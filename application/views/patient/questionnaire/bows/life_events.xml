@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire table="life events" date="LEVDAT">
+	<Language lang="de">
+		<Headline>Life Events</Headline>
+		<Set type="textarea">
+			<Description>Welche wichtigen, positiven und negativen Lebensereignisse (z.B. Heirat, Umzüge, Todesfälle, größere Auseinandersetzungen...) ist/sind in letzter Zeit in Ihrem Leben aufgetreten?</Description>
+			<Question column="LEV001" optional="true">Erstes Ereignis:</Question>
+			<Question column="LEV002" optional="true">Zweites Ereignis:</Question>
+			<Question column="LEV003" optional="true">Drittes Ereignis:</Question>
+			<Question column="LEV004" optional="true">Viertes Ereignis:</Question>
+			<Scale>
+				<Rows>5</Rows>
+				<Cols>50</Cols>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="yes">
+			<Question column="LEV005">Haben Sie in letzter Zeit zusätzliche Behandlungsmaßnahmen in Anspruch genommen?</Question>
+			<Scale>
+				<Option>
+					<Text>nein</Text>
+					<Value>0</Value>
+				</Option>
+				<Option>
+					<Text>ja</Text>
+					<Value>1</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="check_t" parentQuestion="LEV005">
+			<Question>Was?</Question>
+			<Trigger>1</Trigger>
+			<Scale>
+				<Option column="LEV006" has_checkbox="true" has_text="false" optional="true">
+					<Text>psychiatrisch</Text>
+					<Value>Ja</Value>
+				</Option>
+				<Option column="LEV007" has_checkbox="true" has_text="false" optional="true">
+					<Text>neurologisch</Text>
+					<Value>Ja</Value>
+				</Option>
+				<Option column="LEV008" has_checkbox="true" has_text="false" optional="true">
+					<Text>hausärztlich</Text>
+					<Value>Ja</Value>
+				</Option>
+				<Option column="LEV009" has_checkbox="false" has_text="true" optional="true">
+					<Text>andere</Text>
+					<Value>Ja</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="input" parentQuestion="LEV005" popover="false">
+			<Question column="LEV010" size="50" maxlength="255">wie häufig?</Question>
+			<Trigger>1</Trigger>
+			<Scale></Scale>
+		</Set>
+	</Language>
+	<Language lang="en">
+		<Headline>Life Events</Headline>
+		<Set type="textarea">
+			<Description>Welche wichtigen, positiven und negativen Lebensereignisse (z.B. Heirat, Umzüge, Todesfälle, größere Auseinandersetzungen...) ist/sind in letzter Zeit in Ihrem Leben aufgetreten?</Description>
+			<Question column="LEV001" optional="true">Erstes Ereignis:</Question>
+			<Question column="LEV002" optional="true">Zweites Ereignis:</Question>
+			<Question column="LEV003" optional="true">Drittes Ereignis:</Question>
+			<Question column="LEV004" optional="true">Viertes Ereignis:</Question>
+			<Scale>
+				<Rows>5</Rows>
+				<Cols>50</Cols>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="yes">
+			<Question column="LEV005">Haben Sie in letzter Zeit zusätzliche Behandlungsmaßnahmen in Anspruch genommen?</Question>
+			<Scale>
+				<Option>
+					<Text>nein</Text>
+					<Value>0</Value>
+				</Option>
+				<Option>
+					<Text>ja</Text>
+					<Value>1</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="check_t" parentQuestion="LEV005">
+			<Question>was?</Question>
+			<Trigger>1</Trigger>
+			<Scale>
+				<Option column="LEV006" has_checkbox="true" has_text="false" optional="true">
+					<Text>psychiatrisch</Text>
+					<Value>Ja</Value>
+				</Option>
+				<Option column="LEV007" has_checkbox="true" has_text="false" optional="true">
+					<Text>neurologisch</Text>
+					<Value>Ja</Value>
+				</Option>
+				<Option column="LEV008" has_checkbox="true" has_text="false" optional="true">
+					<Text>hausärztlich</Text>
+					<Value>Ja</Value>
+				</Option>
+				<Option column="LEV009" has_checkbox="false" has_text="true" optional="true">
+					<Text>andere</Text>
+					<Value>Ja</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="input" parentQuestion="LEV005" popover="false">
+			<Question column="LEV010" size="50" maxlength="255">wie häufig?</Question>
+			<Trigger>1</Trigger>
+			<Scale></Scale>
+		</Set>
+	</Language>
+</Questionnaire>
