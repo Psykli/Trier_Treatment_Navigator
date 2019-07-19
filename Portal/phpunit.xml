@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="application/tests/Bootstrap.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         strict="true"
+         verbose="true"
+         >
+       
+  <testsuites>
+    <testsuite name="Feedback">
+      <directory>application/tests</directory>
+      <directory>application/tests/helpers</directory>
+      <directory>application/tests/controllers</directory>
+    </testsuite>
+  </testsuites>
+
+  <php>
+		<const name="PHPUNIT_TEST" value="1" />
+		<const name="PHPUNIT_CHARSET" value="UTF-8" />
+		<server name="REMOTE_ADDR" value="0.0.0.0" />
+	</php>
+
+<!---
+  <logging>
+    <log type="coverage-html" target="build/coverage"/>
+    <log type="coverage-clover" target="build/logs/clover.xml"/>
+    <log type="coverage-crap4j" target="build/logs/crap4j.xml"/>
+    <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
+  </logging>
+-->
+  <filter>
+    <whitelist addUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">application</directory>
+      <exclude>
+        <file>application/bootstrap.php</file>
+      </exclude>
+    </whitelist>
+    <blacklist>
+			<directory suffix=".php">system</directory>
+			<!--directory suffix=".php">application/libraries</directory-->
+		</blacklist>
+  </filter>
+</phpunit>

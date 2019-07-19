@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire table="ASQ" date="ASQDAT">
+	<Data>
+		<Scale type="process">
+			<Name>ASQ</Name>
+			<Min>1</Min>
+			<Max>5</Max>
+			<Title>Durchschnitt</Title>
+			<Description>
+					Der Affective Style Questionnaire (ASQ) ist ein Selbstbeurteilungsinstrument bestehend aus 20 Items, in dem drei allgemeine Emotionsregulationsstile erfasst werden: Unterdrücken (invertiert), Anpassen/Neubewerten und Akzeptieren.
+			</Description>
+			<Items>
+				<Value>ASQ001</Value>
+				<Value>ASQ002</Value>
+				<Value invert="6">ASQ003</Value>
+				<Value invert="6">ASQ004</Value>
+				<Value>ASQ005</Value>
+				<Value invert="6">ASQ006</Value>
+				<Value invert="6">ASQ007</Value>
+				<Value invert="6">ASQ008</Value>
+				<Value>ASQ009</Value>
+				<Value>ASQ010</Value>
+				<Value>ASQ011</Value>
+				<Value invert="6">ASQ012</Value>
+				<Value>ASQ013</Value>
+				<Value invert="6">ASQ014</Value>
+				<Value>ASQ015</Value>
+				<Value invert="6">ASQ016</Value>
+				<Value>ASQ017</Value>
+				<Value>ASQ018</Value>
+				<Value invert="6">ASQ019</Value>
+				<Value>ASQ020</Value>
+			</Items>
+		</Scale>
+		<Scale type="status">
+			<Name>ASQ - Gesamt</Name>
+			<Min>1</Min>
+			<Max>5</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>3.142</Mean>
+			<SD>0.464</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Der Affective Style Questionnaire (ASQ) ist ein Selbstbeurteilungsinstrument bestehend aus 20 Items, in dem drei allgemeine Emotionsregulationsstile erfasst werden: Unterdrücken (invertiert), Anpassen/Neubewerten und Akzeptieren.
+			</Description>
+			<Items>
+				<Value>ASQ001</Value>
+				<Value>ASQ002</Value>
+				<Value invert="6">ASQ003</Value>
+				<Value invert="6">ASQ004</Value>
+				<Value>ASQ005</Value>
+				<Value invert="6">ASQ006</Value>
+				<Value invert="6">ASQ007</Value>
+				<Value invert="6">ASQ008</Value>
+				<Value>ASQ009</Value>
+				<Value>ASQ010</Value>
+				<Value>ASQ011</Value>
+				<Value invert="6">ASQ012</Value>
+				<Value>ASQ013</Value>
+				<Value invert="6">ASQ014</Value>
+				<Value>ASQ015</Value>
+				<Value invert="6">ASQ016</Value>
+				<Value>ASQ017</Value>
+				<Value>ASQ018</Value>
+				<Value invert="6">ASQ019</Value>
+				<Value>ASQ020</Value>
+			</Items>
+		</Scale>
+		<Scale type="status">
+			<Name>ASQ - Unterdrücken</Name>
+			<Min>1</Min>
+			<Max>5</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>3.0</Mean>
+			<SD>0.732</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Der Affective Style Questionnaire (ASQ) ist ein Selbstbeurteilungsinstrument bestehend aus 20 Items, in dem drei allgemeine Emotionsregulationsstile erfasst werden: Unterdrücken (invertiert), Anpassen/Neubewerten und Akzeptieren.
+			</Description>
+			<Items>
+				<Value>ASQ001</Value>
+				<Value>ASQ002</Value>
+				<Value>ASQ005</Value>
+				<Value>ASQ009</Value>
+				<Value>ASQ010</Value>
+				<Value>ASQ013</Value>
+				<Value>ASQ015</Value>
+				<Value>ASQ018</Value>
+				<Value>ASQ020</Value>
+			</Items>
+		</Scale>
+		<Scale type="status">
+			<Name>ASQ - Anpassen</Name>
+			<Min>1</Min>
+			<Max>5</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>3.516</Mean>
+			<SD>0.728</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Der Affective Style Questionnaire (ASQ) ist ein Selbstbeurteilungsinstrument bestehend aus 20 Items, in dem drei allgemeine Emotionsregulationsstile erfasst werden: Unterdrücken (invertiert), Anpassen/Neubewerten und Akzeptieren.
+			</Description>
+			<Items>
+				<Value invert="6">ASQ004</Value>
+				<Value invert="6">ASQ007</Value>
+				<Value invert="6">ASQ012</Value>
+				<Value invert="6">ASQ016</Value>
+				<Value invert="6">ASQ019</Value>
+			</Items>
+		</Scale>
+		<Scale type="status">
+			<Name>ASQ - Akzeptieren</Name>
+			<Min>1</Min>
+			<Max>5</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>3.049</Mean>
+			<SD>0.673</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Der Affective Style Questionnaire (ASQ) ist ein Selbstbeurteilungsinstrument bestehend aus 20 Items, in dem drei allgemeine Emotionsregulationsstile erfasst werden: Unterdrücken (invertiert), Anpassen/Neubewerten und Akzeptieren.
+			</Description>
+			<Items>
+				<Value invert="6">ASQ003</Value>
+				<Value invert="6">ASQ006</Value>
+				<Value invert="6">ASQ008</Value>
+				<Value>ASQ011</Value>
+				<Value invert="6">ASQ014</Value>
+				<Value>ASQ017</Value>
+			</Items>
+		</Scale>
+	</Data>
+	<Language lang="de">
+		<Headline alternate="ASQ">ASQ</Headline>
+		<Info>
+			<b>
+				<i>Hinweise zum Ausfüllen:</i>
+			</b> Wir interessieren uns dafür, wie Sie Emotionen erleben und damit umgehen. Natürlich lösen unterschiedliche Situationen etwas 		unterschiedliche Reaktionen aus, aber denken Sie bitte daran, was Sie normalerweise tun. Bitte versuchen Sie, jede Aussage unabhängig von den anderen Aussagen zu beantworten. 		Stimmen Sie nicht zu bei Antworten, von denen Sie denken, dass Sie diese tun sollten oder die Sie gerne tun würden. Stattdessen denken Sie gut über Ihre Antwort nach und wählen aus, 		was auf SIE zutrifft. Bitte beantworten Sie jede der Aussagen. Es gibt dabei keine „richtigen“ oder „falschen“ Antworten, wählen Sie aus, was für SIE zutrifft – nicht, was Sie glauben, 		was die „meisten Menschen“ sagen oder tun würden. Verwenden Sie untenstehende Skala um Ihre Antworten anzugeben
+
+	
+		</Info>
+		<Set type="radio" enumerate="yes">
+			<Question column="ASQ001" noeval="yes">Andere Leute können normalerweise nicht einschätzen, wie ich mich gerade fühle.</Question>
+			<Question column="ASQ002" noeval="yes">Ich habe meine Emotionen gut unter Kontrolle.</Question>
+			<Question column="ASQ003" noeval="yes">Ich kann starke Emotionen tolerieren.</Question>
+			<Question column="ASQ004" noeval="yes">Ich kann es vermeiden, mich aufzuregen, indem ich die Dinge aus einer anderen Perspektive betrachte.</Question>
+			<Question column="ASQ005" noeval="yes">Ich unterdrücke häufig meine emotionalen Reaktionen Dingen gegenüber.</Question>
+			<Question column="ASQ006" noeval="yes">Es ist OK, wenn andere sehen, dass ich aufgebracht bin.</Question>
+			<Question column="ASQ007" noeval="yes">Ich kann mich sehr schnell beruhigen.</Question>
+			<Question column="ASQ008" noeval="yes">Es ist mir möglich, meinen Gefühlen freien Lauf zu lassen.</Question>
+			<Question column="ASQ009" noeval="yes">Ich kann meine Gefühle gut verbergen.</Question>
+			<Question column="ASQ010" noeval="yes">Andere Leute können normalerweise nicht erkennen, wenn ich aufgebracht bin.</Question>
+			<Question column="ASQ011" noeval="yes">Es ist OK, ab und zu negative Emotionen zu fühlen.</Question>
+			<Question column="ASQ012" noeval="yes">Ich komme sehr schnell aus einer schlechten Stimmung raus.</Question>
+			<Question column="ASQ013" noeval="yes">Andere Leute können normalerweise nicht erkennen, wenn ich traurig bin.</Question>
+			<Question column="ASQ014" noeval="yes">Ich kann es tolerieren, traurig zu sein.</Question>
+			<Question column="ASQ015" noeval="yes">Ich kann mich so verhalten, dass andere Menschen nicht bemerken, wenn ich aufgebracht bin.</Question>
+			<Question column="ASQ016" noeval="yes">Ich weiß genau, was ich tun muss, um in eine bessere Stimmung zu kommen</Question>
+			<Question column="ASQ017" noeval="yes">Es ist nichts Falsches daran, sich sehr emotional zu fühlen.</Question>
+			<Question column="ASQ018" noeval="yes">Ich kann Emotionen leicht vortäuschen.</Question>
+			<Question column="ASQ019" noeval="yes">Ich kann ziemlich schnell in eine bessere Stimmung kommen.</Question>
+			<Question column="ASQ020" noeval="yes">Ich kann meinen Ärger gut verbergen, wenn ich das tun muss.</Question>
+			<Scale>
+				<Option>
+					<Text>Trifft auf mich überhaupt nicht zu</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Trifft ein klein wenig zu</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Mittelmäßig</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Trifft ziemlich zu</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Trifft auf mich sehr stark zu</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+	</Language>
+	<Language lang="en">
+		<Headline alternate="ASQ">ASQ</Headline>
+		<Info>
+			<b>
+				<i>Hinweise zum Ausfüllen:</i>
+			</b> Wir interessieren uns dafür, wie Sie Emotionen erleben und damit umgehen. Natürlich lösen unterschiedliche Situationen etwas 		unterschiedliche Reaktionen aus, aber denken Sie bitte daran, was Sie normalerweise tun. Bitte versuchen Sie, jede Aussage unabhängig von den anderen Aussagen zu beantworten. 		Stimmen Sie nicht zu bei Antworten, von denen Sie denken, dass Sie diese tun sollten oder die Sie gerne tun würden. Stattdessen denken Sie gut über Ihre Antwort nach und wählen aus, 		was auf SIE zutrifft. Bitte beantworten Sie jede der Aussagen. Es gibt dabei keine „richtigen“ oder „falschen“ Antworten, wählen Sie aus, was für SIE zutrifft – nicht, was Sie glauben, 		was die „meisten Menschen“ sagen oder tun würden. Verwenden Sie untenstehende Skala um Ihre Antworten anzugeben
+
+	
+		</Info>
+		<Set type="radio" enumerate="yes">
+			<Question column="ASQ001" noeval="yes">Andere Leute können normalerweise nicht einschätzen, wie ich mich gerade fühle.</Question>
+			<Question column="ASQ002" noeval="yes">Ich habe meine Emotionen gut unter Kontrolle.</Question>
+			<Question column="ASQ003" noeval="yes">Ich kann starke Emotionen tolerieren.</Question>
+			<Question column="ASQ004" noeval="yes">Ich kann es vermeiden, mich aufzuregen, indem ich die Dinge aus einer anderen Perspektive betrachte.</Question>
+			<Question column="ASQ005" noeval="yes">Ich unterdrücke häufig meine emotionalen Reaktionen Dingen gegenüber.</Question>
+			<Question column="ASQ006" noeval="yes">Es ist OK, wenn andere sehen, dass ich aufgebracht bin.</Question>
+			<Question column="ASQ007" noeval="yes">Ich kann mich sehr schnell beruhigen.</Question>
+			<Question column="ASQ008" noeval="yes">Es ist mir möglich, meinen Gefühlen freien Lauf zu lassen.</Question>
+			<Question column="ASQ009" noeval="yes">Ich kann meine Gefühle gut verbergen.</Question>
+			<Question column="ASQ010" noeval="yes">Andere Leute können normalerweise nicht erkennen, wenn ich aufgebracht bin.</Question>
+			<Question column="ASQ011" noeval="yes">Es ist OK, ab und zu negative Emotionen zu fühlen.</Question>
+			<Question column="ASQ012" noeval="yes">Ich komme sehr schnell aus einer schlechten Stimmung raus.</Question>
+			<Question column="ASQ013" noeval="yes">Andere Leute können normalerweise nicht erkennen, wenn ich traurig bin.</Question>
+			<Question column="ASQ014" noeval="yes">Ich kann es tolerieren, traurig zu sein.</Question>
+			<Question column="ASQ015" noeval="yes">Ich kann mich so verhalten, dass andere Menschen nicht bemerken, wenn ich aufgebracht bin.</Question>
+			<Question column="ASQ016" noeval="yes">Ich weiß genau, was ich tun muss, um in eine bessere Stimmung zu kommen</Question>
+			<Question column="ASQ017" noeval="yes">Es ist nichts Falsches daran, sich sehr emotional zu fühlen.</Question>
+			<Question column="ASQ018" noeval="yes">Ich kann Emotionen leicht vortäuschen.</Question>
+			<Question column="ASQ019" noeval="yes">Ich kann ziemlich schnell in eine bessere Stimmung kommen.</Question>
+			<Question column="ASQ020" noeval="yes">Ich kann meinen Ärger gut verbergen, wenn ich das tun muss.</Question>
+			<Scale>
+				<Option>
+					<Text>Trifft auf mich überhaupt nicht zu</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Trifft ein klein wenig zu</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Mittelmäßig</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Trifft ziemlich zu</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Trifft auf mich sehr stark zu</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+	</Language>
+</Questionnaire>

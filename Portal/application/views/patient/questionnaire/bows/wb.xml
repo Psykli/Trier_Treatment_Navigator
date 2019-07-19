@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire table="wohlbefinden_patient" date="WBPDAT" med="WBPMED" ver="WBPVER">
+	<Language lang="de">
+		<Headline>Wohlbefinden Patient</Headline>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP001">Wie belastet fühlen Sie sich im Moment?</Question>
+			<Scale>
+				<Option>
+					<Text>überhaupt nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>ein wenig</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>einigermaßen</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>extrem</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP002">Wie gut kommen Sie im Moment emotional und psychisch zurecht?</Question>
+			<Scale>
+				<Option>
+					<Text>Sehr schlecht; ich komme kaum zurecht.</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Schlecht; es ist recht schwer für mich.</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Es geht so; mit Anstrengungen komme ich zurecht</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Gut; Ich habe meine Höhen und Tiefen</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Sehr gut; ich habe keine wichtigen Beschwerden</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP003">Wie zufrieden sind Sie in letzter Zeit mit Ihrem Leben?</Question>
+			<Scale>
+				<Option>
+					<Text>überhaupt nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>ein wenig</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>einigermaßen</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>extrem</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP004">Wie energiegeladen und gesund fühlen Sie sich im Moment?</Question>
+			<Scale>
+				<Option>
+					<Text>gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>ein bisschen</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>ziemlich</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>extrem</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="mmm_slider">
+			<Question column="WBP005">
+				<Text>
+					<strong>Wie gut kommen Sie emotional und psychisch zurecht?</strong>
+				</Text>
+				<Min>sehr schlecht</Min>
+				<Max>sehr gut</Max>
+			</Question>
+			<Scale>
+				<MinValue>0</MinValue>
+				<MaxValue>100</MaxValue>
+			</Scale>
+		</Set>
+		<Set type="hidden_instance" column="WBP006"></Set>
+	</Language>
+	<Language lang="en">
+		<Headline>Wohlbefinden Patient</Headline>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP001">Wie belastet fühlen Sie sich im Moment?</Question>
+			<Scale>
+				<Option>
+					<Text>überhaupt nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>ein wenig</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>einigermaßen</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>extrem</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP002">Wie gut kommen Sie im Moment emotional und psychisch zurecht?</Question>
+			<Scale>
+				<Option>
+					<Text>Sehr schlecht; ich komme kaum zurecht.</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Schlecht; es ist recht schwer für mich.</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Es geht so; mit Anstrengungen komme ich zurecht</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Gut; Ich habe meine Höhen und Tiefen</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Sehr gut; ich habe keine wichtigen Beschwerden</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP003">Wie zufrieden sind Sie in letzter Zeit mit Ihrem Leben?</Question>
+			<Scale>
+				<Option>
+					<Text>überhaupt nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>ein wenig</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>einigermaßen</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>extrem</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="WBP004">Wie energiegeladen und gesund fühlen Sie sich im Moment?</Question>
+			<Scale>
+				<Option>
+					<Text>gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>ein bisschen</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>ziemlich</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>extrem</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="mmm_slider">
+			<Question column="WBP005">
+				<Text>
+					<strong>Wie gut kommen Sie emotional und psychisch zurecht?</strong>
+				</Text>
+				<Min>sehr schlecht</Min>
+				<Max>sehr gut</Max>
+			</Question>
+			<Scale>
+				<MinValue>0</MinValue>
+				<MaxValue>100</MaxValue>
+			</Scale>
+		</Set>
+		<Set type="hidden_instance" column="WBP006"></Set>
+	</Language>
+</Questionnaire>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire table="ChangeTableName" date="DAT">
+	<Language lang="de">
+		<Set type="input">
+			<Question column="questionnaire_name" size="" maxLength="">Name des Fragebogens</Question>
+			<Trigger>1</Trigger>
+			<Scale/>
+		</Set>
+		<Set type="textarea">
+			<Question column="questionnaire_description">Beschreibung des Fragebogens</Question>
+			<Scale>
+				<Rows/>
+				<Cols/>
+			</Scale>
+		</Set>
+	</Language>
+	<Language lang="en">
+		<Set type="input">
+			<Question column="questionnaire_name" size="" maxLength="">Name des Fragebogens</Question>
+			<Trigger>1</Trigger>
+			<Scale/>
+		</Set>
+		<Set type="textarea">
+			<Question column="questionnaire_description">Beschreibung des Fragebogens</Question>
+			<Scale>
+				<Rows/>
+				<Cols/>
+			</Scale>
+		</Set>
+	</Language>
+</Questionnaire>

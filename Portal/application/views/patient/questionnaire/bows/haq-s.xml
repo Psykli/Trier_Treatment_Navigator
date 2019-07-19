@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire table="HAQ-S" date="HQSDAT" med="HQSMED" ver="HQSVER">
+	<Data>
+		<Scale type="status">
+			<Name>HAQ-S Gesamt</Name>
+			<Min>1</Min>
+			<Max>6</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>2.5799</Mean>
+			<SD>0.61407</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Das <b>Helping Alliance Questionnaire - Selbsteinschätzung (HAQ-S)</b> besteht aus zwölf Fragen zur therapeutischen Beziehung und zu Prozessvariablen und wird vom Patienten ausgefüllt.
+			</Description>
+			<Items>
+				<Value>HQS001</Value>
+				<Value>HQS002</Value>
+				<Value>HQS003</Value>
+				<Value>HQS004</Value>
+				<Value>HQS005</Value>
+				<Value>HQS006</Value>
+				<Value>HQS007</Value>
+				<Value>HQS008</Value>
+				<Value>HQS009</Value>
+				<Value>HQS010</Value>
+				<Value>HQS011</Value>
+			</Items>
+		</Scale>
+		<Scale type="status">
+			<Name>HAQ-S Beziehungszufriedenheit</Name>
+			<Min>1</Min>
+			<Max>6</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>2.1113</Mean>
+			<SD>0.64907</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Das <b>Helping Alliance Questionnaire - Selbsteinschätzung (HAQ-S)</b> besteht aus zwölf Fragen zur therapeutischen Beziehung und zu Prozessvariablen und wird vom Patienten ausgefüllt.
+			</Description>
+			<Items>
+				<Value>HQS001</Value>
+				<Value>HQS006</Value>
+				<Value>HQS007</Value>
+				<Value>HQS008</Value>
+				<Value>HQS009</Value>
+				<Value>HQS010</Value>
+			</Items>
+		</Scale>
+		<Scale type="status">
+			<Name>HAQ-S Erfolgszufriedenheit</Name>
+			<Min>1</Min>
+			<Max>6</Max>
+			<Title>Durchschnitt</Title>
+			<Mean>3.1625</Mean>
+			<SD>0.81426</SD>
+			<Low>15.87</Low>
+			<Mid>50.0</Mid>
+			<High>84.13</High>
+			<Description>
+					Das <b>Helping Alliance Questionnaire - Selbsteinschätzung (HAQ-S)</b> besteht aus zwölf Fragen zur therapeutischen Beziehung und zu Prozessvariablen und wird vom Patienten ausgefüllt.
+			</Description>
+			<Items>
+				<Value>HQS002</Value>
+				<Value>HQS003</Value>
+				<Value>HQS004</Value>
+				<Value>HQS005</Value>
+				<Value>HQS011</Value>
+			</Items>
+		</Scale>
+	</Data>
+	<Language lang="de">
+		<Headline alternate="HAQ-S">Qualität der therapeutischen Arbeitsbeziehung (HAQ-S)</Headline>
+		<Info>
+		Bitte schätzen Sie die Beziehung zu Ihrem Therapeuten anhand der unten aufgeführten Aussagen ein.
+		Wählen Sie bitte eine der folgenden Abstufungen:
+						
+			<br/>
+			- Ja, ich halte dies für 			
+			<u>sehr zutreffend</u>
+			<br/>
+			- Ja, ich halte dies für 			
+			<u>zutreffend</u>
+			<br/>
+			- Ja, ich halte dies für 			
+			<u>wahrscheinlich zutreffend</u> bzw. für eher zutreffend als nicht zutreffend
+						
+			<br/>
+			- Nein, ich halte dies für 			
+			<u>wahrscheinlich unzutreffend</u> bzw. für eher unzutreffend als zutreffend
+						
+			<br/>
+			- Nein, ich halte dies für 			
+			<u>unzutreffend</u>
+			<br/>
+			- Nein, ich halte dies für 			
+			<u>sehr unzutreffend</u>
+		</Info>
+		<Set type="radio" enumerate="yes">
+			<Question column="HQS001" noeval="yes">Ich glaube, dass mein Therapeut/meine Therapeutin mir hilft.</Question>
+			<Question column="HQS002" noeval="yes">Ich glaube, dass mir die Behandlung hilft.</Question>
+			<Question column="HQS003" noeval="yes">Ich habe einige neue Einsichten gewonnen.</Question>
+			<Question column="HQS004" noeval="yes">Seit Kurzem fühle ich mich besser.</Question>
+			<Question column="HQS005" noeval="yes">Ich kann bereits absehen, dass ich vielleicht die Probleme bewältigen kann, wegen derer ich zur Behandlung kam.</Question>
+			<Question column="HQS006" noeval="yes">Ich habe das Gefühl, mich auf den Therapeuten/die Therapeutin verlassen zu können.</Question>
+			<Question column="HQS007" noeval="yes">Ich habe das Gefühl, dass mich der Therapeut/die Therapeutin versteht.</Question>
+			<Question column="HQS008" noeval="yes">Ich habe das Gefühl, dass der Therapeut/die Therapeutin möchte, dass ich meine Ziele erreiche.</Question>
+			<Question column="HQS009" noeval="yes">Ich habe das Gefühl, dass ich wie auch der Therapeut/die Therapeutin ernsthaft an einem Strang ziehen.</Question>
+			<Question column="HQS010" noeval="yes">Ich glaube, dass ich und der Therapeut/die Therapeutin meine Probleme ähnlich sehen und beurteilen.</Question>
+			<Question column="HQS011" noeval="yes">Ich habe das Gefühl, dass ich mich jetzt selbst verstehen und mich selbstständig mit mir auseinander setzen kann (d.h. auch dann, wenn ich mit dem Therapeuten/der Therapeutin keine weiteren Gespräche mehr habe).</Question>
+			<Scale>
+				<Option>
+					<Text>sehr zutreffend</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>zutreffend</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>wahrscheinlich zutreffend</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>wahrscheinlich unzutreffend</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>unzutreffend</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text>sehr unzutreffend</Text>
+					<Value>6</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="textarea">
+			<Caption>
+				<u>Veränderungen während der Behandlung</u>
+			</Caption>
+			<Description>Ich habe das Gefühl, dass es mir in folgenden Hinsichten besser geht (Es müssen nicht alle Felder ausgefüllt werden):</Description>
+			<Question column="HQS012" optional="true">Erste Verbesserung:</Question>
+			<Question column="HQS013" optional="true">Zweite Verbesserung:</Question>
+			<Question column="HQS014" optional="true">Dritte Verbesserung:</Question>
+			<Scale>
+				<Rows>5</Rows>
+				<Cols>50</Cols>
+			</Scale>
+		</Set>
+		<Set type="textarea">
+			<Caption>
+				<u>Veränderungen während der Behandlung</u>
+			</Caption>
+			<Description>Ich habe das Gefühl, dass es mir in folgenden Hinsichten schlechter geht (Es müssen nicht alle Felder ausgefüllt werden):</Description>
+			<Question column="HQS015" optional="true">Erste Verschlechterung:</Question>
+			<Question column="HQS016" optional="true">Zweite Verschlechterung:</Question>
+			<Question column="HQS017" optional="true">Dritte Verschlechterung:</Question>
+			<Scale>
+				<Rows>5</Rows>
+				<Cols>50</Cols>
+			</Scale>
+		</Set>
+		<Set type="radio">
+			<Question column="HQS018" noeval="yes">Schätzen Sie bitte ein, wie sehr es Ihnen im Vergleich zu Behandlungsbeginn 				
+				<b> besser geht</b>.
+			
+			</Question>
+			<Scale>
+				<Option>
+					<Text>Gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Leicht</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Mäßig</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Viel</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Sehr viel</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" parentQuestion="HQS018">
+			<Trigger>1</Trigger>
+			<Question column="HQS019" noeval="yes">Falls Sie "gar nicht" angekreuzt haben, hat sich Ihr Befinden möglicherweise 				
+				<b>verschlechtert</b>?
+			
+			</Question>
+			<Scale>
+				<Option>
+					<Text>Gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Leicht</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Mäßig</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Viel</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Sehr viel</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="hidden_instance" column="HQS020"></Set>
+	</Language>
+	<Language lang="en">
+		<Headline alternate="HAQ-S">Qualität der therapeutischen Arbeitsbeziehung (HAQ-S)</Headline>
+		<Info>
+		Bitte schätzen Sie die Beziehung zu Ihrem Therapeuten anhand der unten aufgeführten Aussagen ein.
+		Wählen Sie bitte eine der folgenden Abstufungen:
+						
+			<br/>
+			- Ja, ich halte dies für 			
+			<u>sehr zutreffend</u>
+			<br/>
+			- Ja, ich halte dies für 			
+			<u>zutreffend</u>
+			<br/>
+			- Ja, ich halte dies für 			
+			<u>wahrscheinlich zutreffend</u> bzw. für eher zutreffend als nicht zutreffend
+						
+			<br/>
+			- Nein, ich halte dies für 			
+			<u>wahrscheinlich unzutreffend</u> bzw. für eher unzutreffend als zutreffend
+						
+			<br/>
+			- Nein, ich halte dies für 			
+			<u>unzutreffend</u>
+			<br/>
+			- Nein, ich halte dies für 			
+			<u>sehr unzutreffend</u>
+		</Info>
+		<Set type="radio" enumerate="yes">
+			<Question column="HQS001" noeval="yes">Ich glaube, dass mein Therapeut/meine Therapeutin mir hilft.</Question>
+			<Question column="HQS002" noeval="yes">Ich glaube, dass mir die Behandlung hilft.</Question>
+			<Question column="HQS003" noeval="yes">Ich habe einige neue Einsichten gewonnen.</Question>
+			<Question column="HQS004" noeval="yes">Seit Kurzem fühle ich mich besser.</Question>
+			<Question column="HQS005" noeval="yes">Ich kann bereits absehen, dass ich vielleicht die Probleme bewältigen kann, wegen derer ich zur Behandlung kam.</Question>
+			<Question column="HQS006" noeval="yes">Ich habe das Gefühl, mich auf den Therapeuten/die Therapeutin verlassen zu können.</Question>
+			<Question column="HQS007" noeval="yes">Ich habe das Gefühl, dass mich der Therapeut/die Therapeutin versteht.</Question>
+			<Question column="HQS008" noeval="yes">Ich habe das Gefühl, dass der Therapeut/die Therapeutin möchte, dass ich meine Ziele erreiche.</Question>
+			<Question column="HQS009" noeval="yes">Ich habe das Gefühl, dass ich wie auch der Therapeut/die Therapeutin ernsthaft an einem Strang ziehen.</Question>
+			<Question column="HQS010" noeval="yes">Ich glaube, dass ich und der Therapeut/die Therapeutin meine Probleme ähnlich sehen und beurteilen.</Question>
+			<Question column="HQS011" noeval="yes">Ich habe das Gefühl, dass ich mich jetzt selbst verstehen und mich selbstständig mit mir auseinander setzen kann (d.h. auch dann, wenn ich mit dem Therapeuten/der Therapeutin keine weiteren Gespräche mehr habe).</Question>
+			<Scale>
+				<Option>
+					<Text>sehr zutreffend</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>zutreffend</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>wahrscheinlich zutreffend</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>wahrscheinlich unzutreffend</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>unzutreffend</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text>sehr unzutreffend</Text>
+					<Value>6</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="textarea">
+			<Caption>
+				<u>Veränderungen während der Behandlung</u>
+			</Caption>
+			<Description>Ich habe das Gefühl, dass es mir in folgenden Hinsichten besser geht (Es müssen nicht alle Felder ausgefüllt werden):</Description>
+			<Question column="HQS012" optional="true">Erste Verbesserung:</Question>
+			<Question column="HQS013" optional="true">Zweite Verbesserung:</Question>
+			<Question column="HQS014" optional="true">Dritte Verbesserung:</Question>
+			<Scale>
+				<Rows>5</Rows>
+				<Cols>50</Cols>
+			</Scale>
+		</Set>
+		<Set type="textarea">
+			<Caption>
+				<u>Veränderungen während der Behandlung</u>
+			</Caption>
+			<Description>Ich habe das Gefühl, dass es mir in folgenden Hinsichten schlechter geht (Es müssen nicht alle Felder ausgefüllt werden):</Description>
+			<Question column="HQS015" optional="true">Erste Verschlechterung:</Question>
+			<Question column="HQS016" optional="true">Zweite Verschlechterung:</Question>
+			<Question column="HQS017" optional="true">Dritte Verschlechterung:</Question>
+			<Scale>
+				<Rows>5</Rows>
+				<Cols>50</Cols>
+			</Scale>
+		</Set>
+		<Set type="radio">
+			<Question column="HQS018" noeval="yes">Schätzen Sie bitte ein, wie sehr es Ihnen im Vergleich zu Behandlungsbeginn 				
+				<b> besser geht</b>.
+			
+			</Question>
+			<Scale>
+				<Option>
+					<Text>Gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Leicht</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Mäßig</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Viel</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Sehr viel</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" parentQuestion="HQS018">
+			<Trigger>1</Trigger>
+			<Question column="HQS019" noeval="yes">Falls Sie "gar nicht" angekreuzt haben, hat sich Ihr Befinden möglicherweise 				
+				<b>verschlechtert</b>?
+			
+			</Question>
+			<Scale>
+				<Option>
+					<Text>Gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text>Leicht</Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text>Mäßig</Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text>Viel</Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>Sehr viel</Text>
+					<Value>5</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="hidden_instance" column="HQS020"></Set>
+	</Language>
+</Questionnaire>

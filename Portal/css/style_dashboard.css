@@ -1,0 +1,73 @@
+#contentDash {
+	width: 100%;
+}
+#contentDash div{
+	position: relative;
+	background-color: #FFFFFF;
+	float: left;
+	width: 250px;
+	min-height: 140px;
+	margin: 10% 5% 0 0%;
+
+	background: #eee;
+	border: 1px solid #DDD;
+	background: -moz-linear-gradient(top, #EEE, #FFF);    
+	background: -webkit-linear-gradient(top, #eee, #fff);
+	background: -ms-linear-gradient(top, #eee, #fff);
+	background: -o-linear-gradient(top, #eee, #fff);
+	-moz-box-shadow: 1px 2px 4px rgba(0,0,0, .2);
+	-webkit-box-shadow: 1px 2px 4px rgba(0,0,0, .2);
+	box-shadow: 1px 2px 4px rgba(0,0,0, .2);
+	-moz-border-radius: 1em;
+	-webkit-border-radius: 1em;
+	border-radius: 1em;	
+	
+	//*background: #fdf5ce;
+	//*-moz-box-shadow: 10px 10px 10px rgba(0, 0, 0, .25);
+	-webkit-box-shadow: 10px 10px 10px rgba(0, 0, 0, .25);
+	box-shadow: 10px 10px 10px rgba(0, 0, 0, .25);*//
+}
+
+
+#contentDash div:last-child {
+	margin-right: 0;
+	margin-left: 0%;
+}
+
+#contentDash div ul {
+	list-style: none;
+	padding: 0;
+}
+#contentDash div ul  li {
+	width: 100%;
+	margin: 0 0 0em 0;
+	padding: .5em;
+}
+
+#contentDash div ul li h2 {
+	font: 150%/.825 "Arial Black", Arial, san-serif;
+	text-transform: uppercase;
+	letter-spacing: -1px;
+	line-height: 150%;
+	padding: 0;
+	margin: 0;
+	color: #654;
+}
+
+#contentDash div ul li p{
+	font-size: 80%;
+	padding: 1.25em 1em;
+	margin: 2.5em 2.5em 0 0;
+	background-color: #FFF;
+	color: #484058;
+	-moz-border-radius: 1em;
+	-webkit-border-radius: 1em;
+	border-radius: 1em;
+	height: 10em;
+
+}
+
+#contentDash div ul li hr {
+	margin: 1.5em 2.5em 0 0;
+	border: 1px solid silver;
+}

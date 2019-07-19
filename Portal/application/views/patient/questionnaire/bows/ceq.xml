@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire table="ceq_einschaetzungen_zur_behandlung" date="CEQDAT">
+	<Language lang="de">
+		<Headline alternate="CEQ">CEQ</Headline>
+		<Info>
+			Bei den folgenden Fragen geht es um Ihre Einschätzungen zur Behandlung. Bitte kreuzen Sie diejenige Zahl an, die für Sie zutrifft.
+		</Info>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ001" noeval="yes">1. Wie logisch erscheint ihnen im Moment die Behandlung aufgebaut, welche ihnen angeboten wird?</Question>
+			<Scale>
+				<Option>
+					<Text>gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>mäßig</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>6</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>7</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>8</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>9</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ002" noeval="yes">2. Wie schätzen Sie im Moment den Erfolg den die Behandlung haben wird ein, Ihre Probleme zu beseitigen?</Question>
+			<Scale>
+				<Option>
+					<Text>sehr gering</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>mäßig</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>6</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>7</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>8</Value>
+				</Option>
+				<Option>
+					<Text>sehr hoch</Text>
+					<Value>9</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ003" noeval="yes">3. Wie sehr würden Sie diese Behandlung einem Freund mit gleichen Problemen empfehlen?</Question>
+			<Scale>
+				<Option>
+					<Text>gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>mäßig</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>6</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>7</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>8</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>9</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ004" noeval="yes">4. Um wie viel schätzen Sie, werden sich Ihre Symptome am Ende der Therapie verbessert haben?</Question>
+			<Scale>
+				<Option>
+					<Text></Text>
+					<Value>10</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>20</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>30</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>40</Value>
+				</Option>
+				<Option>
+					<Text>in %</Text>
+					<Value>50</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>60</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>70</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>80</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>90</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>100</Value>
+				</Option>
+			</Scale>
+		</Set>
+	</Language>
+	<Language lang="en">
+		<Headline alternate="CEQ">CEQ</Headline>
+		<Info>
+			Bei den folgenden Fragen geht es um Ihre Einschätzungen zur Behandlung. Bitte kreuzen Sie diejenige Zahl an, die für Sie zutrifft.
+		</Info>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ001" noeval="yes">1. Wie logisch erscheint ihnen im Moment die Behandlung aufgebaut, welche ihnen angeboten wird?</Question>
+			<Scale>
+				<Option>
+					<Text>gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>mäßig</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>6</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>7</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>8</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>9</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ002" noeval="yes">2. Wie schätzen Sie im Moment den Erfolg den die Behandlung haben wird ein, Ihre Probleme zu beseitigen?</Question>
+			<Scale>
+				<Option>
+					<Text>sehr gering</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>mäßig</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>6</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>7</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>8</Value>
+				</Option>
+				<Option>
+					<Text>sehr hoch</Text>
+					<Value>9</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ003" noeval="yes">3. Wie sehr würden Sie diese Behandlung einem Freund mit gleichen Problemen empfehlen?</Question>
+			<Scale>
+				<Option>
+					<Text>gar nicht</Text>
+					<Value>1</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>2</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>3</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>4</Value>
+				</Option>
+				<Option>
+					<Text>mäßig</Text>
+					<Value>5</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>6</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>7</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>8</Value>
+				</Option>
+				<Option>
+					<Text>sehr</Text>
+					<Value>9</Value>
+				</Option>
+			</Scale>
+		</Set>
+		<Set type="radio" enumerate="no">
+			<Question column="CEQ004" noeval="yes">4. Um wie viel schätzen Sie, werden sich Ihre Symptome am Ende der Therapie verbessert haben?</Question>
+			<Scale>
+				<Option>
+					<Text></Text>
+					<Value>10</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>20</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>30</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>40</Value>
+				</Option>
+				<Option>
+					<Text>in %</Text>
+					<Value>50</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>60</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>70</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>80</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>90</Value>
+				</Option>
+				<Option>
+					<Text></Text>
+					<Value>100</Value>
+				</Option>
+			</Scale>
+		</Set>
+	</Language>
+</Questionnaire>
