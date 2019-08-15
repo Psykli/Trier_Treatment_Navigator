@@ -9,7 +9,9 @@
 				<span class="icon-bar"></span> 
 			</button>
 		
-			<a class="navbar-brand" href="<?php echo base_url(); ?>">Feedbacksystem</a>
+			<a class="navbar-brand" href="<?php echo base_url(); ?>">
+				<span style="color:orange;"> TTN</span>
+			</a>
 		</div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
