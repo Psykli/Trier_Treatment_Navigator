@@ -2,7 +2,7 @@
 
 ## Verwendete Ressourcen
 * PHP-Framework: [Codeigniter](https://codeigniter.com/) (Version 2.1.3)
-* CSS-Framework: [Bootstrap](http://holdirbootstrap.de/)(Version 3)
+* CSS-Framework: [Bootstrap](http://holdirbootstrap.de/)(Version 4)
 * User-Tracking: [Piwik](https://piwik.org/)
 * Diverse Javascript Bibliotheken: siehe `application/js`
 
