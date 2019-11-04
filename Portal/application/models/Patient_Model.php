@@ -10,9 +10,18 @@ if( !defined( 'BASEPATH' ) )
 class Patient_model extends CI_Model
 {
 
+    /**
+     * Constructer
+     * Init of the Psychoeq-Database-Connection.
+     */
     public function __construct( )
     {
-        parent::__construct();
+        $this -> db = $this -> load -> database( 'default', TRUE );
+			
+		$CI =& get_instance();
+		if( !property_exists( $CI, 'db_default' ) ) {
+            $CI->db_default =& $this -> db;
+        }
     }
 
     public function get_all_patients( $username )
@@ -22,7 +31,7 @@ class Patient_model extends CI_Model
         $all_patients = NULL;
         $this -> db -> db_select( );
         
-        $this -> db -> select( 'sub.code as code, dok.dok012 as zustand, sub.therpist as therpist'  );
+        $this -> db -> select( 'sub.code as code, dok.dok012 as zustand, sub.therapist as therapist'  );
         $this -> db -> select( 'date(sub.erstsich) as erstsich', FALSE );
         $this -> db -> from( 'subjects sub' );
         $this -> db -> join( 'dokumentation dok', 'dok.code = sub.code' );
@@ -31,7 +40,7 @@ class Patient_model extends CI_Model
         //if it's an admin show all.
         if( !$is_admin )
         {
-            $this -> db -> where( 'therpist', $username );
+            $this -> db -> where( 'therapist', $username );
         }//if
         else
         {
@@ -74,7 +83,7 @@ class Patient_model extends CI_Model
             $this -> db -> db_select( );
             $this -> db -> select( 'CODE' );
 			$this -> db -> from ( 'subjects' );
-			$this -> db -> where( 'THERPIST', $username );	
+			$this -> db -> where( 'THERAPIST', $username );	
 			
 			$query = $this -> db -> get( );
 			
@@ -103,7 +112,7 @@ class Patient_model extends CI_Model
             $this -> db -> like( 'CODE', $patientcode );
             
             if( isset( $therapist ) ) {
-                $this -> db -> like( 'THERPIST', $therapist );
+                $this -> db -> like( 'THERAPIST', $therapist );
             }
             
             $this -> db -> order_by( 'CODE', 'ASC' );
@@ -115,7 +124,7 @@ class Patient_model extends CI_Model
             }//if
             else
             {
-                $this -> db -> where( 'THERPIST', $username );
+                $this -> db -> where( 'THERAPIST', $username );
             }//else
             
             $query = $this -> db -> get( );
@@ -173,7 +182,7 @@ class Patient_model extends CI_Model
 
         $this -> db -> select( '1' );
         $this -> db -> from( 'subjects' );
-        $this -> db -> where( 'THERPIST', $therapist );
+        $this -> db -> where( 'THERAPIST', $therapist );
         $this -> db -> where( 'CODE', $patient );
         $this -> db -> limit( 1 );
         
@@ -212,7 +221,7 @@ class Patient_model extends CI_Model
         $this -> db -> where( 'CODE', $patient );
         
         $this -> db -> group_start();
-        $this -> db -> where( 'THERPIST', $therapist_or_supervisor );
+        $this -> db -> where( 'THERAPIST', $therapist_or_supervisor );
         $this -> db -> or_where( 'SUPERVIS', $therapist_or_supervisor );
         $this -> db -> group_end();
 
@@ -254,7 +263,7 @@ class Patient_model extends CI_Model
             $therapist = $username;
         }
         elseif (!is_null( $username ) && $username !== '') {
-            $this -> db -> select( 'THERPIST' );
+            $this -> db -> select( 'THERAPIST' );
             $this -> db -> from( 'subjects' );
             $this -> db -> where( 'CODE', $patientcode );
             $this -> db -> limit( 1 );
@@ -264,8 +273,8 @@ class Patient_model extends CI_Model
             {
                 //Only return the result if the user is either the patient, therapist, supervisor (of the patient) or an admin.
                 //Others aren't allow to get that information.
-                if( $patientcode === $username || $query -> row( 0 ) -> THERPIST === $username ) {
-                    $therapist = $query -> row( 0 ) -> THERPIST;
+                if( $patientcode === $username || $query -> row( 0 ) -> THERAPIST === $username ) {
+                    $therapist = $query -> row( 0 ) -> THERAPIST;
                 }
                 else
                 {
@@ -280,7 +289,7 @@ class Patient_model extends CI_Model
                     }
 
                     if( $is_supervisor || $is_admin ) {
-                        $therapist = $query -> row( 0 ) -> THERPIST;
+                        $therapist = $query -> row( 0 ) -> THERAPIST;
                     }
                 }
             }
@@ -440,10 +449,15 @@ class Patient_model extends CI_Model
         return $result;
     }//get_sb_allowed()
 
-    public function get_boundary($patientcode, $instance){
+    public function get_boundary($patientcode, $instance, $columns = NULL){
         $result = NULL;
 
         $this -> db -> db_select( );
+        
+        if( isset( $columns ) ) {
+            $this -> db -> select( $columns );
+        }
+
         $this -> db -> from( 'entscheidungsregeln_hscl' );
         $this -> db -> where( 'code', $patientcode );
         $this -> db -> where( 'instance', $instance );
@@ -469,7 +483,7 @@ class Patient_model extends CI_Model
 
         if( !$username OR !$patientcode OR !$db_table )
         {
-            log_message( 'warn', "Some arguements for the fetch_bow_data method are missing" );
+            log_message( 'warn', "Some arguments for the fetch_bow_data method are missing" );
         }//if
         else
         {
@@ -540,7 +554,7 @@ class Patient_model extends CI_Model
             $this -> db -> select( '1' );
             $this -> db -> from('subjects');
             $this -> db -> where('CODE', $patientcode);
-            $this -> db -> where('THERPIST', $therapist);
+            $this -> db -> where('THERAPIST', $therapist);
             $this -> db -> limit( 1 );
 
             $query = $this-> db -> get(); 
@@ -575,7 +589,7 @@ class Patient_model extends CI_Model
             return "green";
         }
         else {
-            return NULL;
+            return "black";
         }
     }//get_feedback_of_patient()
 

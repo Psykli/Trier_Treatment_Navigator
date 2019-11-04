@@ -26,10 +26,13 @@ class Login extends CI_Controller
                             'content' => array(),
                             'footer' => array()
         );
-		
+		$this->load->Model('membership_model');
+        $this->load->Model('session_model');
 		//Laden der Sprachdatei
 		$this->lang->load('login');
         //$this->load->Model( 'Questionnaire_tool_model' );
+        $username = $this->session->userdata( 'username' );
+        $this->data['top_nav']['username'] = $username;
     }//__construct()
     
     /**
@@ -43,9 +46,8 @@ class Login extends CI_Controller
      * @since 0.0.1
      * @access public
      */
-    function index( )
+    function index( $redirect_page = NULL, $redirect_param_1 = NULL )
     {
-	
         $is_logged_in = $this->session_model->is_logged_in( $this->session->all_userdata() );
         
         //if a user is logged in, we need the top_nav with user_information and logout.
@@ -55,8 +57,11 @@ class Login extends CI_Controller
         }//if
         else
         {
+            $this -> data[CONTENT_STRING]['redirect_page'] = $redirect_page;
+            $this -> data[CONTENT_STRING]['redirect_param_1'] = $redirect_param_1;
+
             $this->template->set('header', 'all/header', $this->data['header']);
-            $this->template->set('top_nav', 'guest/top_nav', $this->data['top_nav']);
+            $this->template->set('top_nav', 'all/top_nav', $this->data['top_nav']);
             $this->template->set('content', 'guest/login_form', $this->data['content']);
             $this->template->set('footer', 'all/footer', $this->data['footer']);
             $this->template->load('template');
@@ -76,8 +81,10 @@ class Login extends CI_Controller
      */
     function validate_credentials( )
     {
-
         $query = $this -> membership_model -> validate( );
+
+        $redirect_page = $this -> input -> post( 'redirect_page' );
+        $redirect_param_1 = $this -> input -> post( 'redirect_param_1' );
 
         if( $query )//if login-data validates
         {
@@ -86,6 +93,14 @@ class Login extends CI_Controller
             $this -> session -> set_userdata( $data );
             
             $user_role = $this->membership_model->get_role( $username );
+
+            //check if user should be redirected to a specific page first, before using the default after-login redirects
+            if( !empty( $redirect_page ) && $redirect_page === 'change_email_confirmation' && !empty( $redirect_param_1 ) ) {
+                redirect( $user_role . '/profile/' . $redirect_page . '/' . $redirect_param_1 );
+            }
+            else if( !empty( $redirect_page ) && $redirect_page === 'change_password_confirmation' && !empty( $redirect_param_1 ) ) {
+                redirect( $user_role . '/profile/' . $redirect_page . '/' . $redirect_param_1 );
+            }
             
             switch( $user_role )
             {
@@ -98,7 +113,7 @@ class Login extends CI_Controller
                 case 'user':
                     redirect( 'user/dashboard' );
                     break;
-                case 'priviledged_user':
+                case 'privileged_user':
                     redirect( 'admin/meeting_tool/index/overview' );
                     break;
 				case 'patient':
@@ -111,12 +126,14 @@ class Login extends CI_Controller
         }//if
         else//login Incorect
         {
-            // $this -> index( );
-            $this->data['content']['error'] = TRUE;
-            $this->data['content']['error_code'] = 403;
+            $this -> data[CONTENT_STRING]['error'] = TRUE;
+            $this -> data[CONTENT_STRING]['error_code'] = 403;
+
+            $this -> data[CONTENT_STRING]['redirect_page'] = $redirect_page;
+            $this -> data[CONTENT_STRING]['redirect_param_1'] = $redirect_param_1;
             
             $this->template->set('header', 'all/header', $this->data['header']);
-            $this->template->set('top_nav', 'guest/top_nav', $this->data['top_nav']);
+            $this->template->set('top_nav', 'all/top_nav', $this->data['top_nav']);
             $this->template->set('content', 'guest/login_form', $this->data['content']);
             $this->template->set('footer', 'all/footer', $this->data['footer']);
             $this->template->load('template');

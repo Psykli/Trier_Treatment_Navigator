@@ -23,7 +23,8 @@ class Mail extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-        
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this -> load -> Model( 'Admin_mail_model' );
         $this -> load -> library( 'email' );
 
@@ -51,7 +52,7 @@ class Mail extends CI_Controller
         $this->data[CONTENT_STRING]['messages'] = $this->Admin_mail_model->get_all_messages( );        
         $this->data[CONTENT_STRING]['users'] = $this->Admin_mail_model->get_users();
         
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'admin/mail/overview', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template' );
     }//index()
@@ -62,7 +63,7 @@ class Mail extends CI_Controller
 		
         $this->data[CONTENT_STRING]['messages'] = $this->Admin_mail_model->get_all_messages( );
 
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'admin/mail/message_management', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template' );
     }//message_management()
@@ -90,10 +91,10 @@ class Mail extends CI_Controller
 
     public function send_mail()
     {
-        $receiver = isset($_POST['receiver']) ? $this->input->post('receiver') : '';
-        $cc = isset($_POST['cc']) ? $this->input->post('cc') : '';
-        $bcc = isset($_POST['bcc']) ? $this->input->post('bcc') : '';
-                
+        $receiver = !is_null( $this->input->post('receiver') ) ? $this->input->post('receiver') : '';
+        $cc = !is_null( $this->input->post('cc') ) ? $this->input->post('cc') : '';
+        $bcc = !is_null( $this->input->post('bcc') ) ? $this->input->post('bcc') : '';
+        
         $this -> email -> from( $this -> input -> post( 'sender' ) );
         $this -> email -> to( $receiver );
         $this -> email -> cc( $cc );

@@ -40,7 +40,7 @@ var fields = [{
   attrs: {
     type: 'slider'
   },
-  icon: '<span class="glyphicon glyphicon-resize-horizontal"></span>'
+  icon: '<span class="fas fa-arrows-alt-h"></span>'
 }];
 
 var templates = {
@@ -104,7 +104,7 @@ var options = {
 	actionButtons: [{
 		id:'saveXml',
 		className: 'btn btn-success',
-		label: '<span class="glyphicon glyphicon-file"></span>',
+		label: '<span class="fas fa-file"></span>',
 		type: 'button',
 		events:{
 			click: function(){

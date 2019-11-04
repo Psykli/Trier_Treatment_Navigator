@@ -1,4 +1,4 @@
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
     <a class="pull-left" href="#">
         <img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
     </a>
@@ -15,14 +15,14 @@
 </ol>
 
 <div class="container">   
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class=panel-title>Bereits freigeschaltete GAS</h3>
+    <div class="card ">
+        <div class="card-header">
+            <h3 class=card-title>Bereits freigeschaltete GAS</h3>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <ul>
                 <?php foreach ($gas as $key => $entry): ?>
-                    <li><?php echo $entry->INSTANCE ?> <?php if($this -> Gas_Model -> is_predecessor_filled($patientcode, $entry -> INSTANCE, $username)): ?> <a href="<?php echo base_url(); ?>index.php/user/gas_tool/fill_gas/<?php echo $patientcode?>/<?php echo $entry->INSTANCE; ?>" class="btn btn-xs btn-primary glyphicon glyphicon-edit" data-toggle="tooltip" title="Fill GAS"></a>
+                    <li><?php echo $entry->INSTANCE ?> <?php if( $predecessor_filled_list[$key] ): ?> <a href="<?php echo base_url(); ?>index.php/user/gas_tool/fill_gas/<?php echo $patientcode?>/<?php echo $entry->INSTANCE; ?>" class="btn btn-sm btn-primary fas fa-edit" data-toggle="tooltip" title="Fill GAS"></a>
                     <?php if(isset($entry->GASDAT)): ?>
                         <span class="label label-success"> Wurde am <?php echo $entry->GASDAT; ?> ausgefüllt. </span>
                     <?php else: ?>
@@ -32,7 +32,7 @@
                         <span class="label label-default"> Bitte erst den Vorgänger ausfüllen. </span>
                     <?php endif; ?>
                         <span data-toggle="tooltip" title="Delete GAS">
-                            <button type="button" class="btn btn-xs btn-danger glyphicon glyphicon-remove" data-toggle="modal" data-target="#delete<?php echo $key;?>"></button>
+                            <button type="button" class="btn btn-sm btn-danger fas fa-times" data-toggle="modal" data-target="#delete<?php echo $key;?>"></button>
                         </span>
                     </li>
 
@@ -49,7 +49,7 @@
                                 
                                 <div class="modal-footer">
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                                         <a href="<?php echo base_url(); ?>index.php/user/gas_tool/delete_gas/<?php echo $patientcode?>/<?php echo $entry->INSTANCE; ?>" class="btn btn-danger">Löschen</a>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@
             </ul>
         </div>
     </div>
-    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#instance_confirm">Neuen GAS freischalten</button>
+    <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#instance_confirm">Neuen GAS freischalten</button>
 
     <div id="instance_confirm" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -85,7 +85,7 @@
                 
                 <div class="modal-footer">
                     <div class="form-group">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                         <button type="submit" class="btn btn-primary">GAS speichern</button>
                     </div>
                 </div>

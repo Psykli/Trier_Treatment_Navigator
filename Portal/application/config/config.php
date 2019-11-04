@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://127.0.0.1/portal';
+$config['base_url'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ $config['base_url'] = 'http://127.0.0.1/portal';
 |
 |
 */
-$config['r_path'] = 'C:/Program Files/R/R-3.2.5/bin/x64';
+$config['r_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -579,3 +579,74 @@ $config['msg_encryption_key_size'] = 32;
 | It's recommended to leave it as it is.
 */
 $config['msg_encryption_cipher'] = 'aes-256-gcm';
+
+/*
+|--------------------------------------------------------------------------
+| Default main email address
+|--------------------------------------------------------------------------
+|
+| The main email address of your institution/company that's used to
+| receive feedback when users encounter errors, BCC for emails like password reset
+| and default sender email address of the admin mail.
+*/
+$config['email_address_main'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| Default noreply email address
+|--------------------------------------------------------------------------
+|
+| The standard "from" address for email notifications that are for information only (FYI).
+| Replies to no-reply@ addresses are ignored.
+| https://encyclopedia2.thefreedictionary.com/noreply
+*/
+$config['email_address_noreply'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| Default doku-team (documentation team) email address
+|--------------------------------------------------------------------------
+|
+| Team that deals with patient details and answers questions or solves issues
+| occurring with patient data.
+*/
+$config['email_address_documentation'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| Email confirmation codes expiry
+|--------------------------------------------------------------------------
+|
+| The time period after which email confirmation codes are treated as invalid.
+| Used e.g. for changing the email address.
+| MUST use this format: https://dev.mysql.com/doc/refman/8.0/en/expressions.html#temporal-intervals
+| Example values:
+| 12 HOUR
+| 1 DAY
+| 3 DAY
+*/
+$config['email_confirmation_codes_expiry'] = '1 DAY';
+
+/*
+|--------------------------------------------------------------------------
+| Password confirmation codes expiry
+|--------------------------------------------------------------------------
+|
+| The time period after which password confirmation codes are treated as invalid.
+| Used e.g. for changing the password.
+| MUST use this format: https://dev.mysql.com/doc/refman/8.0/en/expressions.html#temporal-intervals
+| Example values:
+| 12 HOUR
+| 1 DAY
+| 3 DAY
+*/
+$config['password_confirmation_codes_expiry'] = '1 DAY';
+
+/*
+|--------------------------------------------------------------------------
+| Company/Institution name
+|--------------------------------------------------------------------------
+|
+| The name of your company or institution. Used e.g. in emails that get sent.
+*/
+$config['company_name'] = 'Trier Therapie Navigator';

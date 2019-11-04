@@ -24,12 +24,15 @@ class Patient extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-        
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this -> load -> Model( 'Patient_model' );
         $this -> load -> Model( 'Questionnaire_model' );
         $this -> load -> Model( 'Message_model' );
         $this -> load -> library( 'form_validation' ); 
         $this -> load -> helper ( 'security' );
+
+        $this -> lang -> load( 'admin_patient' );
 
         if( $this -> session_model -> is_logged_in( $this -> session -> all_userdata( ) ) )
         {
@@ -50,7 +53,7 @@ class Patient extends CI_Controller
 
     public function index()
     {
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'admin/patient/index', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }
@@ -80,7 +83,7 @@ class Patient extends CI_Controller
             $initials_unique = $this -> membership_model -> get_id($profile_data['initials']) == -1;
             $initials_valid = $this-> membership_model -> validate_initial_string($profile_data['initials'], 'patient');
 
-            if($initials_valid AND $profile_data_valid AND $initials_unique AND ($initials_valid[0] == TRUE)) //Input Data is Valid
+            if($profile_data_valid && $password_valid && $initials_unique && $initials_valid && $initials_valid[0]) //Input Data is Valid
             {   
                 //Create User and Set Flash_Session_Data
                 $patient_id = $this->membership_model->create_new_user($profile_data);
@@ -99,7 +102,7 @@ class Patient extends CI_Controller
             } // else  ( -> data is invalid)
         } // else ($_POST is not empty)
 
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'admin/patient/new_patientlogin', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template' );
     }
@@ -109,9 +112,9 @@ class Patient extends CI_Controller
      */
     public function list_all()
     {
-		$this->data[CONTENT_STRING]['patients'] = $this->Patient_model->get_all_patients( $this->data[TOP_NAV_STRING]['username'] );
+        $this->data[CONTENT_STRING]['patients'] = $this->Patient_model->get_all_patients( $this->data[TOP_NAV_STRING]['username'] );
         
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set(CONTENT_STRING, 'admin/patient/list_all', $this->data[CONTENT_STRING]);
         $this -> template -> load('template');
     }//list_all()
@@ -124,26 +127,26 @@ class Patient extends CI_Controller
         $patientcode = $this -> input -> post( 'patientcode' );
         $this->data[CONTENT_STRING]['searched_patientcode'] = $patientcode;
         
-		$patient_login_exists = array();
-		$patient_data = NULL;
+        $patient_login_exists = array();
+        $patient_data = NULL;
         
-        if( $patientcode != NULL AND $patientcode != FALSE )
-		{
+        if( $patientcode != NULL && $patientcode != FALSE )
+        {
             $patient_data = $this -> Patient_model -> search_patients( $this->data[TOP_NAV_STRING]['username'], $patientcode, NULL, 'code', $this -> data[CONTENT_STRING]['userrole'] );
             
             if( !is_null( $patient_data ) )
-			{
-				foreach($patient_data as $p){
+            {
+                foreach($patient_data as $p){
                     $patient_login_exists[] = $this -> Patient_model -> does_login_exist( $p->code );
                 }
-			}
-		}
+            }
+        }
         
         $this->data[CONTENT_STRING]['patient_data'] = $patient_data;
         $this->data[CONTENT_STRING]['patient_login_exists'] = $patient_login_exists;
         $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
 
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'admin/patient/search', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//search()
@@ -155,7 +158,7 @@ class Patient extends CI_Controller
         
         $this->data[CONTENT_STRING]['fep2'] = $this->Questionnaire_model->get_fep2_count();
         
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'admin/patient/instance_count', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//instance_count()
@@ -163,7 +166,7 @@ class Patient extends CI_Controller
     public function messages()
     {
         $username = $this->data[TOP_NAV_STRING]['username'];
-		$user_id = $this->membership_model->get_id( $username );
+        $user_id = $this->membership_model->get_id( $username );
 
         $receivedMsgs = $this -> Message_model -> get_received_msgs( $username );
         
@@ -207,10 +210,10 @@ class Patient extends CI_Controller
             }
         }
 
-		$this->data[CONTENT_STRING]['sentMsgs'] = $sentMsgs;
+        $this->data[CONTENT_STRING]['sentMsgs'] = $sentMsgs;
         $this->data[CONTENT_STRING]['anzahlSentMsg'] = sizeof($sentMsgs);
         
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'admin/patient/messages', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//messages()
@@ -237,13 +240,13 @@ class Patient extends CI_Controller
         //mark message as read
         $this -> Message_model -> set_status( $msgid, 1, $this->data[TOP_NAV_STRING]['username'] );
         
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set(CONTENT_STRING, 'admin/patient/showMessage', $this->data[CONTENT_STRING]);
         $this -> template -> load('template');
     }//showMessage()
 
     public function send_msg( )
-	{
+    {
         //Holen der Daten
         $request['betreff'] = $this -> input -> post( 'betreff' );
         $request['nachricht'] = $this -> input -> post( 'nachricht' );
@@ -265,14 +268,14 @@ class Patient extends CI_Controller
         $messageEncrypted = openssl_encrypt(nl2br( $request['nachricht'] ), $cipher, $key, $options=0, $iv, $tagMessage);
         $subjectEncrypted = openssl_encrypt($request['betreff'], $cipher, $key, $options=0, $iv, $tagSubject);
 
-		//Daten in die DB schreiben
-		$id = $this -> Message_model -> insert_msg( $sender, $receiver, $subjectEncrypted, $messageEncrypted, $cipher, $iv, $tagSubject, $tagMessage, $randomKeyBytes );
+        //Daten in die DB schreiben
+        $id = $this -> Message_model -> insert_msg( $sender, $receiver, $subjectEncrypted, $messageEncrypted, $cipher, $iv, $tagSubject, $tagMessage, $randomKeyBytes );
         
         if( is_null( $id ) ) {
             show_error( 'Error sending message. Your subject was "'.$request['betreff'].'" and your message was: '.$request['nachricht'], 403 );
         }
 
-		$this -> messages( );
+        redirect( 'admin/patient/messages' );
     }//send_msg()
 
     private function validate_profile_data() // Checks if input profile_data is valid.

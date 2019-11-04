@@ -2,14 +2,14 @@
 <br />
 <br />
 <div class="row">
-	<div class="col-sm-offset-4 col-sm-4">
-		<div class="panel panel-default">
+	<div class="col-sm-4 mx-auto">
+		<div class="card ">
 
-			<div class="panel-heading">
-				<h3 class="panel-title">Login</h3>
+			<div class="card-header">
+				<h3 class="card-title">Login</h3>
 			</div>
 			
-			<div class="panel-body">
+			<div class="card-body">
 				<?php if( isset( $error ) && $error ): ?>
 					<div class="alert alert-danger">
 						<?php if( $error_code === 403 ): ?>
@@ -31,7 +31,12 @@
 						<input type="password" class="form-control" id="password" name="password" placeholder="<?php echo lang('password'); ?>">
 					</div>
 
-					<button type="submit" class="btn btn-default">Login</button>
+					<?php if( !empty($redirect_page) && !empty($redirect_param_1) ) : ?>
+						<input type="hidden" name="redirect_page" value="<?php echo $redirect_page; ?>" />
+						<input type="hidden" name="redirect_param_1" value="<?php echo $redirect_param_1; ?>" />
+					<?php endif; ?>
+
+					<button type="submit" class="btn btn-outline-secondary">Login</button>
 				</form>
 			</div>
 		</div>

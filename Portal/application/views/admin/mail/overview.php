@@ -1,4 +1,4 @@
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
 	<a class="pull-left" href="#">
 		<img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
 	</a>
@@ -7,17 +7,20 @@
 	</div>
 </div>
 
-<ul class="breadcrumb">
-	<li><a href="../dashboard">Dashboard</a></li>
-	<li class="active">Admin Mail</li>
-</ul>
+<nav class="menu">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Admin Mail</li>
+    </ol>        
+</nav><!-- end:.usermenu -->     
+	
 <div class="col-md-12">
 
 <div class="row">
     <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a class="clickable" href="<?php echo site_url().'/admin/mail/index'?>">Neue Mail</a></li>
-        <li role="presentation"><a href="<?php echo site_url().'/admin/mail/message_management'?>">Vorlagen verwalten</a></li>
-        <li role="presentation"><a href="<?php echo site_url().'/admin/patient/messages'?>">Interne Nachrichten</a></li>
+        <li class="nav-item" role="presentation" class="active"><a class="nav-link active" href="<?php echo site_url().'/admin/mail/index'?>">Neue Mail</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link" href="<?php echo site_url().'/admin/mail/message_management'?>">Vorlagen verwalten</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link" href="<?php echo site_url().'/admin/patient/messages'?>">Interne Nachrichten</a></li>
     </ul>
     <br/>
 </div>
@@ -48,16 +51,16 @@
     </div>
 
     <div class="row">
-        <div class="panel panel-default">
+        <div class="card ">
         
-            <div class="panel-heading">
+            <div class="card-header">
                 <h4>Neue Mail verfassen</h4>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
             <?php echo form_open('admin/mail/send_mail', array('role'=>'form', 'method' => 'post')); ?>
                 <div class="form-group">
                     <label for="sender"> Absender </label>
-                    <input class="form-control" id="sender" name="sender" type="email" value="psyfeedback@uni-trier.de"/>
+                    <input class="form-control" id="sender" name="sender" type="email" value="<?php echo $this -> config -> item( 'email_address_main' ); ?>"/>
                     <label for="receiver">Empfänger</label>
                     <br/>
                     <select class="contact_select form-control" multiple="multiple" id="receiver" name="receiver[]">
@@ -65,13 +68,17 @@
                             <option value="<?php echo $user->email; ?>"><?php echo $user->FIRST_NAME.', '.$user->LAST_NAME.', '.$user->INITIALS.', '.$user->email; ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <br/>
                     <label for="cc">Cc</label>
+                    <br/>
                     <select class="contact_select form-control" multiple="multiple" id="cc" name="cc[]">
                         <?php foreach ($users as $user): ?>
                             <option value="<?php echo $user->email; ?>"><?php echo $user->FIRST_NAME.', '.$user->LAST_NAME.', '.$user->INITIALS.', '.$user->email; ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <br/>
                     <label for="bcc">Bcc</label>
+                    <br/>
                     <select class="contact_select form-control" multiple="multiple" id="bcc" name="bcc[]">
                         <?php foreach ($users as $user): ?>
                             <option value="<?php echo $user->email; ?>"><?php echo $user->FIRST_NAME.', '.$user->LAST_NAME.', '.$user->INITIALS.', '.$user->email; ?></option>
@@ -85,7 +92,7 @@
                 </div>
                 <hr/>
                 <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="templates" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="templates" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         Vorlagen
                         <span class="caret"></span>
                     </button>

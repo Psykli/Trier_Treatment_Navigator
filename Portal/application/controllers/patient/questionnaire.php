@@ -24,8 +24,9 @@ class Questionnaire extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-
-        $this-> load -> Model('Patient_model');
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
+        $this-> load -> Model('Patient_Model');
         $this-> load -> Model('Questionnaire_tool_model');
         $this-> load -> Model('Gas_Model');
 
@@ -33,20 +34,25 @@ class Questionnaire extends CI_Controller
         
         $this->template->set(FOOTER_STRING, 'all/footer', $this->data[FOOTER_STRING]);
 
-
         $this->files = "application/views/patient/questionnaire/bows/*.xml";
         $this->xsl_file = "application/views/patient/questionnaire/questionnaires.xsl";
+
+        if( $this->session_model->is_logged_in( $this->session->all_userdata( ) ) )
+        {
+            $this->data[TOP_NAV_STRING]['username'] = $this -> session -> userdata( 'username' );
+            $this->data[CONTENT_STRING]['userrole'] = $this -> membership_model -> get_role( $this->data[TOP_NAV_STRING]['username'] );
+        }
     }//__construct()
 
     public function show_questionnaire($id, $instance)
-    {   
+    {
         $patientcode = $this-> session -> userdata('patientcode');
         
         if (!empty($patientcode))
         {
             $therapist = $this->session->userdata('therapist');
             $questionnaire_id = $this-> Questionnaire_tool_model -> instance_exists($id, $patientcode, $therapist, $instance); //id for last unfinished instance of questionnaire
-        
+            
             if (!is_numeric($questionnaire_id)) // if true: Questionnaire with id already released for patient but no instance for given id found
             {
                 $id = $this-> Questionnaire_tool_model -> insert_questionnaire($therapist, $patientcode, $id, $instance);
@@ -63,9 +69,12 @@ class Questionnaire extends CI_Controller
             $this-> data[CONTENT_STRING]['endTherapy'] = $abschluss;
         }
         
-        $entry = $this -> Questionnaire_tool_model -> get_entry($id);
+        $entry = $this -> Questionnaire_tool_model -> get_entry($id, "id, qid, instance");
+        if( is_null( $entry ) ) {
+            show_error('Couldn\'t find the requested data in the database. Are you sure the link (URL) is correct?' , 404);
+        }
 
-        $questionnaire = $this-> Questionnaire_tool_model -> get_questionnaire ($entry[0]-> qid );
+        $questionnaire = $this-> Questionnaire_tool_model -> get_questionnaire ($entry -> qid );
 
         if (!empty($patientcode))
         {
@@ -75,6 +84,7 @@ class Questionnaire extends CI_Controller
         {
             $last_sb_instance = $this-> SB_Model -> getLastInstance( $this -> data[TOP_NAV_STRING]['username'] );
         }
+
         $this->data[CONTENT_STRING]['last_sb_instance'] = $last_sb_instance;
         $this->data[CONTENT_STRING]['questionnaire'] = $questionnaire;
         $this->data[CONTENT_STRING]['entry'] = $entry;
@@ -84,21 +94,19 @@ class Questionnaire extends CI_Controller
         foreach (glob($this->files) as $file)
         {
 			$reader = new XMLReader;
-			$reader->open($file);
+            $reader->open($file);
+            
 			while ($reader->read() && $reader->name !== "Questionnaire");
 			$all_questionnaires[$reader->getAttribute('table')] = $file;
         }
+
         $this-> data[CONTENT_STRING]['all_questionnaires'] = $all_questionnaires;
 
         $this->template->set(HEADER_STRING, 'all/header_sb', $this->data[HEADER_STRING]);
         
         if(empty($patientcode))
         {
-            $this-> template -> set(TOP_NAV_STRING, 'patient/top_nav', $this->data[TOP_NAV_STRING]);
-        }
-        else
-        {
-            $this-> template -> set(TOP_NAV_STRING, 'patient/top_nav_sb', $this-> data[TOP_NAV_STRING]);
+            $this-> template -> set(TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING]);
         }
         
         $this->template->set(CONTENT_STRING, 'patient/questionnaire/show_questionnaire', $this->data[CONTENT_STRING]);
@@ -109,8 +117,8 @@ class Questionnaire extends CI_Controller
     {
         $username = $this-> data [TOP_NAV_STRING]['username'];
 
-        $entry = $this-> Questionnaire_tool_model -> get_entry($id);
-        $questionnaire = $this-> Questionnaire_tool_model -> get_questionnaire($entry[0]->qid);
+        $entry = $this-> Questionnaire_tool_model -> get_entry($id, "id, qid, finished, daysInterval");
+        $questionnaire = $this-> Questionnaire_tool_model -> get_questionnaire($entry->qid);
 
         $questionnaires = array($questionnaire[0]);
         $tables = array($questionnaire[0]->tablename);
@@ -122,13 +130,14 @@ class Questionnaire extends CI_Controller
         $patientcode = $this->session->userdata('patientcode');
         $this->data[CONTENT_STRING]['is_sb'] = !empty($patientcode);
 
+        $prefix = site_url();
+        
         if($this->input->post('table')) #CASE: Fragebogen wurde ausgefüllt (Standaard)
         {
             $data = $this-> prepare_data($this->input->post());
 
             if (!empty($patientcode))
             {
-                
                 $data['CODE'] = $patientcode;
                 $step = $this-> session -> userdata('step');
                 $instance = $this-> session -> userdata('instance');
@@ -165,48 +174,49 @@ class Questionnaire extends CI_Controller
            
 
             $data['INSTANCE'] = $instance;
+           
             if(!empty($data)) //Schreibe $data in DB und ggfs. Abschluss-Email versenden
             {
-                $this-> Questionnaire_tool_model ->insert_row($data, $this->input->post('table'));
+                $questionnaire_list_tablenames = $this -> Questionnaire_tool_model -> get_questionnaire_list_tablenames();
+                $temp_search_array = [];
+                $temp_search_array['tablename'] = $this->input->post('table');
+                if( !in_array($temp_search_array, $questionnaire_list_tablenames) ) {
+                    log_message( 'warn', $username.' tried to insert data into the table '.$this->input->post('table').' which is not listed as a questionnaire table in the "questionnaire_list" table' );
+                    show_error( 'Invalid questionnaire tablename.', 403 );
+                }
+                else {
+                    $this-> Questionnaire_tool_model ->insert_row_DANGEROUS($data, $this->input->post('table'));
+                }
+
                 if($this->input->post('ETS011') == 1 OR $this->input->post('ETN011') == 1)
                 {
-					$this->email->from('from@address.noreply');
+					$this->email->from('mail@noreply');
 					$this->email->to($this->Admin_mail_model->get_mail_of_user($this->session->userdata('therapist')));
-					$this->email->cc('cc@address.de');
+					$this->email->cc('mail2@noreply');
 					$this->email->subject('Ende der Therapie von: '.$data['CODE']);
-					$this->email->message('Das Ende der Therapie wurde in Sitzung '.$data['INSTANCE'].' festgelegt! Falls dies nicht korrekt sein sollte, wenden Sie sich bitte umgehend an thabschluss@uni-trier.de');
+					$this->email->message('Das Ende der Therapie wurde in Sitzung '.$data['INSTANCE'].' festgelegt! Falls dies nicht korrekt sein sollte, wenden Sie sich bitte umgehend an mail2@noreply');
                     $mail_sent = $this->email->send();
                     
                     $this->email->clear();
-					$this->email->from('from@address.noreply');
+					$this->email->from('mail@psykli.noreply');
 					$this->email->to($this->Admin_mail_model->get_mail_of_user($this->session->userdata('THERAPIST')));
-					$this->email->cc('cc@address.de');
+					$this->email->cc('mail@uni-trier.de');
 					$this->email->subject('Therapieabschluss '.$data['CODE']);
-					$messages = "Liebe/r Therapeut/in,<br>";
-					$messages .= "Sie haben nach der letzten Sitzung mit dem o.g. Patient im Nachstundenbogen angegeben, dass in den nächsten 3 Sitzungen der Therapieabschluss stattfinden soll. <br><br>";
-					$messages .= "Wir gehen daher davon aus, dass Sie noch bis zu 3 Sitzungen mit dem Patienten planen, von denen eine Sitzung das <b>Abschlussgespräch</b> (siehe Therapeutenmappe) ist. Booster-Sitzungen in einem Abstand von mehr als 6 Wochen zählen hierbei nicht und sind nach Abschluss noch möglich.<br><br>";
-					$messages .= "Wir möchten Sie nun über das weitere Vorgehen informieren. <br><br>";
-					$messages .= "	<ul>
-										<li>In den nächsten Tagen wird das Abschluss-Team Ihrem Patienten das <b>Post-Messungs-Paket</b> zuschicken. </li>
-										<li>In der nächsten Sitzung sollen Sie Sinn und Zweck dieser Messung mit ihrem Patienten besprechen und ihn/sie bitten, diese ausgefüllt wieder in die darauffolgende Sitzung mitzubringen oder zeitnah per Post zurückzuschicken. </li>
-										<li>Bitte denken Sie daran, spätestens nach der übernächsten Sitzung die <b>Post-Messungs-Therapeut</b> abzugeben. Diese werden Sie in den nächsten Tagen in Ihrem Schließfach finden.</li>
-										<li>Der <b>Termin für das Abschlussgespräch</b> soll erst dann vereinbart werden, wenn die Post-Messungen (Patient und Therapeut) vollständig vorliegen. Sie erhalten dann eine Mail vom Abschluss-Team</li>
-										<li>•	Sie bekommen dann eine für den Patienten aufbereitete Rückmeldung der Fragebogendaten in Ihr Fach, die Sie für Ihr Abschlussgespräch nutzen können und die Ihr Patient im Anschluss mit nach Hause nehmen darf. Eine Hilfestellung zum Führen des Abschlussgesprächs finden Sie in der Therapeutenmappe.</li>
-									</ul> ";
-					$messages .= "Wir wünschen Ihnen und Ihrem Patienten einen guten Abschluss Ihrer Therapie. Den Ablauf können Sie in der Therapeutenmappe unter 1.5. nachlesen. Bitten beachten Sie auch die Häufig gestellten Fragen im Anhang der Therapeutenmappe.  
-					Sollten Sie Fragen zum Ablauf haben, wenden Sie sich bitte an das Abschluss-Team.
-					<br><br>";
-					$messages .= "Liebe Grüße,<br>
-					Abschluss-Team";
-					$this->email->message($messages);
-					$mail_sent = $this->email->send();
+                    
+                    $message = "";
+                    
+                    $email_data = array( 'main_content' => $message );
+                    $email_body = $this -> load -> view( 'emails/basic_html.php', $email_data, true );
+                    $this->email->message($email_body);
+					
+                    $mail_sent = $this->email->send();
 				}//if Email-Part
             }//if (!empty($data))
 
-            $patientData = $this -> Patient_model -> get_therapist_of_patient( $data['CODE'], $data['CODE'] );
+            $therapist_of_patient = $this -> Patient_Model -> get_therapist_of_patient( $data['CODE'], $data['CODE'] );
             $nextInstance = '';
 
-            if(empty($patientcode AND $entry[0]->finished != 1)) // Fallbehandlung: kein Patientcode und nicht letzter Step in Sektion
+            if(empty($patientcode AND $entry->finished != 1)) // Fallbehandlung: kein Patientcode und nicht letzter Step in Sektion
             {
                 if( strcasecmp($this->input->post('table'),'ziel-fragebogen-internetinterventionen-new') == 0)
                 {
@@ -215,29 +225,36 @@ class Questionnaire extends CI_Controller
 
                 //Nächste Instanz wird nur automatisch für die OT, Z und SB Fragebögen freigeschaltet
                 if(preg_match("/Z\d+/",$instance) AND 
-                !$this-> Questionnaire_tool_model ->instance_exists($entry[0]->qid,$data['CODE'],$patientData,'PO'))
+                !$this-> Questionnaire_tool_model ->instance_exists($entry->qid,$data['CODE'],$therapist_of_patient,'PO'))
                 {
                     $val = intval(substr($instance,1))+5;
                     $nextInstance = $val < 10 ? "Z0".$val : "Z".$val;
                 }
                 else if(preg_match("/OT\d+/",$instance) AND 
-                !$this-> Questionnaire_tool_model ->instance_exists($entry[0]->qid,$data['CODE'],$patientData,'PR'))
+                !$this-> Questionnaire_tool_model ->instance_exists($entry->qid,$data['CODE'],$therapist_of_patient,'PR'))
                 {
                     $val = intval(substr($instance,2))+1;
                     $nextInstance = $val < 10 ? "OT0".$val : "OT".$val;
                 } else if(is_numeric($instance) AND
-                !$this-> Questionnaire_tool_model ->instance_exists($entry[0]->qid,$data['CODE'],$patientData,'PO'))
+                !$this-> Questionnaire_tool_model ->instance_exists($entry->qid,$data['CODE'],$therapist_of_patient,'PO'))
                 {
                     $val = intval($instance)+1;
                     $nextInstance = $val < 10 ? "0".$val : "".$val;
-                } 
+                }
+
                 if(!empty($nextInstance))
                 { 
-                    $activation = date("Y-m-d", strtotime("+".$entry[0]->daysInterval." days"));    
-                    if(!isset($patientData))
-                    {$patientData = 'admin';}
-                    if($entry[0]->daysInterval > 0)
-                    {$this-> Questionnaire_tool_model ->insert_questionnaire($patientData,$data['CODE'],$entry[0]->qid,$nextInstance,$activation,$entry[0]->daysInterval);}
+                    $activation = date("Y-m-d", strtotime("+".$entry->daysInterval." days"));
+
+                    if(!isset($therapist_of_patient))
+                    {
+                        $therapist_of_patient = 'admin';
+                    }
+                    
+                    if($entry->daysInterval > 0)
+                    {
+                        $this-> Questionnaire_tool_model ->insert_questionnaire( $therapist_of_patient, $data['CODE'], $entry->qid, $nextInstance, $activation, $entry->daysInterval );
+                    }
                 }
             }//Fallbehandlung: kein Patientencode und nicht letzter Step in Sektion
             
@@ -256,9 +273,10 @@ class Questionnaire extends CI_Controller
                 redirect($prefix.'/patient/questionnaire/show_questionnaire/'.$batterie[$step]->qid.'/'.$instance);
             } 
             else 
-            {               
+            {
                 $gas = $this->session->userdata('gas');
                 $is_immutable = $this-> Gas_Model->is_immutable($patientcode, $username);
+                
                 if(!$gas AND $is_immutable AND $batterie[$step]->gas_section == $section AND ($instance-1) % 5 == 0 AND 
                    ($instance-1) != 5 AND $this-> Gas_Model->does_pr_exist($patientcode, $username))
                 {
@@ -267,8 +285,10 @@ class Questionnaire extends CI_Controller
                     $z_instance = intval($z_instance) < 10 ? 'Z0'.intval($z_instance) : 'Z'.intval($z_instance);
                     redirect($prefix.'/user/Gas_Tool/fill_gas_sb/'.$patientcode.'/'.$z_instance);
                 }
+
                 $this->session->set_userdata('section',++$section); 
                 $this->session->set_userdata('step',++$step);
+
                 if(sizeof($batterie) <= $step)
                 {
                     redirect($prefix.'/patient/sb_dynamic/process');
@@ -282,15 +302,17 @@ class Questionnaire extends CI_Controller
         else 
         {
             $open_quests = $this-> Questionnaire_tool_model ->get_remaining_questionnaires( $data['CODE']);
+            
             if(isset($open_quests))
             {
                 redirect($prefix.'/patient/questionnaire/show_questionnaire/'.$open_quests[0]->id);
             }
         }//else
+
         if(empty($patientcode))
         {
             $this->template->set(HEADER_STRING, 'all/header', $this->data[HEADER_STRING]);
-            $this->template->set(TOP_NAV_STRING, 'patient/top_nav', $this->data[TOP_NAV_STRING]);
+            $this->template->set(TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING]);
         }
         else 
         {
@@ -299,7 +321,6 @@ class Questionnaire extends CI_Controller
         
         $this->template->set(CONTENT_STRING, 'patient/questionnaire/send_questionnaire', $this->data[CONTENT_STRING]);  
         $this->template->load('template');
-
     }//send_questionnaire()
 
     private function prepare_data($array)

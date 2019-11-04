@@ -20,6 +20,8 @@ class Dashboard extends CI_Controller
     function __construct( )
     {
         parent::__construct( );
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->Model( 'SB_Model' );
         $this->data = array(HEADER_STRING => array('title' => 'Portal'),
                             TOP_NAV_STRING => array(),
@@ -64,7 +66,7 @@ class Dashboard extends CI_Controller
      */
     public function index()
     {
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'admin/dashboard', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//index()

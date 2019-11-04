@@ -23,9 +23,8 @@ class USER extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-        
-        $this-> load-> dbutil();
-        $this-> load-> Model( 'piwik_model');
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this-> load-> library('email');
         $this-> load-> library('form_validation'); 
         $this-> load-> library('user_agent');
@@ -44,13 +43,15 @@ class USER extends CI_Controller
             redirect( 'login' );
         }
 
+        $this -> lang -> load('new_user');
+
         $this -> template -> set( HEADER_STRING, 'all/header', $this -> data[HEADER_STRING] );
         $this -> template -> set( FOOTER_STRING, 'all/footer', $this -> data[FOOTER_STRING] );
     } //__contruct()
 
     public function index( )
     {
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'admin/user/index', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template' );       
     }//index()    
@@ -88,7 +89,7 @@ class USER extends CI_Controller
         $this -> data[TOP_NAV_STRING]['users']['count']['users'] = $user_counts -> users;
         $this -> data[TOP_NAV_STRING]['users']['count']['migrated'] = $user_counts -> migrated;
 
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'admin/user/list_all', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template');
     }//list_all()
@@ -120,7 +121,6 @@ class USER extends CI_Controller
                 'rechte_verlauf_gruppe' => array_key_exists('rechte_verlauf_gruppe', $_POST) ? 1 : 0,
                 'rechte_verlauf_seminare'   => array_key_exists('rechte_verlauf_seminare', $_POST) ? 1 : 0,
                 'rechte_zw'          => array_key_exists('rechte_zw', $_POST) ? 1 : 0,
-
             );
 
             //Evaluate Changes between Database and Forminput
@@ -197,9 +197,12 @@ class USER extends CI_Controller
 
         //Assemble Data for View
         $this-> data[TOP_NAV_STRING]['userdata']['id'] = $id;
+        $this->load->database();
+        $this-> load-> Model( 'piwik_model');
+        $this-> load-> dbutil();
         $this-> data[TOP_NAV_STRING]['piwik_exists'] = $this-> dbutil -> database_exists('piwik');
 
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'admin/user/edit_user', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template');
     }//edit_user()
@@ -207,26 +210,28 @@ class USER extends CI_Controller
     public function reset_password ($id)
     {
         $show_username = $this -> membership_model -> get_username( $id );
-        $profile = $this -> membership_model -> get_profile( $show_username );
+        
         $password = $this -> membership_model -> generate_random_unhashed_password( );
         $this -> membership_model -> set_user_password( $show_username, $password );
-        $this -> reset_password_email ($profile[0], $password);
+
+        $profile = $this -> membership_model -> get_profile( $show_username, 'first_name, last_name, email' );
+        $this -> reset_password_email ($profile, $password);
 
         $this -> edit_user( $id );
     }//reset_password()
 
-    private function reset_password_email($profile, $password){
-        
-        $message = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>';
-        $message .= "<p>Liebe/r Therapeut/in ".$profile["first_name"]." ".$profile["last_name"].", <br><br>";
-        $message .= "ihr Passwort wurde zurückgesetzt. <br> Das neue Passwort lautet: ".$password."<br> Bitte ändern Sie ihr Passwort umgehend.<br><br> Mit freundlichen Grüßen<br> Team des Feedbackportals";
-        $message .= "</p></body></html>";
+    private function reset_password_email($profile, $password)
+    {    
+        $message = "<p>Liebe/r Therapeut/in ".$profile["first_name"]." ".$profile["last_name"].", <br><br>Ihr Passwort wurde zurückgesetzt. <br> Das neue Passwort lautet: ".$password."<br> Bitte ändern Sie Ihr Passwort umgehend.<br><br> Mit freundlichen Grüßen<br> Team des Feedbackportals</p>";
 
-        $this->email->from("from@address.de");
+        $this->email->from( $this -> config -> item( 'email_address_noreply' ) );
         $this->email->to($profile["email"]);
-        $this->email->bcc("bcc@address.de");
+        $this->email->bcc( $this -> config -> item( 'email_address_main' ) );
         $this->email->subject("Feedbackportal Login");
-        $this->email->message($message);
+
+        $email_data = array( 'main_content' => $message );
+        $email_body = $this->load->view( 'emails/basic_html.php', $email_data, true );
+        $this->email->message( $email_body );
 
         $this->email->send();
     }//reset_password_email()
@@ -261,7 +266,7 @@ class USER extends CI_Controller
         $this-> data[TOP_NAV_STRING]['initial_unique'] = $this->membership_model->new_user_initial_check($this->input->post('initials'));//Check if User with given Initials exists
 
         //If input data is valid create new user and reroute to user_profile
-        if ($profile_data_valid AND $password_data_valid AND $this->input->post('initial_unique') AND ($initials_valid[0] == TRUE)) 
+        if ($profile_data_valid AND $password_data_valid AND $this-> data[TOP_NAV_STRING]['initial_unique'] AND ($initials_valid[0] == TRUE)) 
         {
             $new_user_data = array_merge($profile_data, $access_data);
             $user_id = $this->membership_model->create_new_user($new_user_data);
@@ -277,7 +282,7 @@ class USER extends CI_Controller
             $this -> data[TOP_NAV_STRING]['access_data'] = $access_data;
             $this -> data[TOP_NAV_STRING]['initials_errors'] = $initials_valid[1];
 
-            $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+            $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
             $this -> template -> set( CONTENT_STRING, 'admin/user/new_user', $this -> data[CONTENT_STRING] );
             $this -> template -> load( 'template');       
         }
@@ -310,28 +315,28 @@ class USER extends CI_Controller
         {
             //Fetch Data from DB
             $show_username = $this-> membership_model -> get_username($id);
+            $this-> load-> Model( 'piwik_model');
             $piwik = $this-> piwik_model -> get_piwik_data_for_user(strtolower($show_username));
 
-            // Add Data to CONTENT_STRING
-            $this -> data[TOP_NAV_STRING]['piwik'] = $piwik;      
-            $this -> data[TOP_NAV_STRING]['id'] = $id;  
-            $this -> data[TOP_NAV_STRING]['user'] = $show_username;   
-            $this -> data[TOP_NAV_STRING]['patientcode'] = $patientcode;
+        // Add Data to CONTENT_STRING
+        $this -> data[TOP_NAV_STRING]['piwik'] = $piwik;      
+        $this -> data[TOP_NAV_STRING]['id'] = $id;  
+        $this -> data[TOP_NAV_STRING]['user'] = $show_username;   
+        $this -> data[TOP_NAV_STRING]['patientcode'] = $patientcode;
 
             // Assemble and Load View
-            $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+            $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
             $this -> template -> set( CONTENT_STRING, 'admin/user/user_statistics', $this -> data[CONTENT_STRING] );
             $this -> template -> load( 'template');   
         }//else
     }//user_statistics()
 
-    public function list_all_delete( $role = 'all' )
+    public function list_all_delete( )
     {
         $username = $this -> data[TOP_NAV_STRING]['username'];
         $users = $this -> membership_model -> get_all_users( $username, $role );
         
         $this -> data[TOP_NAV_STRING]['users'] = $users;
-        $this -> data[TOP_NAV_STRING]['users']['list'] = $role;
         
         $user_counts = $this -> membership_model -> get_count_of_roles_combined( $username );
         $this -> data[TOP_NAV_STRING]['users']['count']['all'] = $user_counts -> all;
@@ -339,8 +344,8 @@ class USER extends CI_Controller
         $this -> data[TOP_NAV_STRING]['users']['count']['users'] = $user_counts -> users;
         $this -> data[TOP_NAV_STRING]['users']['count']['migrated'] = $user_counts -> migrated;
         
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
-        $this -> template -> set( TOP_NAV_STRING, 'admin/user/list_all_delete', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( CONTENT_STRING, 'admin/user/list_all_delete', $this -> data[CONTENT_STRING] );
         $this -> template -> load( 'template' );
     }//list_all_delete()
 
@@ -390,7 +395,7 @@ class USER extends CI_Controller
     private function load_template_delete_error( )
     {
         $this -> data[TOP_NAV_STRING]['data_valid_error'] = TRUE;
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( TOP_NAV_STRING, 'admin/user/delete_user_failed', $this -> data[TOP_NAV_STRING] );
         $this -> template -> load( 'template' );
     }//load_template_delete_error()
@@ -400,7 +405,7 @@ class USER extends CI_Controller
      */
     private function load_template_delete_success( )
     {
-        $this -> template -> set( TOP_NAV_STRING, 'admin/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( TOP_NAV_STRING, 'admin/user/delete_user_success', $this -> data[TOP_NAV_STRING] );
         $this -> template -> load( 'template' );
     }//load_template_delete_success()

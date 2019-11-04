@@ -1,4 +1,4 @@
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
 	<a class="pull-left" href="#">
 		<img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
 	</a>
@@ -8,37 +8,39 @@
 </div>
 
 <ul class="breadcrumb">
-	<li><a href="<?php echo base_url( ); ?>index.php/<?php echo $userrole; ?>/dashboard">Startseite</a></li>
+	<li><a href="<?php echo base_url( ); ?>index.php/<?php echo $userrole; ?>/dashboard">Dashboard</a></li>
 	<li class="active">Nachrichten</li>
 </ul>  
 
 
 <div class="row">
-	<div class="col-sm-3">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<span class="glyphicon glyphicon-arrow-left"></span> <?php echo anchor( 'patient/patient/messages', 'Zurück zu den Nachrichten' ); ?>
-				</h4>
+	<div class="col-lg-6 col-sm-12 bottom_spacer_25px">
+		<a href="<?php echo site_url( 'patient/patient/messages' ); ?>" class="remove_text_decoration">
+			<div class="card clickable">
+				<div class="card-header">
+					<h4 class="card-title remove_margin_bottom">
+						<span class="fas fa-arrow-left"></span> Zurück zu den Nachrichten
+					</h4>
+				</div>
 			</div>
-		</div>
+		</a>
 	</div>
-	<div class="col-sm-2">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<a id="linkMsgModal" data-toggle="modal" data-target="#msgModal">
-						<span class="glyphicon glyphicon-pencil"></span> Antworten
-					</a>
-				</h4>
+	<div class="col-lg-6 col-sm-12 bottom_spacer_25px">
+		<a id="linkMsgModal" data-toggle="modal" data-target="#msgModal">
+			<div class="card clickable">
+				<div class="card-header">
+					<h4 class="card-title remove_margin_bottom">
+						<span class="fas fa-pencil-alt"></span> Antworten
+					</h4>
+				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 </div>
 
 <?php if( isset( $msg ) ): ?>
-	<div class="panel panel-default">
-		<div class="panel-body">
+	<div class="card ">
+		<div class="card-body">
 			<h4>Nachricht <?php echo ( !empty( $msg[0]->datum ) ) ? 'vom '.date( 'd-m-Y H:i', strtotime( $msg[0]->datum ) ) : ''; ?> </h4>
 			<p><strong>Absender</strong></p>
 			<p><?php echo $msg[0]->sender; ?></p>
@@ -80,7 +82,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
 					<?php echo form_submit(array('class' => 'btn btn-primary'), 'Nachricht abschicken'); ?>
 				</div>
 			</form>

@@ -174,47 +174,50 @@
 
 <xsl:template match="Set[@type='radio']" name="i_radio">
 	<xsl:variable name="set_name" select="1+count(preceding-sibling::Set)" />	
-	<table class="radio_table">
-			<thead>
-				<tr>
-					<th class="radio_question_header">
-					</th>
-					<xsl:for-each select="Scale/Option">
-						<th class="radio_option_header">
-							<xsl:if test="count(Text) &gt; 0">
-								<xsl:value-of select="Text" />
-							</xsl:if>
-						</th>
-					</xsl:for-each>
-				</tr>
-			</thead>
-			<tbody>
-				<xsl:for-each select="Question">
-					<xsl:variable name="position" select="1+count(preceding-sibling::Question)" />
-					<xsl:variable name="column" select="@column" />
-					<xsl:variable name="even_odd" select="$position mod 2" />
-					<tr class="qt_{$even_odd} radio_buttonset">
-						<td class="radio_question">
-							<xsl:if test="ancestor::Set/@enumerate='yes'">
-								<xsl:value-of select="format-number(number($position), '00')" />. 
-							</xsl:if>
-							<xsl:copy-of select="node()" />
-						</td>
+	<div class="row">
+		<div class="row w-100 choices">
+			<div class="col-md-6"></div>			
+			<div class="col-md-6">
+				<div class="row">
+				<xsl:for-each select="Scale/Option">
+				<div class="col">
+				<xsl:if test="count(Text) &gt; 0">
+					<xsl:value-of select="Text" />
+				</xsl:if>
+				</div>
+				</xsl:for-each>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<xsl:for-each select="Question">
+				<xsl:variable name="position" select="1+count(preceding-sibling::Question)" />
+				<xsl:variable name="column" select="@column" />
+				<xsl:variable name="even_odd" select="$position mod 2" />
+				<xsl:variable name="option_count" select="count(ancestor::Set/Scale/Option)" />
+				<div class="row w-100 align-items-center">
+					<div class="col-md-6 question">
+						<xsl:if test="ancestor::Set/@enumerate='yes'">
+							<xsl:value-of select="format-number(number($position), '00')" />. 
+						</xsl:if>
+						<xsl:copy-of select="node()" />
+					</div>
+					<div class="col-md-6 labels h-100">
+						<div class="btn-group-toggle h-100" data-toggle="buttons">
 						<xsl:for-each select="ancestor::Set/Scale/Option">
 							<xsl:variable name="val" select="Value" />
-							<xsl:variable name="rid" select="1+count(preceding-sibling::Option)" />
-							<td class="radio_container">
-								<input type="radio" name="{$column}" value="{$val}" id="radio_button_{$file_number}_{$set_name}_{$position}_{$rid}"/>
-								<label class="radio_label" for="radio_button_{$file_number}_{$set_name}_{$position}_{$rid}">
-									<xsl:value-of select="Value" />
+							<xsl:variable name="rid" select="1+count(preceding-sibling::Option)" />								
+								<label class="btn btn-outline-primary h-100 align-middle" style="width:{100 div $option_count}%;" for="radio_button_{$file_number}_{$set_name}_{$position}_{$rid}">
+									<input type="radio" name="{$column}" value="{$val}" id="radio_button_{$file_number}_{$set_name}_{$position}_{$rid}"/> 
+									<span class="radio-span"><xsl:value-of select="Value" /></span>
 								</label>
-							</td>
-							
 						</xsl:for-each>
-					</tr>
-				</xsl:for-each>
-			</tbody>
-			</table>
+						</div>
+					</div>
+				</div>
+			</xsl:for-each>
+		</div>
+	</div>
 </xsl:template>
 
 <xsl:template match="Set[@type='radio_head_foot']" name="i_radio_head_foot">
@@ -377,13 +380,16 @@
 							</td>
 						</tr>-->
 						<p class="an_radio_question"><xsl:copy-of select="node()" /></p>
-						<tr class="an_radio_buttonset">
+						<tr>				
+						<td>
+						<div class="btn-group btn-group-toggle" data-toggle="buttons">
 							<xsl:for-each select="ancestor::Set/Scale/Option">
 							<xsl:variable name="rid" select="1+count(preceding-sibling::Option)" />
 							<xsl:variable name="val" select="Value" />
 							<xsl:variable name="even_odd" select="1+count(preceding-sibling::Option) mod 2" />
-								<td class="qc_{$even_odd}">
+								
 								<!--begin:Extrawurst:ENDTHERAPY-->
+								<label class="btn btn-secondary" for="an_radio_button_{$file_number}_{$set_name}_{$position}_{$rid}">
 									<xsl:choose>
 									<xsl:when test="count(Dialog) &gt; 0 and $endTherapy = '0'">
 										<xsl:variable name="dialogID" select="Dialog/@id" />
@@ -414,12 +420,13 @@
 										<input type="radio" name="{$column}" id="an_radio_button_{$file_number}_{$set_name}_{$position}_{$rid}" value="{$val}" />
 									</xsl:otherwise>
 									<!--end:Extrawurst:ENDTHERAPY-->
-									</xsl:choose>
-									<label class="an_radio_label" for="an_radio_button_{$file_number}_{$set_name}_{$position}_{$rid}">
+									</xsl:choose>									
 										<xsl:value-of select="Text" />
 									</label>
-								</td>
+								
 							</xsl:for-each>
+							</div>
+							</td>
 						</tr>
 						<!--OK:-->
 						<!--<tr>
@@ -498,14 +505,14 @@
 			<tr>
 				<th colspan="2" class="text_scale_description"><xsl:copy-of select="Scale/Description/node()" />
 					<xsl:if test="not(@popover = 'false')">
-						<span class="glyphicon glyphicon-info-sign" rel="popover" data-popover-content="#myPopover"></span>
+						<button class="btn btn-sm btn-info" rel="popover" data-popover-content="#myPopover"><i class="fas fa-info-circle"></i></button>
 						<script>
 							$(function(){
 								$('[rel="popover"]').popover({
 									container: 'body',
 									html: true,
 									content: function () {
-										var clone = $($(this).data('popover-content')).clone(true).removeClass('hide');
+										var clone = $($(this).data('popover-content')).clone(true).removeClass('sr-only');
 										return clone;
 									}
 								}).click(function(e) {
@@ -513,7 +520,8 @@
 								});
 							});
 						</script>
-						<div id="myPopover" class="hide" style="				
+						<div id="myPopover" class="sr-only" style="	
+						font-size: 1em;			
 						position: absolute;
 						top: 0;
 						left: 0;

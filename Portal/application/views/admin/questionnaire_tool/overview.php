@@ -5,21 +5,21 @@
 			<h3>Fragenbogen-Übungs-Tool</h3>
 			
 			<ul class="nav nav-tabs" role="tablist">
-				<li class="active"><?php echo anchor( 'admin/questionnaire_tool', 'Startseite', array('class' => 'clickable') ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung' ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard', array("class" => 'nav-link active') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array("class" => 'nav-link') ); ?></li>
 			</ul>
 		</div>
 	</div>
 	<br/><br/><br/>
 	<div class="row">	
 		<div class="col-sm-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Information</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Information</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<p>
 						<h4>Bereich 1: Verwaltung der Patienten</h4>
 						In diesem Bereich findet die Zuweisung der Übungen und der Fragebögen zu den Patienten statt.

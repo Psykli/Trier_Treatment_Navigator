@@ -12,11 +12,12 @@ class Dashboard extends CI_Controller
         );
 
         //Laden der Model und Helper
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->model( 'Therapy_model' );
         $this->load->model( 'Questionnaire_tool_model' );
         $this->load->model( 'Message_model' );
         $this->load->model( 'Remind_model' );
-		$this->load->model( 'Wb_tool_model' );
         $this->load->helper( 'url' );
 		
 		//Laden der Sprachdateien
@@ -86,74 +87,62 @@ class Dashboard extends CI_Controller
         
         $this->data[CONTENT_STRING]['anzahlUnreadMsg'] = $this-> Message_model -> get_count_of_unread_received_msgs( $username );	
         
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'user/dashboard', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//index()
     
     public function delete_therapy_remind( $code )
 	{
-		if( isset( $code ) )
-		{
-			$data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
-							'code' => $code,
-							'type' => 'therapy_remind',
-                            'date' => date("Y-m-d H:i:s")
-						);
+		$data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
+						'code' => $code,
+						'type' => 'therapy_remind',
+                        'date' => date("Y-m-d H:i:s")
+					);
 
-			$this -> Remind_model -> insert( 'reminds_deleted', $data );
-		}
-		
-		$this -> index();
+		$this -> Remind_model -> insert( 'reminds_deleted', $data );
+        
+        $this -> index();
 	}//delete_therapy_remind()
 
     public function delete_gas_remind( $code )
 	{
-        if( isset( $code ) )
-		{
-			$data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
-							'code' => $code,
-                            'type' => 'gas_remind',
-                            'date' => date("Y-m-d H:i:s")
-						);
+        $data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
+						'code' => $code,
+                        'type' => 'gas_remind',
+                        'date' => date("Y-m-d H:i:s")
+					);
 
-			$this -> Remind_model -> insert( 'reminds_deleted', $data );
-        }
+        $this -> Remind_model -> insert( 'reminds_deleted', $data );
         
 		$this -> index();		
 	}//delete_gas_remind()
 
     public function delete_zw_remind( $code, $instance )
 	{
-        if( isset( $code ) && isset( $instance ) )
-		{
-			$data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
-							'code' => $code,
-							'instance' => $instance,
-                            'type' => 'zw_remind',
-                            'date' => date("Y-m-d H:i:s")
-                        );
+        $data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
+						'code' => $code,
+						'instance' => $instance,
+                        'type' => 'zw_remind',
+                        'date' => date("Y-m-d H:i:s")
+                    );
             
-			$this -> Remind_model -> insert( 'reminds_deleted', $data );
-        }
-        
+		$this -> Remind_model -> insert( 'reminds_deleted', $data );
+    
 		$this -> index();		
 	}//delete_zw_remind()
 
     public function delete_quest_remind( $code, $instance, $quest_name )
 	{
-        if( isset( $code ) && isset( $instance ) && isset( $quest_name ) )
-		{
-			$data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
-							'code' => $code,
-							'instance' => $instance,
-                            'type' => 'questionnaire_remind',
-                            'date' => date("Y-m-d H:i:s"),
-                            'inactive_questionnaire' => $quest_name
-						);
+        $data = array(	'therapist' => $this->data[TOP_NAV_STRING]['username'],
+						'code' => $code,
+				    	'instance' => $instance,
+                        'type' => 'questionnaire_remind',
+                        'date' => date("Y-m-d H:i:s"),
+                        'inactive_questionnaire' => $quest_name
+					);
 
-			$this -> Remind_model -> insert( 'reminds_deleted', $data );
-        }
+		$this -> Remind_model -> insert( 'reminds_deleted', $data );
         
 		$this -> index();		
 	}//delete_quest_remind()

@@ -29,7 +29,8 @@ class Status extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->Model('Patient_model');
         $this->load->Model('Questionnaire_model');
         $this->load->library('dompdf_gen');
@@ -61,7 +62,7 @@ class Status extends CI_Controller
         $username = $this->data[TOP_NAV_STRING]['username'];
         $user_role = $this->data[CONTENT_STRING]['userrole'];
 
-        if( !$this -> Patient_model -> is_therapist_or_supervisor_of_patient( $username, $patientcode ) && $user_role !== 'admin' ) {
+        if( $user_role !== 'admin' && !$this -> Patient_model -> is_therapist_or_supervisor_of_patient( $username, $patientcode ) ) {
             show_error( 'Access denied. It\'s not a patient of yours!', 403 );
         }
 
@@ -125,7 +126,7 @@ class Status extends CI_Controller
         //Die alte Version verwendet hierzu den OQ30, welcher hier nicht mehr vorhanden sein soll. Informationen abwarten !!!
         //$this->data[CONTENT_STRING]['instance_date'] = $this->Patient_model->get_instance_date( $username, $patientcode, $instance );
 
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'user/patient/status', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//status()
@@ -178,7 +179,7 @@ class Status extends CI_Controller
         $this->data[CONTENT_STRING]['graphs'] = $grapharray;
         $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
         
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'user/patient/process', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//process()

@@ -1,4 +1,4 @@
-<div class="media bottom_spacer">
+<div class="media bottom_spacer_50px">
 	<a class="pull-left" href="#">
 		<img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
 	</a>
@@ -7,20 +7,17 @@
 	</div>
 </div>
 
-<ol class="breadcrumb">
-	<li><a href="<?php echo base_url(); ?>index.php/<?php echo $userrole; ?>/dashboard"><?php echo lang('list_overview');?></a></li>
-	<li><?php $link = $userrole.'/patient/list_all' ?>
-		<?php echo anchor( $link, lang('list_list1') ); ?></li>
-	<li class="active"><?php echo lang('details_details2');?></li>
-</ol> 
+<nav class="menu">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="<?php echo base_url(); ?>index.php/<?php echo $userrole; ?>/dashboard"><?php echo lang('list_overview');?></a></li>
+		<li class="breadcrumb-item"><?php $link = $userrole.'/patient/list_all' ?>
+			<?php echo anchor( $link, lang('list_list1') ); ?></li>
+		<li class="breadcrumb-item active"><?php echo lang('details_details2');?></li>
+	</ol> 
+</nav>
 
-<?php 
-$rechte_nn = $this -> membership_model -> is_rechte_set( $username, 'rechte_nn' );
-$rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'rechte_uebungen' ); 
-?>
-
-<div class="panel panel-default">
-	<div class="panel-body">
+<div class="card ">
+	<div class="card-body">
 		<ul class="nav nav-pills">		
 
 
@@ -39,17 +36,14 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 
 <div class="row">	
 	<div class="col-sm-6">	
-			
-		<?php //if($rechte_nn): ?>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title"><?php echo lang('details_diagnostik');?></h3>
+			<div class="card-column">
+			<div class="card ">
+				<div class="card-header">
+					<h4 class="card-title"><?php echo lang('details_diagnostik');?></h4>
 				</div>
-				<div class="panel-body">
-					<div class="media">
+				<div class="card-body">
 					<?php 
-					$recommendation_status = $this-> User_Model ->get_status_recommendation( $patientcode, $username );
-					if (  $recommendation_status[0] -> status == 1 ){
+					if (  $recommendation_status == 1 ){
 						$viewColor = "green";	
 					}
 					else{
@@ -65,31 +59,16 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 						<?php else:?>
 							<img class="media-object pull-left" src="<?php echo base_url();?>/img/feedback/green.png">
 					<?php endif;?>
-
-					<div class="media-body">
-						<div class="col-sm-6">
-							<?php
-							$text = "Behandlungsempfehlung";							
-							echo "<br />$text";
-							?>
-						</div>
-						<div class="col-sm-6">
-							<a href="<?php echo base_url( $link ); ?>" role="button" class="btn btn-info">Zur Behandlungsempfehlung</a>
-						</div>
-					</div>
-				</div>
-					
-					
+							<span>Behandlungsempfehlung</span>
+							<a href="<?php echo base_url( $link ); ?>" role="button" class="btn btn-outline-info form-control">Zur Behandlungsempfehlung</a>								
 				</div>
 			</div>
-		<?php //endif;?>
-			
-<br/><br/><br/>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title"><?php echo lang('details_statusreport');?></h3>
+			<br/>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title"><?php echo lang('details_statusreport');?></h3>
 				</div>
-				<div class="panel-body">				
+				<div class="card-body">				
 					<?php if( !isset( $status ) ): ?>
 						<div class="alert alert-info">
 							<?php echo lang('details_nodata');?>
@@ -118,6 +97,7 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 					<?php endif; ?>
 				</div>
 			</div>
+			</div>
 
 	</div><!-- end:#feedbackOQ -->
 
@@ -125,14 +105,14 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 	
 
 	<div class="col-sm-6">	
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php echo lang('details_feedback');?></h3>
+	<div class="card-column">
+		<div class="card ">
+			<div class="card-header">
+				<h4 class="card-title"><?php echo lang('details_feedback');?></h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 
 				<!--Nun wird das Bild geladen und der Text angezeigt. -->
-				<div class="media">
 					<?php 
 					$link = site_url().'/user/feedback/overview/'.$patientcode; 
 					if($color == 'red'):?>
@@ -141,36 +121,29 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 						<img class="media-object pull-left" src="<?php echo base_url();?>/img/feedback/<?php echo $color; ?>.png">
 					<?php endif;?>
 
-					<div class="media-body">
-						<div class="col-sm-6">
-							<?php
+							<span><?php
 							if($color == 'white')
 								$text = "Für die aktuelle Sitzung wird kein Feedback berechnet";
 							elseif ($color == 'missing')
 								$text = "Berechnung nicht erfolgreich abgeschlossen (Details in Übersicht)";									
 							else
 								$text = "Behandlungsanpassung";							
-							echo "<br />$text";
-							
-							?>
-						</div>
-						<div class="col-sm-6">
-							<a href="<?php echo $link ; ?>" role="button" class="btn btn-info">Zur Behandlungsanpassung</a>
-						</div>
-					</div>
-				</div>
+							echo "$text";
+					
+							?></span>
+							<a href="<?php echo $link ; ?>" role="button" class="btn btn-outline-info form-control">Zur Behandlungsanpassung</a>
 
 				<div style="clear: both;"></div>
 			</div>
 		</div>
 
-		<br/><br/><br/>
+		<br/>
 		
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php echo lang('details_verlaufsreport');?></h3>
+		<div class="card ">
+			<div class="card-header">
+				<h3 class="card-title"><?php echo lang('details_verlaufsreport');?></h3>
 			</div>
-			<div class="panel-body">				
+			<div class="card-body">				
 				<table class="table table-bordered table-striped">
 					<tbody>
 						<tr>
@@ -209,13 +182,12 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 			</div>
 		</div>	
 
-		<?php $has_gas = $this->SB_Model->has_gas($patientcode); $has_request = $this->SB_Model->has_filled_request($patientcode); ?>
-		<?php if (( $userrole === 'admin' OR $userrole === 'priviledged_user' ) AND (!$has_gas OR !$has_request)): ?>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">SB-Freigabe</h3>
+		<?php if (( $userrole === 'admin' OR $userrole === 'privileged_user' ) AND (!$has_gas OR !$has_request)): ?>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">SB-Freigabe</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<div class="btn-group" style="width:100%;">
 						<p>Das Stundenbogensystem ist nur erreichbar, wenn die Fallkonzeption bis zur 10. Sitzung und die Gas bis zur 15. Sitzung angelegt wurden. Soll es weiterhin möglich sein das Stundenbogensystem zu benutzen, so muss hier angegeben werden, bis zu welcher Sitzung diese Regel ignoriert werden kann.</p> 
 						<?php if(!$has_gas):?>
@@ -224,10 +196,10 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 						<?php if(!$has_request):?>
 							<p class="alert alert-warning"> Fallkonzeption wurde nicht ausgefüllt</p>
 						<?php endif;?>
-						Letze beendete Sitzung: <b><?php echo $this->SB_Model->getLastInstance($patientcode);?></b> - Erlaubt bis einschließlich Sitzung: <b><span id="allowed_until"><?php echo $this->Patient_Model->get_sb_allowed($patientcode) !== null ? $this->Patient_Model->get_sb_allowed($patientcode)->allowed_until_instance : 'Nicht gesetzt';?></span></b>
+						Letze beendete Sitzung: <b><?php echo $last_instance; ?></b> - Erlaubt bis einschließlich Sitzung: <b><span id="allowed_until"><?php echo $sb_allowed !== null ? $sb_allowed -> allowed_until_instance : 'Nicht gesetzt';?></span></b>
 						<br/>
 						<label for="allowed_instance">Neue erlaubte Sitzung:</label>
-						<input type="number" class="form-control" name="allowed_instance" id="allowed_instance" value="<?php echo ($this->SB_Model->getLastInstance($patientcode)+3);?>" min="<?php echo ($this->SB_Model->getLastInstance($patientcode)+1);?>">
+						<input type="number" class="form-control" name="allowed_instance" id="allowed_instance" value="<?php echo $last_instance + 3; ?>" min="<?php echo $last_instance + 1; ?>">
 						<br/>
 						<button type="button" class="btn btn-info form-control" id="set_allowed_instance" onclick="set_allowed()">Erlaubte Sitzung setzen</button>
 						<br/>
@@ -246,6 +218,7 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 
 	</div>
 	<div style="clear: both;"></div>
+	</div>
 </div>	
 
 
@@ -319,7 +292,7 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
 					<?php echo form_submit(array('class' => 'btn btn-primary'), 'Nachricht abschicken'); ?>
 				</div>
 			</form>

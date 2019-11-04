@@ -12,6 +12,18 @@ if( !defined( 'BASEPATH' ) )
  */
 class Session_model extends CI_Model
 {
+    public function __construct()
+    {
+        try{
+            $this -> db = $this -> load -> database( 'default', TRUE );
+            $CI =& get_instance();
+            if( !property_exists( $CI, 'db_default' ) ) {
+                $CI->db_default =& $this -> db;
+            }
+        } catch(Exception $e){
+            redirect('setup/step2');
+        }
+    }//__construct()
     /**
      * Checks the cookie if the user is logged in.
      * 

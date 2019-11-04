@@ -1,5 +1,5 @@
 <div id="member_area" class="patient">
-    <div class="media bottom_spacer place_headline">
+    <div class="media bottom_spacer_50px place_headline">
         <a class="pull-left">
             <img class="media-object" src="<?php echo base_url( ); ?>/img/48x48/user-edit.png" data-src="holder.js/32x32">
         </a>
@@ -9,34 +9,13 @@
     </div>
     <div class="menu">
         <ul class="breadcrumb">
-            <li><a href="./">Benutzer</a> <span class="divider">/</span></li>
-            <li class="active">Liste</li>
+            <li class="breadcrumb-item"><a href="./">Benutzer</a></li>
+            <li class="breadcrumb-item active">Liste</li>
         </ul>        
     </div><!-- end:.usermenu -->
-    <div class="dashrow status">
         <?php if( isset( $users ) ): ?>
-            <div class="well">
-                <?php
-                // generate the role-links
-                $link_controller = '/user/list_all_delete/';
-                $link_all = $userrole . $link_controller . 'all';
-                $link_admins = $userrole . $link_controller . 'admins';
-                $link_users = $userrole . $link_controller . 'users';
-                $link_migradet = $userrole . $link_controller . 'migrated';
-                ?>
-                      
-                <?php if( $users['list'] == 'admins' ): ?>
-                    <?php echo anchor( $link_all, 'Alle' ); ?> <span class="badge"><?php echo $users['count']['all']; ?></span> | <strong>Administratoren</strong> <span class="badge"><?php echo $users['count']['admins']; ?></span> | <?php echo anchor( $link_users, 'Benutzer' ); ?> <span class="badge"><?php echo $users['count']['users']; ?></span> | <?php echo anchor( $link_migradet, 'Script-Migriert' ); ?> <span class="badge"><?php echo $users['count']['migrated']; ?></span>
-                <?php elseif ($users['list'] == 'users' ): ?>
-                    <?php echo anchor( $link_all, 'Alle' ); ?> <span class="badge"><?php echo $users['count']['all']; ?></span> | <?php echo anchor( $link_admins, 'Administratoren' ); ?> <span class="badge"><?php echo $users['count']['admins']; ?></span> | <strong>Benutzer</strong> <span class="badge"><?php echo $users['count']['users']; ?></span> | <?php echo anchor( $link_migradet, 'Script-Migriert' ); ?> <span class="badge"><?php echo $users['count']['migrated']; ?></span>
-                <?php elseif ($users['list'] == 'migrated' ): ?>    
-                    <?php echo anchor( $link_all, 'Alle' ); ?> <span class="badge"><?php echo $users['count']['all']; ?></span> | <?php echo anchor( $link_admins, 'Administratoren' ); ?> <span class="badge"><?php echo $users['count']['admins']; ?></span> | <?php echo anchor( $link_users, 'Benutzer' ); ?> <span class="badge"><?php echo $users['count']['users']; ?></span> | <strong>Script-Migriert</strong> <span class="badge"><?php echo $users['count']['migrated']; ?></span>                
-                <?php else: ?>
-                    <strong>Alle</strong> <span class="badge"><?php echo $users['count']['all']; ?></span> | <?php echo anchor( $link_admins, 'Administratoren' ); ?> <span class="badge"><?php echo $users['count']['admins']; ?></span> | <?php echo anchor( $link_users, 'Benutzer' ); ?> <span class="badge"><?php echo $users['count']['users']; ?></span> | <?php echo anchor( $link_migradet, 'Script-Migriert' ); ?> <span class="badge"><?php echo $users['count']['migrated']; ?></span>
-                <?php endif; ?> 
-            </div>
             
-            <table class="table table-bordered table-striped">
+            <table id="delete-users" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -86,5 +65,127 @@
                 Keine Datensätze vorhanden.
             </div>
         <?php endif; ?>
-    </div><!-- end:.dashrow -->
 </div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#delete-users').DataTable(
+            {
+            pageLength: 10,
+        scrollX: true,
+        dom: 'fBrtp',
+        columnDefs: [
+            {
+                targets: 1,
+                className: 'noVis',
+            }
+        ],
+        buttons: [
+            {
+                extend: 'colvisGroup',
+                text: 'alle Benutzer'           
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Therapeuten'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Patienten'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Andere (Indikation, Administrator)'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Supervisoren'
+            }       
+        ]
+    } );
+
+    var action1 = table.button(0).action();
+    var action2 = table.button(1).action();
+    var action3 = table.button(2).action();
+    var action4 = table.button(3).action();
+    var action5 = table.button(4).action();
+
+    table.button(0).action( function ( e, dt, node, config ) {
+                    action1(e, dt, node, config);
+                    user_filter = 0;
+                    table.column(4)
+                    .data()
+                    .filter(function(value, index){
+                        
+                    }).draw();
+                    });
+
+    table.button(1).action( function ( e, dt, node, config ) {
+                    action2(e, dt, node, config);
+                    user_filter = 1;
+                    table.column(4)
+                    .data()
+                    .filter(function(value, index){
+                        
+                    }).draw();
+                    });
+
+    table.button(2).action( function ( e, dt, node, config ) {
+                    action3(e, dt, node, config);
+                    user_filter = 2;
+                    table.column(4)
+                    .data()
+                    .filter(function(value, index){
+                        
+                    }).draw();
+                    });
+    table.button(3).action( function ( e, dt, node, config ) {
+                    action4(e, dt, node, config);
+                    user_filter = 3;
+                    table.column(4)
+                    .data()
+                    .filter(function(value, index){
+                        
+                    }).draw();
+                    });
+    table.button(4).action( function ( e, dt, node, config ) {
+                    action5(e, dt, node, config);
+                    user_filter = 4;
+                    table.column(4)
+                    .data()
+                    .filter(function(value, index){
+                        
+                    }).draw();
+                    });
+
+
+    $.fn.dataTable.ext.search.push(
+        function( settings, searchData, index, rowData, counter  ) {
+            var user = searchData[4];
+            switch(user_filter){
+                case 0:
+                    var beginUser = /.*/;
+                    break;
+                case 1:
+                    var beginUser = /user/;
+                    break;
+                case 2:
+                    var beginUser = /patient/;
+                    break;
+                case 3:
+                    var beginUser = /(privileged_user|admin)/;
+                    break;
+                case 4:
+                    var beginUser = /supervisor/;
+                    break;
+            }
+    
+            if ( beginUser.test(user) == true )
+            {
+                return true;
+            }
+            return false;
+        }
+    );	
+} );
+</script>

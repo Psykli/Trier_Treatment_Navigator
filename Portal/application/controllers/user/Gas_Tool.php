@@ -20,7 +20,8 @@ class Gas_tool extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this-> load -> Model('Gas_Model');
         $this-> load -> library('dompdf_gen');
 
@@ -46,7 +47,7 @@ class Gas_tool extends CI_Controller
 
     public function index()
     {
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set(CONTENT_STRING, 'user/patient/index', $this->data[CONTENT_STRING]);
         $this -> template -> load('template');
     }//index()
@@ -77,7 +78,7 @@ class Gas_tool extends CI_Controller
 
         $this->data[CONTENT_STRING]['immutable'] = $this -> Gas_Model -> is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
 
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set(CONTENT_STRING, 'user/patient/gas/create_gas', $this->data[CONTENT_STRING]);
         $this -> template -> load('template');
     }//create_gas()
@@ -118,7 +119,7 @@ class Gas_tool extends CI_Controller
         
         $immutable = $this -> input -> post( 'submit') === 'immutable';
         
-        if( isset( $patientcode ) && isset( $entries ) && empty($missing) && !empty($bereiche))
+        if( isset( $entries ) && empty($missing) && !empty($bereiche))
 		{
 			$this -> Gas_Model -> insert_update_gas( $patientcode, $entries, $this->data[TOP_NAV_STRING]['username'], $immutable );	
         }
@@ -151,7 +152,11 @@ class Gas_tool extends CI_Controller
             show_error( 'Access denied. It\'s not a patient of yours!', 403 );
         }
 
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        foreach ($data as $key => $entry) {
+            $this->data[CONTENT_STRING]['predecessor_filled_list'][$key] = $this -> Gas_Model -> is_predecessor_filled($patientcode, $entry -> INSTANCE, $username);
+        }
+
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set(CONTENT_STRING, 'user/patient/gas/enter_gas', $this->data[CONTENT_STRING]);
         $this -> template -> load('template');
     }//enter_gas()
@@ -169,7 +174,7 @@ class Gas_tool extends CI_Controller
             $instance_number = intval($instance_number) < 10 ? '0'.$instance_number : $instance_number;
             $instance = $instance_prefix !== 'PO' ? $instance_prefix.$instance_number : $instance_prefix;
             
-            if( isset( $patientcode ) && isset( $data_array ))
+            if( isset( $data_array ) )
             {
                 $this -> Gas_Model -> insert_new_z( $patientcode, $instance, $data_array, $this->data[TOP_NAV_STRING]['username'] );		
             }
@@ -223,6 +228,7 @@ class Gas_tool extends CI_Controller
                 }
                 
             }//for
+            
             $this->data[CONTENT_STRING]['stufen'] = $stufen;
             $this->data[CONTENT_STRING]['bereiche'] = $bereiche;
             $this->data[CONTENT_STRING]['werte'] = $werte;
@@ -232,7 +238,7 @@ class Gas_tool extends CI_Controller
         //set top_nav depending on user_role
         if(!$this->data[CONTENT_STRING]['sb'])
         {
-            $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+            $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         }//if
 
         $this-> template -> set(CONTENT_STRING, 'user/patient/gas/fill_gas', $this->data[CONTENT_STRING]);

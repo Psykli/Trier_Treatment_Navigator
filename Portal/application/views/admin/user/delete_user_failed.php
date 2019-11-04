@@ -1,4 +1,4 @@
-<div class="media bottom_spacer">
+<div class="media bottom_spacer_50px">
     <a class="pull-left" href="#"> <img class="media-object" src="<?php echo base_url( ); ?>/img/48x48/identity.png"> </a>
     <div class="media-body">
         <h2 class="media-heading">Benutzer löschen</h2>

@@ -1,5 +1,5 @@
 <div id="member_area" class="patient">
-    <div class="media bottom_spacer place_headline">
+    <div class="media bottom_spacer_50px place_headline">
         <a class="pull-left">
             <img class="media-object" src="<?php echo base_url( ); ?>/img/48x48/user-edit.png" data-src="holder.js/32x32">
         </a>
@@ -9,12 +9,12 @@
     </div>
     <div class="menu">
         <ul class="breadcrumb">
-            <li><a href="./">Benutzer</a></li>
-            <li class="active">Liste</li>
+            <li class="breadcrumb-item"><a href="./">Benutzer</a></li>
+            <li class="active breadcrumb-item">Liste</li>
         </ul>        
     </div><!-- end:.usermenu -->
 	
-    <div class="dashrow status">
+
         <?php if( isset( $users ) ): ?>
           <!--
 			<div class="well">
@@ -37,7 +37,7 @@
                 <?php endif; ?> 
             </div>
           -->  
-			
+            
 			<?php 
 				$table_columns = array( 	'id' => 'ID', 
 											'initials' => 'Initialien',
@@ -56,7 +56,7 @@
                                                  
 										); 
 			?>
-            <table class="table table-bordered table-striped" id="user" cellspacing="0" width="100%">
+            <table id="user" class="table table-bordered table-striped" cellspacing="0" width="100%">
                 <thead>
 					<tr>
 						<?php foreach( $table_columns as $key => $value ): ?>
@@ -90,14 +90,16 @@
                                 <td><!-- useremail -->
                                     <?php echo $user -> email; ?>
                                 </td>
-								<td <?php echo ( $user -> rechte_entscheidung == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
-                                <td <?php echo ( $user -> rechte_zuweisung == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
-                                <td <?php echo ( $user -> rechte_verlauf_normal == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
-                                <td <?php echo ( $user -> rechte_verlauf_online == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
-                                <td <?php echo ( $user -> rechte_verlauf_gruppe == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
-                                <td <?php echo ( $user -> rechte_verlauf_seminare == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
-                                <td <?php echo ( $user -> rechte_zw == 1 ) ? 'class="success"' : 'class="danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_feedback == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+								<td <?php echo ( $user -> rechte_entscheidung == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_zuweisung == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_verlauf_normal == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_verlauf_online == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_verlauf_gruppe == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_verlauf_seminare == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
+                                <td <?php echo ( $user -> rechte_zw == 1 ) ? 'class="bg-success"' : 'class="bg-danger"'; ?>></td>
                             </tr>
+
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </tbody>
@@ -107,18 +109,15 @@
                 Keine Datensätze vorhanden.
             </div>
         <?php endif; ?>
-    </div><!-- end:.dashrow -->
 </div>
 
 <script>
 var user_filter = 0; 
-
-
 $(document).ready(function() {
     var table = $('#user').DataTable( {
-        pageLength: 50,
+        pageLength: 10,
         scrollX: true,
-        dom: 'Bfrtip',
+        dom: 'fBrtp',
         columnDefs: [
             {
                 targets: 1,
@@ -134,38 +133,32 @@ $(document).ready(function() {
             {
                 extend: 'colvisGroup',
                 text: 'alle Benutzer',
-                show: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ],
-                hide: [ ],
+                show: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
             },
             {
                 extend: 'colvisGroup',
                 text: 'Therapeuten',
-                show: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ],
-                hide: [ 16 ],
+                show: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
             },
             {
                 extend: 'colvisGroup',
                 text: 'Patienten',
-                show: [ 0, 1, 2, 3, 4, 5, 16   ],
-                hide: [ 6, 7, 8 , 9, 10, 11, 12, 13, 14, 15 ],
+                show: [ 0, 1, 2, 3, 4, 5],
+                hide: [ 6, 7, 8 , 9, 10, 11, 12, 13 ],
             },
             {
                 extend: 'colvisGroup',
                 text: 'Andere (Indikation, Administrator)',
-                show: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ],
-                hide: [  16  ],
+                show: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ],
             },
             {
                 extend: 'colvisGroup',
                 text: 'Supervisoren',
-                show: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
-                hide: [  16 ],
-            },
-            
-            
+                show: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+            }       
         ]
     } );
-    // folgender Abschnitt funktioniert, keiner weiß warum... WTF
+
     var action1 = table.button(1).action();
     var action2 = table.button(2).action();
     var action3 = table.button(3).action();
@@ -235,7 +228,7 @@ $(document).ready(function() {
                     var beginUser = /patient/;
                     break;
                 case 3:
-                    var beginUser = /(priviledged_user|admin)/;
+                    var beginUser = /(privileged_user|admin)/;
                     break;
                 case 4:
                     var beginUser = /supervisor/;

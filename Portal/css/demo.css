@@ -166,6 +166,7 @@ p.an_radio_question {
 	padding-bottom: .5em;
 }
 
+
 table.radio_table td {}
 
 tr.an_radio_buttonset {
@@ -384,4 +385,27 @@ font-size: 1.5em;}
     margin-left:-300px;
     margin-top:-100px;
 
+}
+
+.question{
+	font-size: 1.4em;
+}
+
+.choices{
+	font-size: 1.25em;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.labels{
+	font-size: 1.15em;
+	text-align: center;
+}
+
+.radio-span{
+	height:100%;
+}
+
+.quest-row{
+	margin-bottom: 1.5em;
 }

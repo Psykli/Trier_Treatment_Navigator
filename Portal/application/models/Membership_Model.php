@@ -3,9 +3,23 @@
 class Membership_model extends CI_Model
 {
 
+    /**
+     * Constructer
+     * Init of the Psychoeq-Database-Connection.
+     */
     public function __construct( )
-    {      
-
+    {
+        try{
+            $this -> db = $this -> load -> database( 'default', TRUE );
+                
+            $CI =& get_instance();
+            if( !property_exists( $CI, 'db_default' ) ) {
+                $CI->db_default =& $this -> db;
+            }
+        } catch (Exception $e){
+            redirect('setup/step2');
+        }
+        $this->load->library('form_validation');
     }
 
 
@@ -18,18 +32,26 @@ class Membership_model extends CI_Model
      * @access public
      * @return boolean True if the login initials and password validates correct to database.  
      */
-    function validate()
+    function validate( $username = NULL, $password = NULL )
     {
         $login_ok = false;
         
+        if( is_null( $username ) ) {
+            $username = $this->input->post('username');
+        }
+
         $this->db->select( 'password' );
-        $this->db->where('initials', $this->input->post('username'));
+        $this->db->where('initials', $username);
         $this->db->limit( 1 );
         $query = $this->db->get('user');
         
-        if( $query->num_rows() == 1 )
+        if( $query->num_rows() === 1 )
         {
-            $login_ok = password_verify( $this->input->post('password'), $query->row(0)->password );
+            if( is_null( $password ) ) {
+                $password = $this->input->post('password');
+            }
+
+            $login_ok = password_verify( $password, $query->row(0)->password );
         }//if
         
         return $login_ok;
@@ -47,18 +69,15 @@ class Membership_model extends CI_Model
     {
         $role = 'guest';
            
-        if( isset( $username ) )
-        {
-            $this->db->select( 'role' );
-            $this->db->from( 'user' );
-            $this->db->where( 'initials', $username );
-            $this->db->limit( 1 );
-            $query = $this->db->get();
+        $this->db->select( 'role' );
+        $this->db->from( 'user' );
+        $this->db->where( 'initials', $username );
+        $this->db->limit( 1 );
+        $query = $this->db->get();
             
-            if( $query->num_rows() == 1 )
-            {
-                $role = $query->row(0)->role;
-            }//if
+        if( $query->num_rows() === 1 )
+        {
+            $role = $query->row(0)->role;
         }//if
         
         return $role;
@@ -75,19 +94,17 @@ class Membership_model extends CI_Model
     
     function is_rechte_set( $username, $rechte )
     {
-        if( isset( $username ) && isset( $rechte ) )
-        {
-            $this->db->select( '1' );
-            $this->db->from( 'user' );
-            $this->db->where( 'initials', $username );
-            $this->db->where( $rechte, 1 );
-            $this->db->limit( 1 );
+        $this->db->select( '1' );
+        $this->db->from( 'user' );
+        $this->db->where( 'initials', $username );
+        $this->db->where( $rechte, 1 );
+        $this->db->limit( 1 );
 
-            $query = $this->db->get();
+        $query = $this->db->get();
             
-            if( $query->num_rows() === 1 )
-				return TRUE;		
-        }//if
+        if( $query->num_rows() === 1 ) {
+            return TRUE;
+        }
         
         return FALSE;
     }
@@ -96,18 +113,15 @@ class Membership_model extends CI_Model
     {
         $profile = NULL;
         
-        if( isset( $username ) )
+        $this->db->select( 'change_password' );
+        $this->db->from( 'user' );
+        $this->db->where( 'initials', $username );
+        $this->db->limit( 1 );
+        $query = $this->db->get();
+        
+        if( $query->num_rows() === 1 )
         {
-            $this->db->select( 'change_password' );
-            $this->db->from( 'user' );
-            $this->db->where( 'initials', $username );
-            $this->db->limit( 1 );
-            $query = $this->db->get();
-            
-            if( $query->num_rows() == 1 )
-            {
-                $profile = $query->result_array();
-            }//if
+            $profile = $query->result_array();
         }//if
         
         return $profile;
@@ -117,18 +131,15 @@ class Membership_model extends CI_Model
     {
         $id = -1;
         
-        if( isset( $username ) )
-        {
-            $this->db->select( 'id' );
-            $this->db->from( 'user' );
-            $this->db->where( 'initials', $username );
-            $this->db->limit( 1 );
-            $query = $this->db->get();
+        $this->db->select( 'id' );
+        $this->db->from( 'user' );
+        $this->db->where( 'initials', $username );
+        $this->db->limit( 1 );
+        $query = $this->db->get();
             
-            if( $query->num_rows() == 1 )
-            {
-                $id = $query->row(0)->id;
-            }//if
+        if( $query->num_rows() === 1 )
+        {
+            $id = $query->row(0)->id;
         }//if
         
         return $id;
@@ -140,19 +151,16 @@ class Membership_model extends CI_Model
         $data -> id = NULL;
         $data -> role = NULL;
 
-        if( isset( $username ) )
-        {
-            $this -> db -> select( 'id, ROLE' );
-            $this -> db -> from( 'user' );
-            $this -> db -> where( 'initials', $username );
-            $this -> db -> limit( 1 );
-            $query = $this -> db -> get( );
+        $this -> db -> select( 'id, ROLE' );
+        $this -> db -> from( 'user' );
+        $this -> db -> where( 'initials', $username );
+        $this -> db -> limit( 1 );
+        $query = $this -> db -> get( );
 
-            if( $query->num_rows() == 1 )
-            {
-                $data -> id = $query -> row(0) -> id;
-                $data -> role = $query -> row(0) -> ROLE;
-            }//if
+        if( $query->num_rows() === 1 )
+        {
+            $data -> id = $query -> row(0) -> id;
+            $data -> role = $query -> row(0) -> ROLE;
         }//if
 
         return $data;
@@ -164,48 +172,48 @@ class Membership_model extends CI_Model
     is_admin        -> $role = 'admin'
     is_supervisor   -> $role = 'supervisor'
     is_patient      -> $role = 'patient'
-    is_priviledged_user
-                    -> $role = 'priviledged_user'
+    is_privileged_user
+                    -> $role = 'privileged_user'
     is_user         -> $role = 'user'
     */
     function is_role ($username, $role) {
         $is_role = false;
 
-        if( isset( $username ) )
-        {
-            $this->db->select( 'role' );
-            $this->db->from( 'user' );
-            $this->db->where( 'initials', $username );
-            $this->db->limit( 1 );
-            $query = $this->db->get();
+        $this->db->select( 'role' );
+        $this->db->from( 'user' );
+        $this->db->where( 'initials', $username );
+        $this->db->limit( 1 );
+        $query = $this->db->get();
             
-            if( $query->num_rows() == 1 )
-            {
-                $is_role = $query -> row(0) -> role === $role;
-            }//if
+        if( $query->num_rows() === 1 )
+        {
+            $is_role = $query -> row(0) -> role === $role;
         }//if
         
         return $is_role;
-    } 
+    }
 
-    function get_profile ($username)
+    function get_profile ($username, $columns = NULL)
     {
         $profile = NULL;
-
-        if( isset ($username) )
-        {
+        
+        if( is_null( $columns ) ) {
             $this->db->select( 'first_name, last_name, initials, email, role, kohorte, rechte_wb, rechte_feedback, rechte_entscheidung, rechte_nn, rechte_uebungen, change_password, rechte_zuweisung, rechte_wb_questionnaire, rechte_verlauf_normal, rechte_verlauf_online, rechte_verlauf_gruppe, rechte_verlauf_seminare, rechte_zw' );
+        }
+        else {
+            $this->db->select( $columns );
+        }
 
-            $this->db->from( 'user' );
-            $this->db->where( 'initials', $username );
-            $this->db->limit( 1 );
-            $query = $this->db->get();
-            
-            if( $query->num_rows() == 1 )
-            {
-                $profile = $query->result_array();
-            }//if
-        } //if
+        $this->db->from( 'user' );
+        $this->db->where( 'initials', $username );
+        $this->db->limit( 1 );
+        $query = $this->db->get();
+        
+        if( $query->num_rows() === 1 )
+        {
+            $profile = $query->result()[0];
+        }//if
+        
         return $profile;
     }
 
@@ -273,7 +281,7 @@ class Membership_model extends CI_Model
     {
         $user_ID = -1;
         $this-> db -> set('initials', $new_user_data['initials']);
-        $this-> db -> insert ('portal.user');
+        $this-> db -> insert ('user');
         $user_ID = $this->get_id($new_user_data['initials']);
 
         // Set-New-User-Profile-Data
@@ -302,13 +310,14 @@ class Membership_model extends CI_Model
     public function get_all_users( $username, $role = 'all', $order_column = NULL , $ordering = NULL )
     {      
         $all_users = NULL;
-        $is_admin = $this->get_role($username) === 'admin' ? TRUE : FALSE;
-        if( $is_admin )
+        
+        if( $this->is_role($username, 'admin') )
         {
             $this->db->select( 'id, first_name, last_name, initials, email, role, rechte_feedback, rechte_entscheidung, rechte_zuweisung, rechte_verlauf_normal, rechte_verlauf_online, rechte_verlauf_gruppe, rechte_verlauf_seminare, rechte_zw');
             $this->db->from('user');
-			if( !is_null( $order_column ) && !is_null( $ordering ) )
-				$this -> db -> order_by ( $order_column, $ordering );
+			if( !is_null( $order_column ) && !is_null( $ordering ) ) {
+                $this -> db -> order_by ( $order_column, $ordering );
+            }
             
             switch( $role )
             {
@@ -338,7 +347,7 @@ class Membership_model extends CI_Model
         }//if
         else
         {
-            log_message( 'error', 'User (not Admins) performs a user-list request.' );
+            log_message( 'error', 'A user (not admin) tried to perform a user-list request.' );
         }//else
         
         return $all_users;
@@ -348,7 +357,7 @@ class Membership_model extends CI_Model
     {
         $username = NULL;
         
-        if( isset( $id ) AND is_numeric( $id ) )
+        if( is_numeric( $id ) )
         {
             $this->db->select( 'initials' );
             $this->db->from( 'user' );
@@ -356,7 +365,7 @@ class Membership_model extends CI_Model
             $this->db->limit( 1 );
             $query = $this->db->get();
             
-            if( $query->num_rows() == 1 )
+            if( $query->num_rows() === 1 )
             {
                 $username = $query->row(0)->initials;
             }//if
@@ -375,16 +384,16 @@ class Membership_model extends CI_Model
         $this-> db -> select('*');
         $this-> db -> from('user');
         $this-> db -> where('id', $id);
+        $this-> db -> limit(1);
 
         $query = $this-> db -> get();
 
         if ($query)
         {
-          $temp =  $query->result();
+            $temp =  $query->result();
         }
         
         $userdata = json_decode(json_encode($temp[0]), true);
-        
         
         return $userdata;
     }
@@ -402,13 +411,11 @@ class Membership_model extends CI_Model
      */
     public function get_count_of_role( $username, $role = 'all' )
     {
-        $is_admin = $this->get_role($username) === 'admin' ? TRUE : FALSE;
-        
         $user_count = NULL;
         
-        if( $is_admin )
+        if( $this->is_role($username, 'admin') )
         {
-            $this->db->select( 'id');
+            $this->db->select('1');
             $this->db->from('user');
             
             switch( $role )
@@ -437,7 +444,7 @@ class Membership_model extends CI_Model
         }//if
         else
         {
-            log_message( 'error', 'User (not Admins) performs a user-count request.' );
+            log_message( 'error', 'A user (not admin) tried to perform a user-count request.' );
         }//else
         
         return $user_count;
@@ -460,15 +467,13 @@ class Membership_model extends CI_Model
         $data -> users = NULL;
         $data -> migrated = NULL;
 
-        $is_admin = $this->get_role($username) === 'admin' ? TRUE : FALSE;
-
-        if( $is_admin ) {
+        if( $this->is_role($username, 'admin') ) {
             $this->db->select( 'COUNT(id) AS all_count, SUM(ROLE = "admin") AS admin_count, SUM(ROLE = "user") AS user_count, SUM(ROLE = "migrated") AS migrated_count');
             $this->db->from('user');
             
             $query = $this -> db -> get( );
 
-            if( $query->num_rows( ) == 1 )
+            if( $query->num_rows( ) === 1 )
             {
                 $data -> all = $query -> row(0) -> all_count;
                 $data -> admins = $query -> row(0) -> admin_count;
@@ -478,7 +483,7 @@ class Membership_model extends CI_Model
         }//if
         else
         {
-            log_message( 'error', 'User (not Admins) performs a combined user-count request.' );
+            log_message( 'error', 'A user (not admin) tried to perform a combined user-count request.' );
         }//else
         
         return $data;
@@ -496,12 +501,12 @@ class Membership_model extends CI_Model
      */
     public function set_user_password( $username, $password )
     {
-        if( !isset( $username ) OR is_null( $username ) OR $username == '' )
+        if( $this -> username_empty_checks( $username ) )
         {
             return FALSE;
         }//if
         
-        if( !isset( $password ) OR is_null( $password ) OR $password == '' )
+        if( $this -> username_empty_checks( $password ) )
         {
             $password = $this->config->item('default_password');
         }//if
@@ -513,9 +518,36 @@ class Membership_model extends CI_Model
         $data = array( 'password' => $hashed_password );
         $this->db->where( 'id', $id );
         $this->db->update( 'user', $data );
-        
+
         return ( $this->db->affected_rows() > 0 );
     }//set_user_password()
+
+    /**
+     * Set a new password for a user.
+     * The password MUST already be hashed, do NOT use a plaintext password as the password parameter.
+     * This function is only used for the change password functionality.
+     * Otherwise use set_user_password().
+     */
+    public function set_user_password_dangerous( $username, $hashed_password )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return FALSE;
+        }//if
+        
+        if( $this -> username_empty_checks( $password ) )
+        {
+            $password = $this->config->item('default_password');
+        }//if
+     
+        $id = $this->get_id($username);
+
+        $data = array( 'password' => $hashed_password );
+        $this->db->where( 'id', $id );
+        $this->db->update( 'user', $data );
+
+        return ( $this->db->affected_rows() > 0 );
+    }//set_user_password_dangerous()
 
 
     public function generate_random_unhashed_password ( $length = 8, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./' )
@@ -545,7 +577,7 @@ class Membership_model extends CI_Model
      * @param string $password The plain input password.
      * @return string The hash string of the password.
      */
-    private function get_hashed_password( $password )
+    public function get_hashed_password( $password )
     {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
@@ -560,7 +592,7 @@ class Membership_model extends CI_Model
 
     function user_set_first_name($username, $first_name)
     {
-        if(!isset($username) OR is_null($username) OR $username == '')
+        if( $this -> username_empty_checks( $username ) )
         {
             return FALSE;
         }
@@ -569,14 +601,14 @@ class Membership_model extends CI_Model
 
         $this-> db -> set('first_name', $first_name);
         $this-> db -> where('id', $id);
-        $this-> db -> update('portal.user');
+        $this-> db -> update('user');
 
         return TRUE;
     }
 
     function user_set_last_name($username, $last_name)
     {
-        if(!isset($username) OR is_null($username) OR $username == '')
+        if( $this -> username_empty_checks( $username ) )
         {
             return FALSE;
         }
@@ -585,14 +617,14 @@ class Membership_model extends CI_Model
 
         $this-> db -> set('last_name', $last_name);
         $this-> db -> where('id', $id);
-        $this-> db -> update('portal.user');
+        $this-> db -> update('user');
 
         return TRUE;
     }
 
     function user_set_kohorte($username, $kohorte)
     {
-        if(!isset($username) OR is_null($username) OR $username == '')
+        if( $this -> username_empty_checks( $username ) )
         {
             return FALSE;
         }
@@ -601,14 +633,14 @@ class Membership_model extends CI_Model
 
         $this-> db -> set('kohorte', $kohorte);
         $this-> db -> where('id', $id);
-        $this-> db -> update('portal.user');
+        $this-> db -> update('user');
 
         return TRUE;
     }
 
     function user_set_role($username, $role)
     {
-        if(!isset($username) OR is_null($username) OR $username == '')
+        if( $this -> username_empty_checks( $username ) )
         {
             return FALSE;
         }
@@ -617,43 +649,26 @@ class Membership_model extends CI_Model
 
         $this-> db -> set('role', $role);
         $this-> db -> where('id', $id);
-        $this-> db -> update('portal.user');
-
-        return TRUE;
-    }
-
-    function user_set_email($username, $email)
-    {
-        if(!isset($username) OR is_null($username) OR $username == '')
-        {
-            return FALSE;
-        }
-        
-        $id = $this->get_id($username);
-
-        $this-> db -> set('email', $email);
-        $this-> db -> where('id', $id);
-        $this-> db -> update('portal.user');
+        $this-> db -> update('user');
 
         return TRUE;
     }
 
     function user_set_access_rights($username, $value_name, $value)      //
     {                                                                   
-        if(!isset($username) OR is_null($username) OR $username == '')
+        if( $this -> username_empty_checks( $username ) )
         {
             return FALSE;
         }
-        
-        $id = $this->get_id($username);
 
         $value_names = array('rechte_feedback', 'rechte_entscheidung', 'rechte_zuweisung',
         'rechte_wb_questionnaire', 'rechte_verlauf_normal', 'rechte_verlauf_gruppe', 'rechte_verlauf_online',
         'rechte_verlauf_seminare', 'rechte_zw');
-
         
         if (in_array($value_name, $value_names))
         {
+            $id = $this->get_id($username);
+
             $this-> db -> set($value_name, $value );
             $this-> db -> where('id', $id);
             $this-> db -> update('user');
@@ -662,14 +677,169 @@ class Membership_model extends CI_Model
         return TRUE;
     }
 
+    function user_set_email($username, $email)
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return FALSE;
+        }
+        
+        $id = $this->get_id($username);
+
+        $this-> db -> set('email', $email);
+        $this-> db -> where('id', $id);
+        $this-> db -> update('user');
+
+        return TRUE;
+    }
+
+    function enter_email_confirmation_code( $username, $reset_code, $old_email_address, $new_email_address )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return false;
+        }
+
+        $user_id = $this->get_id( $username );
+
+        //remove expired email confirmation codes
+        $expiry_value = $this -> config -> item( 'email_confirmation_codes_expiry' );
+        $this->db->where("created_on < (NOW() - INTERVAL ".$expiry_value.")");
+        $this->db->delete('email_confirmation_codes');
+
+        //remove previous confirmation codes for this user
+        $this->db->where('user_id', $user_id);
+        $this->db->delete('email_confirmation_codes');
+
+        //enter the new confirmation code
+        $reset_data = array(
+            'user_id' => $user_id,
+            'confirmation_code' => $reset_code,
+            'old_email' => $old_email_address,
+            'new_email' => $new_email_address
+        );
+
+        $this -> db -> insert('email_confirmation_codes', $reset_data);
+        return true;        
+    }
+
+    function get_email_confirmation_data( $username )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return null;
+        }
+
+        //remove expired email confirmation codes
+        $expiry_value = $this -> config -> item( 'email_confirmation_codes_expiry' );
+        $this->db->where("created_on < (NOW() - INTERVAL ".$expiry_value.")");
+        $this->db->delete('email_confirmation_codes');
+
+        //get the confirmation data of the user
+        $user_id = $this->get_id( $username );
+
+        $this->db->select( 'confirmation_code, old_email, new_email' );
+        $this->db->where('user_id', $user_id);
+        
+        $query = $this->db->get('email_confirmation_codes');
+        
+        if( $query->num_rows() === 1 )
+        {
+            return $query->row(0);
+        }//if     
+    }
+
+    function delete_email_confirmation_codes( $username )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return false;
+        }
+
+        $user_id = $this->get_id( $username );
+
+        //remove previous confirmation codes for this user
+        $this->db->where('user_id', $user_id);
+        $this->db->delete('email_confirmation_codes');
+    }
+
+    function enter_password_confirmation_code( $username, $reset_code, $new_hashed_pw )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return false;
+        }
+
+        $user_id = $this->get_id( $username );
+
+        //remove expired password confirmation codes
+        $expiry_value = $this -> config -> item( 'password_confirmation_codes_expiry' );
+        $this->db->where("created_on < (NOW() - INTERVAL ".$expiry_value.")");
+        $this->db->delete('password_confirmation_codes');
+
+        //remove previous confirmation codes for this user
+        $this->db->where('user_id', $user_id);
+        $this->db->delete('password_confirmation_codes');
+
+        //enter the new confirmation code
+        $reset_data = array(
+            'user_id' => $user_id,
+            'confirmation_code' => $reset_code,
+            'new_password' => $new_hashed_pw
+        );
+
+        $this -> db -> insert('password_confirmation_codes', $reset_data);
+        return true;        
+    }
+
+    function get_password_confirmation_data( $username )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return null;
+        }
+
+        //remove expired password confirmation codes
+        $expiry_value = $this -> config -> item( 'password_confirmation_codes_expiry' );
+        $this->db->where("created_on < (NOW() - INTERVAL ".$expiry_value.")");
+        $this->db->delete('password_confirmation_codes');
+
+        //get the confirmation data of the user
+        $user_id = $this->get_id( $username );
+
+        $this->db->select( 'confirmation_code, new_password' );
+        $this->db->where('user_id', $user_id);
+        
+        $query = $this->db->get('password_confirmation_codes');
+        
+        if( $query->num_rows() === 1 )
+        {
+            return $query->row(0);
+        }//if     
+    }
+
+    function delete_password_confirmation_codes( $username )
+    {
+        if( $this -> username_empty_checks( $username ) )
+        {
+            return false;
+        }
+
+        $user_id = $this->get_id( $username );
+
+        //remove previous confirmation codes for this user
+        $this->db->where('user_id', $user_id);
+        $this->db->delete('password_confirmation_codes');
+    }
+
     public function delete_user( $username )
     {
-        if( !isset( $username ) OR is_null( $username ) OR $username == '' )
+        if( $this -> username_empty_checks( $username ) )
         {
             return NULL;
         }//if
         
-        if( $this->get_role($username) === 'admin' )
+        if( $this->is_role($username, 'admin') )
         {
             // check if it is the last admin in database
             if( 1 == $this->get_count_of_role($username, 'admins') )
@@ -682,7 +852,7 @@ class Membership_model extends CI_Model
 
         $this->db->where( 'initials', $username );
         $this->db->delete( 'user' );
-        log_message( 'info', "Delete the user " . $username );
+        log_message( 'info', "Deleted the user " . $username );
         
         return TRUE;
     }//delete_user()
@@ -713,7 +883,7 @@ class Membership_model extends CI_Model
             $initials_valid = TRUE; // no inital restrictions
             $initials_error = NULL;
             break;
-            case "priviledged_user":
+            case "privileged_user":
             $initials_valid = (preg_match('/^[[:alpha:]]{2}[[:digit:]]{3}$/', $initials)) == 1 ? TRUE : FALSE;
             $initials_error = ($initials_valid) ? NULL : "Die Initialien für Privilegierte Benutzer düfren nur aus drei Buchstaben und zwei Ziffern bestehen!";
             default:
@@ -723,7 +893,7 @@ class Membership_model extends CI_Model
         }
         
         return array($initials_valid, $initials_error);
-    }
+    }//validate_initial_string()
 
     public function validate_profile_data() // Checks if input profile_data is valid.
     {
@@ -731,24 +901,24 @@ class Membership_model extends CI_Model
         $is_valid = FALSE;
 
 
-        $this -> form_validation -> set_rules( 'first_name', 'First name', 'trim|min_length[2]|xss_clean');
-        $this -> form_validation -> set_rules( 'last_name', 'Last name', 'trim|min_length[2]|xss_clean');
-        $this -> form_validation -> set_rules( 'initials', 'Initals', 'trim|xss_clean|required');
-        $this -> form_validation -> set_rules( 'email', 'Email', 'trim|valid_email|xss_clean');
-        $this -> form_validation -> set_rules( 'role', 'Role', 'trim|xss_clean|required');
+        $this -> form_validation -> set_rules( 'first_name', 'First name', 'trim|min_length[2]');
+        $this -> form_validation -> set_rules( 'last_name', 'Last name', 'trim|min_length[2]');
+        $this -> form_validation -> set_rules( 'initials', 'Initals', 'trim|required');
+        $this -> form_validation -> set_rules( 'email', 'Email', 'trim|valid_email');
+        $this -> form_validation -> set_rules( 'role', 'Role', 'trim|required');
         
 
         $is_valid = $this -> form_validation -> run();
 
         return $is_valid;
 
-    } // validate_profile_input
+    }//validate_profile_input()
 
     public function validate_password()
     {
         $is_valid = FALSE;
 
-        $this -> form_validation -> set_rules( 'password', 'Password', 'trim|required|matches[passconf]|min_length[5]|xss_clean');
+        $this -> form_validation -> set_rules( 'password', 'Password', 'trim|required|matches[passconf]|min_length[5]');
         $this -> form_validation -> set_rules( 'passconf', 'Passconf', 'trim|matches[password]|required');
 
         $is_valid = $this -> form_validation -> run();
@@ -756,7 +926,47 @@ class Membership_model extends CI_Model
         return $is_valid;
     }
 
+    public function get_navbar_content($role = 'guest')
+    {
+        ob_start();
 
+        switch($role)
+        {
+            case 'guest':
+                include('application/views/guest/top_nav.php');
+            break;
+            case 'patient':
+                include('application/views/patient/top_nav.php');
+            break;
+            case 'admin':
+                include('application/views/admin/top_nav.php');
+            break;
+            case 'user':
+                include('application/views/user/top_nav.php');
+            break;
+        }
+        
+        return ob_get_clean();
+    }
+
+    public function create_admin($name, $email, $password){
+
+        if(isset($name) && isset($email) && isset($password)){
+            $data = array(
+                'INITIALS' => $name,
+                'email' => $email,
+                'PASSWORD' => $this->get_hashed_password($password),
+                'ROLE' => 'admin'
+            );
+
+            return $this->db->insert('user',$data);          
+        }
+        return FALSE;
+    }
+
+    private function username_empty_checks( $username ) {
+        return is_null($username) || $username == '';
+    }//username_empty_check()
 }//class Membership_model
 
 

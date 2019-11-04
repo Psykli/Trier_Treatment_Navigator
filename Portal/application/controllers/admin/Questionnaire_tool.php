@@ -14,7 +14,8 @@ class Questionnaire_tool extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-        
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this -> load -> Model( 'Questionnaire_tool_model' );
         $this -> load -> Model( 'Questionnaire_model' );
         $this -> load -> Model( 'Patient_model' );
@@ -41,7 +42,7 @@ class Questionnaire_tool extends CI_Controller
 
     public function index( )
     {  
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/overview', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//index()
@@ -50,12 +51,17 @@ class Questionnaire_tool extends CI_Controller
     {
         //search for patients
         if( $this -> input -> post( 'patientcode' ) || $this -> input -> post( 'therapist' ) ) {
-            $this -> data['content']['patients'] = $this -> Patient_model -> search_patients( $this -> data[TOP_NAV_STRING]['username'], $this -> input -> post( 'patientcode' ), $this -> input -> post( 'therapist' ), 'CODE, THERPIST', $this -> data[CONTENT_STRING]['userrole'] );
+            $this -> data['content']['patients'] = $this -> Patient_model -> search_patients( $this -> data[TOP_NAV_STRING]['username'], $this -> input -> post( 'patientcode' ), $this -> input -> post( 'therapist' ), 'CODE, THERAPIST', $this -> data[CONTENT_STRING]['userrole'] );
             $this -> data['content']['searched_patientcode'] = $this -> input -> post( 'patientcode' );
             $this -> data['content']['searched_therapist'] = $this -> input -> post( 'therapist' );
+
+            $this -> data['content']['released_questionnaires'] = [];
+            foreach($this -> data['content']['patients'] as $patient) {
+                $this -> data['content']['released_questionnaires'][$patient -> CODE] = $this -> Questionnaire_tool_model -> get_released_questionnaires( $patient -> CODE, 0 );
+            }
         }
         
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/patientenverwaltung', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//patientenverwaltung()
@@ -77,7 +83,7 @@ class Questionnaire_tool extends CI_Controller
         $this->data['content']['batteries'] = $batteries;
         $this->data['content']['patientcode'] = $patientcode;
        
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/show_questionnaire_list', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//show_questionnaire_list()
@@ -97,7 +103,7 @@ class Questionnaire_tool extends CI_Controller
         $this->data['content']['evaluationXSL'] = $this->evaluationXSL;
         $this->data['content']['tables'] = $tables;
 
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/show_questionnaire', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//show_questionnaire()
@@ -150,40 +156,29 @@ class Questionnaire_tool extends CI_Controller
 
         $patient = new stdClass();
         $patient -> CODE = $patientcode;
-        $patient -> THERPIST = $this -> Patient_model -> get_therapist_of_patient( $this -> data[TOP_NAV_STRING]['username'], $patientcode, true );
+        $patient -> THERAPIST = $this -> Patient_model -> get_therapist_of_patient( $this -> data[TOP_NAV_STRING]['username'], $patientcode, true );
         $this->data['content']['patient'] = $patient;
         
         $this->set_questionnaire_release_information($qid, $this->data['content']['patient']);
 
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/quest_release', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//quest_release()
 
-    public function insert_questionnaire($patientcode, $questionnaire, $therapist = "")
+    public function insert_questionnaire($patientcode, $questionnaire, $therapist = "admin")
     {
-        if( isset( $patientcode ) && isset( $questionnaire ))
-		{
-            if(!isset($therapist)){
-                $therapist = 'admin';
-            }
+        $instancePost = $this -> input -> post('instance');
 
-            $instancePost = $this -> input -> post('instance');
-
-            if($instancePost !== "") {
-                $instancePost = intval($instancePost) < 10 ? '0'.intval($instancePost) : $instancePost;
-            }
-            
-            $instance = $this -> input -> post('instance_prefix') . $instancePost; 
-            $interval = $this -> input -> post('interval');
-            $start = $this -> input -> post('start');
-            
-            if(!isset($therapist)) {
-                $therapist = $this -> data['top_nav']['username'];
-            }
-
-			$this -> Questionnaire_tool_model -> insert_questionnaire ( $therapist, $patientcode, $questionnaire, $instance, $start, $interval );
+        if($instancePost !== "") {
+            $instancePost = intval($instancePost) < 10 ? '0'.intval($instancePost) : $instancePost;
         }
+            
+        $instance = $this -> input -> post('instance_prefix') . $instancePost; 
+        $interval = $this -> input -> post('interval');
+        $start = $this -> input -> post('start');
+
+		$this -> Questionnaire_tool_model -> insert_questionnaire ( $therapist, $patientcode, $questionnaire, $instance, $start, $interval );
         
         redirect('admin/questionnaire_tool/show_questionnaire_list/'.$patientcode);
     }//insert_questionnaire()
@@ -194,7 +189,7 @@ class Questionnaire_tool extends CI_Controller
         
         $patient = new stdClass();
         $patient -> CODE = $patientcode;
-        $patient -> THERPIST = $this -> Patient_model -> get_therapist_of_patient( $this -> data[TOP_NAV_STRING]['username'], $patientcode, true );
+        $patient -> THERAPIST = $this -> Patient_model -> get_therapist_of_patient( $this -> data[TOP_NAV_STRING]['username'], $patientcode, true );
         
         $this->data['content']['battery'] = $bid;
         $this->data['content']['questionnaires'] = $questionnaires;
@@ -202,7 +197,7 @@ class Questionnaire_tool extends CI_Controller
         
         $this->set_questionnaire_release_information($questionnaires[0]->qid, $patient);
 
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/battery_release', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//battery_release()
@@ -213,38 +208,32 @@ class Questionnaire_tool extends CI_Controller
             $therapist = 'admin';
         }
 
-		if( isset(  $therapist ) && isset ($patientcode ) && isset ($bid) ){
-            $username = $this -> data['top_nav']['username'];
-			$all_questionnaires = $this -> Questionnaire_tool_model -> get_all_questionnaire_by_batterie( $bid );
-            $instancePost = $this -> input -> post('instance'); 
-            
-            if($instancePost !== "") {
-                $instancePost = intval($instancePost) < 10 ? '0'.intval($instancePost) : $instancePost;
-            }
-            
-            $instance = $this -> input -> post('instance_prefix') . $instancePost;    
+		$all_questionnaires = $this -> Questionnaire_tool_model -> get_all_questionnaire_by_batterie( $bid );
+        $instancePost = $this -> input -> post('instance'); 
+        
+        if($instancePost !== "") {
+            $instancePost = intval($instancePost) < 10 ? '0'.intval($instancePost) : $instancePost;
+        }
+        
+        $instance = $this -> input -> post('instance_prefix') . $instancePost;
 
-            if(!isset($therapist))
-                $therapist = $username;   
-
-            foreach ($all_questionnaires as $key => $questionnaire) {
-                $interval = $this -> input -> post('interval_'.$key);
-                $start = $this -> input -> post('start_'.$key);
-                $this -> Questionnaire_tool_model -> insert_questionnaire ($therapist, $patientcode, $questionnaire -> qid,$instance,$start,$interval);
-            }
+        foreach ($all_questionnaires as $key => $questionnaire) {
+            $interval = $this -> input -> post('interval_'.$key);
+            $start = $this -> input -> post('start_'.$key);
+            $this -> Questionnaire_tool_model -> insert_questionnaire ($therapist, $patientcode, $questionnaire -> qid,$instance,$start,$interval);
         }
 
         redirect('admin/questionnaire_tool/show_questionnaire_list/'.$patientcode);
     }//insert_questionnaire_batterie_patient()
 
     private function set_questionnaire_release_information( $qid, $patient ) {
-        $this -> data['content']['instanceOT'] = $this -> Questionnaire_tool_model -> get_next_instance_of_questionnaire($qid, $patient -> CODE, $patient -> THERPIST, 'OT');
-        $this -> data['content']['instanceZ'] = $this -> Questionnaire_tool_model -> get_next_instance_of_questionnaire($qid, $patient -> CODE, $patient -> THERPIST, 'Z');	  
-        $this -> data['content']['instanceSB'] = $this -> Questionnaire_tool_model -> get_next_sb_instance($qid, $patient -> CODE, $patient -> THERPIST);
+        $this -> data['content']['instanceOT'] = $this -> Questionnaire_tool_model -> get_next_instance_of_questionnaire($qid, $patient -> CODE, $patient -> THERAPIST, 'OT');
+        $this -> data['content']['instanceZ'] = $this -> Questionnaire_tool_model -> get_next_instance_of_questionnaire($qid, $patient -> CODE, $patient -> THERAPIST, 'Z');	  
+        $this -> data['content']['instanceSB'] = $this -> Questionnaire_tool_model -> get_next_sb_instance($qid, $patient -> CODE, $patient -> THERAPIST);
 
-        $this -> data['content']['disableWZ'] = $this->Questionnaire_tool_model->instance_exists($qid, $patient->CODE, $patient->THERPIST, 'WZ');
-        $this -> data['content']['disablePR'] = $this->Questionnaire_tool_model->instance_exists($qid, $patient->CODE, $patient->THERPIST, 'PR');
-        $this -> data['content']['disablePO'] = $this->Questionnaire_tool_model->instance_exists($qid, $patient->CODE, $patient->THERPIST, 'PO');
+        $this -> data['content']['disableWZ'] = $this->Questionnaire_tool_model->instance_exists($qid, $patient->CODE, $patient->THERAPIST, 'WZ');
+        $this -> data['content']['disablePR'] = $this->Questionnaire_tool_model->instance_exists($qid, $patient->CODE, $patient->THERAPIST, 'PR');
+        $this -> data['content']['disablePO'] = $this->Questionnaire_tool_model->instance_exists($qid, $patient->CODE, $patient->THERAPIST, 'PO');
     }//set_questionnaire_release_information()
 
     public function add_questionnaire()
@@ -395,7 +384,7 @@ class Questionnaire_tool extends CI_Controller
 
         $this->data['content']['all_questionnaire'] = $this -> Questionnaire_tool_model -> get_all_questionnaire( );
         
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/add_questionnaire', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//add_questionnaire()
@@ -419,7 +408,7 @@ class Questionnaire_tool extends CI_Controller
         
         $this-> data['content']['all_questionnaire'] = $this-> Questionnaire_tool_model -> get_all_questionnaire();
 
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/add_questionnaire', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//do_upload()
@@ -480,7 +469,7 @@ class Questionnaire_tool extends CI_Controller
         $this->data['content']['descriptions'] = $quest[0]->description;
         $this->data['content']['xml_filename'] = $quest[0]->filename;
         
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/edit_questionnaire', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//edit_questionnaire()
@@ -530,7 +519,7 @@ class Questionnaire_tool extends CI_Controller
         $this->data['content']['languages'] = $languages;
         $this->data['content']['table'] = $table;
         
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/create_questionnaire', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//create_questionnaire()
@@ -538,7 +527,7 @@ class Questionnaire_tool extends CI_Controller
     public function save_created_xml()
     {
         $form_array = $this->input->post('form');
-        $languages = isset($_POST['languages']) ? $this-> input -> post('languages') : '';
+        $languages = !is_null($this-> input -> post('languages')) ? $this-> input -> post('languages') : '';
         $languages = json_decode($languages);
         
         $questionnaire_name = "";
@@ -775,8 +764,8 @@ class Questionnaire_tool extends CI_Controller
             //editing existing XML-file, data received via POST
             $creating_new_questionnaire = false;
 
-            $form_array = isset($_POST['form']) ? $this-> input -> post('form') : '';
-            $languages = isset($_POST['languages']) ? $this-> input -> post('languages') : '';
+            $form_array = !is_null($this-> input -> post('form')) ? $this-> input -> post('form') : '';
+            $languages = !is_null($this-> input -> post('languages')) ? $this-> input -> post('languages') : '';
             $languages = json_decode($languages);
             $table = $this->input->post('table');
             $dateField = $this->input->post('dateField');
@@ -1004,10 +993,21 @@ class Questionnaire_tool extends CI_Controller
 
     public function batterieverwaltung()
     {
-        $this -> data['content']['all_batteries'] = $this-> Questionnaire_tool_model -> get_all_batteries();
+        $this-> data['content']['all_batteries'] = $this-> Questionnaire_tool_model -> get_all_batteries();
         $this-> data['content']['patients'] = $this-> Patient_model -> get_all_patients( $this -> data[TOP_NAV_STRING]['username'] );
 
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this-> data['content']['questionnaires_batteries'] = [];
+        $this-> data['content']['z_batteries'] = [];
+        $this-> data['content']['section_names_collection'] = [];
+        
+        foreach($this -> data['content']['all_batteries'] as $batterie) {
+            $this-> data['content']['questionnaires_batteries'][$batterie -> id] = $this -> Questionnaire_tool_model -> get_all_questionnaire_by_battery( $batterie -> id );
+            $this-> data['content']['z_batteries'][$batterie -> id] = $this -> Questionnaire_tool_model -> get_all_questionnaire_by_battery( $batterie -> id, true);
+            $this-> data['content']['section_names_collection'][$batterie -> id] = $this-> Questionnaire_tool_model ->get_section_names($batterie->id);
+            $this-> data['content']['questionnaire_list'] = $this -> Questionnaire_tool_model -> get_all_questionnaire( );
+        }
+
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/batterieverwaltung', $this -> data['content'] );
         $this -> template -> load( 'template' );    
     }//batterieverwaltung()
@@ -1025,28 +1025,22 @@ class Questionnaire_tool extends CI_Controller
 
     public function delete_batterie($bid)
     {
-        if(isset($bid)) {
-            $this-> Questionnaire_tool_model -> delete_batterie_from_DB($bid);
-        }
+        $this-> Questionnaire_tool_model -> delete_batterie_from_DB($bid);
         
         $this-> batterieverwaltung();
     }//delete_batterie()
 
     public function add_section($bid)
     {
-        if(isset($bid)) {
-            $this-> Questionnaire_tool_model -> add_section_to_batterie($bid);
-        }
-
+        $this-> Questionnaire_tool_model -> add_section_to_batterie($bid);
+        
         $this-> batterieverwaltung();
     }//add_section()
 
     public function delete_section($bid)
     {
-        if(isset($bid)) {
-            $this-> Questionnaire_tool_model -> delete_section_from_batterie($bid);
-        }
-
+        $this-> Questionnaire_tool_model -> delete_section_from_batterie($bid);
+        
         $this-> batterieverwaltung();
     }//delete_section()
 
@@ -1099,9 +1093,7 @@ class Questionnaire_tool extends CI_Controller
 
     public function delete_questionnaire_from_battery($bid, $qid)
     {
-        if(isset($bid) && isset($qid)) {
-            $this-> Questionnaire_tool_model -> delete_questionnaire_in_battery($bid, $qid);
-        }
+        $this-> Questionnaire_tool_model -> delete_questionnaire_in_battery($bid, $qid);
         
         $this-> batterieverwaltung();
     }//delete_questionnaire_from_battery()
@@ -1134,7 +1126,7 @@ class Questionnaire_tool extends CI_Controller
         $process_info['HSCL-11'] = array((object) array('name'=>'HSCL-11'));
         $this -> data['content']['process_info'] = $process_info;
 
-        $this -> template -> set( 'top_nav', 'admin/top_nav', $this -> data['top_nav'] );
+        $this -> template -> set( 'top_nav', 'all/top_nav', $this -> data['top_nav'] );
         $this -> template -> set( 'content', 'admin/questionnaire_tool/batterie_feedback', $this -> data['content'] );
         $this -> template -> load( 'template' );
     }//batterie_feedback()
@@ -1181,8 +1173,7 @@ class Questionnaire_tool extends CI_Controller
 
     public function set_as_standard_battery($bid)
     {
-        if(isset($bid))
-            $this-> Questionnaire_tool_model -> set_standard_battery($bid);
+        $this-> Questionnaire_tool_model -> set_standard_battery($bid);
     }//set_as_standard_battery()
 }//class Questionnaire_tool
 

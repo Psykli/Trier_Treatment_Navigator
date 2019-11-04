@@ -25,7 +25,8 @@ class Patient extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->library('user_agent');
         $this->load->Model( 'User_Model' );
         $this->load->Model( 'Patient_Model' );
@@ -33,6 +34,7 @@ class Patient extends CI_Controller
 		$this->load->Model( 'Questionnaire_tool_model' );
         $this->load->Model( 'Message_model');
         $this->load->Model( 'Questionnaire_model');
+        $this->load->Model( 'SB_model');
 
 		//Laden der Sprachdateien
         $this->lang->load( 'user_patient' );
@@ -56,14 +58,14 @@ class Patient extends CI_Controller
     
     public function index()
     {
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'user/patient/index', $this->data[CONTENT_STRING] );
         $this -> template -> load( 'template' );
     }//index()
 
     public function list_all( $show_all = false )
     {
-        if( $this -> data[CONTENT_STRING]['userrole'] === 'priviledged_user' AND $show_all ){
+        if( ($this -> data[CONTENT_STRING]['userrole'] === 'privileged_user' || $this -> data[CONTENT_STRING]['userrole'] === 'admin') && $show_all ){
             $this -> data[CONTENT_STRING]['patients'] = $this -> Patient_model -> get_all_patients( 'admin' );
             $this -> data[CONTENT_STRING]['show_all'] = true;
         } else {
@@ -72,8 +74,9 @@ class Patient extends CI_Controller
         }
 
         $this -> data[CONTENT_STRING]['status'] = $this -> Therapy_model -> extract_status_data_from_patients( $this -> data[CONTENT_STRING]['patients'] );
-        
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+    
+
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'user/patient/list_all', $this->data[CONTENT_STRING] );
         $this -> template -> load( 'template' );
     }//list_all()
@@ -83,7 +86,7 @@ class Patient extends CI_Controller
         $username = $this -> data[TOP_NAV_STRING]['username'];
         $user_role = $this -> data[CONTENT_STRING]['userrole'];
         
-        if( $user_role !== 'admin' && $user_role !== 'priviledged_user' && !$this -> Patient_model -> is_therapist_or_supervisor_of_patient( $username, $patientcode ) )
+        if( $user_role !== 'admin' && $user_role !== 'privileged_user' && !$this -> Patient_model -> is_therapist_or_supervisor_of_patient( $username, $patientcode ) )
         {    
             show_error( 'Access denied. It\'s not a patient of yours!', 403 );
         }
@@ -92,7 +95,7 @@ class Patient extends CI_Controller
             $status = $this->Patient_model->get_status( $patientcode );
             $this -> data[CONTENT_STRING]['lastHscl'] = $this->Patient_model->get_last_hscl( $patientcode);
             
-            $color = $this->Patient_model->get_feedback_of_patient($patientcode);	
+            $color = $this->Patient_model->get_feedback_of_patient($patientcode);
             
             $this->data[CONTENT_STRING]['color'] = $color;
             
@@ -107,14 +110,18 @@ class Patient extends CI_Controller
             $this -> data[CONTENT_STRING]['patientcode'] = $patientcode;
             $this -> data[CONTENT_STRING]['status'] = $status; 	
             
-            $sb_allowed = $this -> Patient_model -> get_sb_allowed( $patientcode );
-            if( isset( $sb_allowed ) ) {
-                $this -> data[CONTENT_STRING]['sb_allowed'] = $sb_allowed;
-            }
-            
             $view_status = $this -> Patient_model -> get_view_status( $patientcode );
             
-            if( $view_status == 2 OR $user_role === 'admin' ) { // neues Feedback
+            $this -> data[CONTENT_STRING]['rechte_feedback'] = $this -> membership_model -> is_rechte_set( $username, 'rechte_feedback' );
+
+            $this -> data[CONTENT_STRING]['recommendation_status'] = $this -> User_Model -> get_status_recommendation( $patientcode, $username );
+            $this -> data[CONTENT_STRING]['sb_allowed'] = $this -> Patient_Model -> get_sb_allowed( $patientcode );
+
+            $this -> data[CONTENT_STRING]['has_gas'] = $this -> SB_model -> has_gas( $patientcode );
+            $this -> data[CONTENT_STRING]['has_request'] = $this -> SB_model -> has_filled_request( $patientcode );
+            $this -> data[CONTENT_STRING]['last_instance'] = $this -> SB_model -> getLastInstance( $patientcode );
+
+            if( $view_status == 2 || $user_role === 'admin' ) { // neues Feedback
                 $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this -> data[CONTENT_STRING] );
             }
             elseif( $view_status == 1 ) { // Kontrollgrp
@@ -127,7 +134,7 @@ class Patient extends CI_Controller
                 else{
                     //TODO details_feedback_monitoring view isn't created yet. copy it from the admin views (views/admin/user/patient/feedback)?
                     $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_monitoring', $this->data[CONTENT_STRING] );
-                }   
+                }
             }
             else {
                 /*
@@ -138,7 +145,7 @@ class Patient extends CI_Controller
                 $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this -> data[CONTENT_STRING] );
             }
             
-            $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+            $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
             $this -> template -> load( 'template' );
         }//else
     }//list()
@@ -203,7 +210,7 @@ class Patient extends CI_Controller
         $this->data[CONTENT_STRING]['allowed_receivers'] = $allowed_receivers;
 
 
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'user/patient/messages', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//messages()
@@ -229,7 +236,7 @@ class Patient extends CI_Controller
         //mark message as read
 		$this -> Message_model -> set_status( $msgid, 1, $this->data[TOP_NAV_STRING]['username'] );
 
-        $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
         $this->template->set(CONTENT_STRING, 'user/patient/showMessage', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//showMessage()
@@ -271,16 +278,17 @@ class Patient extends CI_Controller
             show_error( 'Error sending message. You can only send messages to your patients and all admins and supervisors. Your subject was "'.$request['betreff'].'" and your message was: '.$request['nachricht'], 403 );
         }
 
-		$this -> messages( );
+		redirect( 'user/patient/messages' );
     }//send_msg()
 
     public function diagnostiktool($patientcode)
     {
         $username = $this -> data[TOP_NAV_STRING]['username'];
         $user_role = $this -> data[CONTENT_STRING]['userrole'];
+        $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
         $instance = "PR";
 
-        if( $user_role === 'admin' OR $user_role === 'priviledged_user' OR ($user_role === 'supervisor' AND $this->Patient_model->is_supervisor_of_patient( $username, $patientcode ))){    
+        if( $user_role === 'admin' OR $user_role === 'privileged_user' OR ($user_role === 'supervisor' AND $this->Patient_model->is_supervisor_of_patient( $username, $patientcode ))){    
             $diagnose_user = 'admin';
         } else{
             $diagnose_user = $username;
@@ -295,14 +303,12 @@ class Patient extends CI_Controller
             $is_patient_of_user = $this -> Patient_model -> is_patient_of_user( $username, $username, $patientcode );
             //TODO $recommendation_status is missing:
             if ( empty($recommendation_status[0]) AND $user_role === 'user' AND $is_patient_of_user){
-                $this->User_model->insert_recommendation_status( $username, $patientcode );
+                $this->User_Model->insert_recommendation_status( $username, $patientcode );
             }
                 
-            //$this->Patient_model->set_r2_test( $patientcode );  
 			$this->data[CONTENT_STRING]['suicideItems'] = $this->Questionnaire_model->get_suicide_data($patientcode, $instance);
-            //$this->Patient_model->set_nn_therapists_test( $patientcode );  
 
-            $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
+            $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
             $this->template->set(CONTENT_STRING, 'user/patient/diagnostiktool', $this->data[CONTENT_STRING]);
             $this->template->load('template');    
         }//else

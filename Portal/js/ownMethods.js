@@ -16,7 +16,7 @@ $(function() {
 	});
 });
 
-$(function() {
+$(function() 
 	$( "#tag" ).datepicker({
 		dateFormat: "dd-mm-yy",
 		showWeek: true,
@@ -144,55 +144,6 @@ $(function() {
 });
 
 /*
-* jPlayer Konfiguration
-*
-*
-* @author Ruven Martin
-* @since 0.8.0
-*/
-
- $(document).ready(function(){
-	$("#jquery_jplayer_ort").jPlayer({
-		ready: function () {
-			$(this).jPlayer("setMedia", {
-				mp3: "http://psylutz84/ci_pf_0.8.0/audio/ort.mp3"
-			});
-		},
-        swfPath: "http://psylutz84/ci_pf_0.8.0/js",
-        supplied: "mp3"
-	});
-	
-	$("#jquery_jplayer_tresor").jPlayer({
-		ready: function () {
-			$(this).jPlayer("setMedia", {
-				mp3: "http://psylutz84/ci_pf_0.8.0/audio/tresor.mp3"
-			});
-		},
-        swfPath: "http://psylutz84/ci_pf_0.8.0/js",
-        supplied: "mp3"
-	});
-	
-	$("#jquery_jplayer_basisuebung").jPlayer({
-		ready: function () {
-			$(this).jPlayer("setMedia", {
-				mp3: "http://psylutz84/ci_pf_0.8.0/audio/atem_beobachten.mp3"
-			});
-		},
-        swfPath: "http://psylutz84/ci_pf_0.8.0/js",
-        supplied: "mp3"
-	});
-	
-	$("#jquery_jplayer_bodyscan").jPlayer({
-		ready: function () {
-			$(this).jPlayer("setMedia", {
-				mp3: "http://psylutz84/ci_pf_0.8.0/audio/body_scan.mp3"
-			});
-		},
-        swfPath: "http://psylutz84/ci_pf_0.8.0/js",
-        supplied: "mp3"
-	});
-});
-/*
 * jPlayer Konfiguration für Video
 *
 *
@@ -216,4 +167,4 @@ function switch_language(lang){
 
 
 // **** INFO Tooltip mit Bootstrap (anstatt mit tooltip standard plugin von jQuery)
-// - <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button>
+// - <button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button>

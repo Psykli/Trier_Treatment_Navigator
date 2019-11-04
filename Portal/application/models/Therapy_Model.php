@@ -61,66 +61,62 @@ class Therapy_Model extends CI_Model
         //Initialisiere eine leeres Arrays
 		$reminds = array(); 
 
-        if( isset( $patientcode ) )
+        //Anzahl der Sitzungen, die nach einer Zwischenmessung vergangen sein m�ssen um eine Meldung zu erzeugen
+        $anzahlSitzungen = 2;
+    
+        //Hole letzte "Instance" aus den Sitzungsb�gen
+        $this -> db -> db_select( );
+
+        $sql = "SELECT code, instance
+                    FROM `einzelfragen_patient_sitzungsbogen`
+                    WHERE code=? 
+                    ORDER BY instance DESC
+                    LIMIT 1";
+                    
+        $query = $this -> db -> query( $sql, array( $patientcode ) );
+
+        if( $query -> num_rows( ) == 1 )
         {
-
-			//Anzahl der Sitzungen, die nach einer Zwischenmessung vergangen sein m�ssen um eine Meldung zu erzeugen
-			$anzahlSitzungen = 2;
-		
-            //Hole letzte "Instance" aus den Sitzungsb�gen
-            $this -> db -> db_select( );
-
-            $sql = "SELECT code, instance
-                        FROM `einzelfragen_patient_sitzungsbogen`
-                        WHERE code=? 
-                        ORDER BY instance DESC
-                        LIMIT 1";
-                        
-            $query = $this -> db -> query( $sql, array( $patientcode ) );
-
-            if( $query -> num_rows( ) == 1 )
+            $last_instance = $query -> row(0) -> instance;
+            
+            if( strcasecmp( $last_instance, 'KI' ) != 0 && is_numeric( $last_instance ) )
             {
-                $last_instance = $query -> row(0) -> instance;
-                
-                if( strcasecmp( $last_instance, 'KI' ) != 0 && is_numeric( $last_instance ) )
+                for( $i=1; $i<=( $last_instance-$anzahlSitzungen )/5; $i++ )
                 {
-                    for( $i=1; $i<=( $last_instance-$anzahlSitzungen )/5; $i++ )
+                    $instance_number = $i * 5;
+                    if( $instance_number == 5 )
+                        $instance = 'Z05';
+                    else
+                        $instance = 'Z'.$instance_number;
+                    /**
+                    $sql = "SELECT instance
+                            FROM `1 oq-30`
+                            WHERE code=? && instance=?";
+
+                    Folgende $sql ist platzhalter!
+                    */
+                    $sql = "SELECT instance
+                    FROM `einzelfragen_patient_sitzungsbogen`
+                    WHERE code=? && instance=?";
+                    $query = $this -> db -> query( $sql, array( $patientcode, $instance ) );
+                    
+                    if( $query -> num_rows( ) == 0 )
                     {
-                        $instance_number = $i * 5;
-                        if( $instance_number == 5 )
-                            $instance = 'Z05';
-                        else
-                            $instance = 'Z'.$instance_number;
-                        /**
-                        $sql = "SELECT instance
-                                FROM `1 oq-30`
-                                WHERE code=? && instance=?";
-
-                        Folgende $sql ist platzhalter!
-                        */
-                        $sql = "SELECT instance
-                        FROM `einzelfragen_patient_sitzungsbogen`
-                        WHERE code=? && instance=?";
-                        $query = $this -> db -> query( $sql, array( $patientcode, $instance ) );
+                        $username = $this->session->userdata( 'username' );
+                        $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patientcode, false );
                         
-                        if( $query -> num_rows( ) == 0 )
-                        {
-                            $username = $this->session->userdata( 'username' );
-                            $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patientcode, false );
-                            
-                            $remind_date = $this -> Remind_Model -> is_zw_remind_deleted( $username, $patientcode, $instance );
-                            
-                            if( $remind_date === FALSE){
-                                //Schreibe die Therapeuteninitialen noch mit in das Array
-                                $reminds[] = array( 'therapeut' => $therapeut, 'code'=> $patientcode, 'instance' => $instance );
-                            }//if
-                        }//if	
+                        $remind_date = $this -> Remind_Model -> is_zw_remind_deleted( $username, $patientcode, $instance );
                         
-                    }//for
-                }//if
+                        if( $remind_date === FALSE){
+                            //Schreibe die Therapeuteninitialen noch mit in das Array
+                            $reminds[] = array( 'therapeut' => $therapeut, 'code'=> $patientcode, 'instance' => $instance );
+                        }//if
+                    }//if	
+                    
+                }//for
             }//if
-        }//if		
-
+        }//if
+        
         return $reminds;
     }//get_zw_reminds_of_patient()
 
@@ -128,217 +124,59 @@ class Therapy_Model extends CI_Model
         //Initialisiere eine leeres Arrays
 		$reminds = array(); 
 
-        if( isset( $patientcode ) )
+        //Anzahl der Sitzungen, die nach einer Zwischenmessung vergangen sein m�ssen um eine Meldung zu erzeugen
+        $anzahlSitzungen = 2;
+    
+        //Hole letzte "Instance" aus den Sitzungsb�gen
+        $this -> db -> db_select( );
+
+        $sql = "SELECT code, instance
+                    FROM `einzelfragen_patient_sitzungsbogen`
+                    WHERE code=? 
+                    ORDER BY instance DESC
+                    LIMIT 1";
+                    
+        $query = $this -> db -> query( $sql, array( $patientcode ) );
+
+        if( $query -> num_rows( ) == 1 )
         {
-
-			//Anzahl der Sitzungen, die nach einer Zwischenmessung vergangen sein m�ssen um eine Meldung zu erzeugen
-			$anzahlSitzungen = 2;
-		
-            //Hole letzte "Instance" aus den Sitzungsb�gen
-            $this -> db -> db_select( );
-
-            $sql = "SELECT code, instance
-                        FROM `einzelfragen_patient_sitzungsbogen`
-                        WHERE code=? 
-                        ORDER BY instance DESC
-                        LIMIT 1";
-                        
-            $query = $this -> db -> query( $sql, array( $patientcode ) );
-
-            if( $query -> num_rows( ) == 1 )
+            $last_instance = $query -> row(0) -> instance;
+            
+            if( strcasecmp( $last_instance, 'KI' ) != 0 && is_numeric( $last_instance ) )
             {
-                $last_instance = $query -> row(0) -> instance;
-                
-                if( strcasecmp( $last_instance, 'KI' ) != 0 && is_numeric( $last_instance ) )
+                for( $i=1; $i<=( $last_instance-$anzahlSitzungen )/5; $i++ )
                 {
-                    for( $i=1; $i<=( $last_instance-$anzahlSitzungen )/5; $i++ )
-                    {
-                        $instance_number = $i * 5;
-                        if( $instance_number == 5 )
-                            $instance = 'Z05';
-                        else
-                            $instance = 'Z'.$instance_number;
-                        
-                        $sql = "SELECT instance
-                                FROM `haq-f`
-                                WHERE code=? && instance=?";
-                                
-                        $query = $this -> db -> query( $sql, array( $patientcode, $instance ) );
+                    $instance_number = $i * 5;
+                    if( $instance_number == 5 )
+                        $instance = 'Z05';
+                    else
+                        $instance = 'Z'.$instance_number;
+                    
+                    $sql = "SELECT instance
+                            FROM `haq-f`
+                            WHERE code=? && instance=?";
+                            
+                    $query = $this -> db -> query( $sql, array( $patientcode, $instance ) );
 
-                        if( $query -> num_rows( ) == 0 )
-                        {
-                            $username = $this->session->userdata( 'username' );
-                            $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patientcode, false );
-                            $remind_date = $this -> Remind_Model -> is_remind_type_deleted( $therapeut, $patientcode, $instance,'haq_remind' ); 
-                            if( $remind_date === FALSE){
-                                //Schreibe die Therapeuteninitialen noch mit in das Array
-                                $reminds[] = array( 'therapeut' => $therapeut, 'code'=> $patientcode, 'instance' => $instance );
-                            }//if
-                        }//if	
-                        
-                    }//for
-                }//if
+                    if( $query -> num_rows( ) == 0 )
+                    {
+                        $username = $this->session->userdata( 'username' );
+                        $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patientcode, false );
+                        $remind_date = $this -> Remind_Model -> is_remind_type_deleted( $therapeut, $patientcode, $instance,'haq_remind' ); 
+                        if( $remind_date === FALSE){
+                            //Schreibe die Therapeuteninitialen noch mit in das Array
+                            $reminds[] = array( 'therapeut' => $therapeut, 'code'=> $patientcode, 'instance' => $instance );
+                        }//if
+                    }//if	
+                    
+                }//for
             }//if
-        }//if		
+        }//if
+
         return $reminds;
     }//get_haq_reminds_of_patient()
 
-        /* Muss erst noch abgeklärt werden 
-
-    public function get_reminds_of_user($username)
-    {
-	//Initialisiere eine leeres Arrays
-	$reminds = array(); 
-    if(isset($username))
-    {
-		//Anzahl der Wochen, ab der eine Meldung erscheinen soll
-		$anzahlWochen = 8;
-		//Alle Patienten eines Therapeuten
-		$patients = $this->Patient_model->get_all_patients( $username );
-		//Als "letztes Datum" soll nun das Datum des letzten TSTB geholt werden, aber nur bei den "laufenden" Patienten
-		foreach( $patients as $patient )
-		{
-			//Dabei m�ssen nur die Patienten betrachetet werden, bei denen der Zustand 1 ist (also Laufend).
-			if( strcasecmp($patient->zustand, "1") == 0 )
-			{
-				//Hole Datum des letzten HSCL 11					
-                $this -> db -> db_select( );
-				$sql = "SELECT code, tsbdat
-						FROM `5 tstb`
-						WHERE code=? 
-						ORDER BY tsbdat DESC
-						LIMIT 1";
-				$query = $this -> db -> query( $sql, array( $patient->code ) );
-				if( $query -> num_rows( ) == 1 )
-				{
-					$tsbDate = $query -> row(0) ->tsbdat;
-					//Pr�fe ob die Kalenderwoche von Heute - Kalenderwoche von $tsbDate l�nger als 8 Wochen her ist		
-					if ( ( time() - strtotime($tsbDate) ) >= $anzahlWochen*7*24*60*60)
-					{
-						//Schreibe die Therapeuteninitialen noch mit in das Array
-                        $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patient->code, false );
-                        $remind_date = $this -> Remind_model -> is_therapy_remind_deleted( $username, $patient->code );
-                        if( $remind_date === FALSE OR strtotime($remind_date) <= strtotime('-8 weeks'))
-                        {
-							$reminds[] = array('therapeut' => $therapeut, 'code'=> $patient->code, 'datum' => $tsbDate);	
-                        }
-					}	
-				}					
-			}//if		
-		}//foreach  
-    }//if
-    return $reminds;
-    }
-
-    public function get_gas_reminds_of_user( $username )
-    {
-		//Initialisiere eine leeres Arrays
-		$gasReminds = array();
-        if( isset( $username ) )
-        {
-			//Alle Patienten eines Therapeuten bzw. alle Patienten wenn man als Admin eingeloggt ist
-			$patients = $this->Patient_model->get_all_patients( $username );
-			//Als "letztes Datum" soll nun das Datum des letzten TSTB geholt werden, aber nur bei den "laufenden" Patienten
-			foreach($patients as $patient)
-			{
-				//Dabei m�ssen nur die Patienten betrachetet werden, bei denen der Zustand 1 ist (also Laufend).
-				if( strcasecmp($patient->zustand, "1") == 0 )
-				{
-					//W�hle die DB aus				
-					$this -> db -> db_select( );
-					//Pr�fe ob der Patient mindestens elf Sitzungen hat (als 1. Sitzung wird Z01 gez�hlt)
-					$sql = "SELECT instance
-							 FROM `5 tstb`
-							 WHERE code=?
-							 ORDER BY instance DESC
-							 LIMIT 1";
-					$query = $this -> db -> query( $sql, array( $patient->code ) );
-					if( $query -> row( 0 ) -> instance >= 11 )
-					{
-						//Pr�fe ob der GAS mindestens einmal in einer Sitzung (LIKE 'Z%') ausgef�llt wurde
-						$sql = "SELECT code
-								 FROM `5 gas`
-								 WHERE code=? AND instance LIKE 'Z%'";
-						$query = $this -> db -> query( $sql, array( $patient->code ) );
-
-						if( $query -> num_rows( ) == 0 )
-						{
-							//Schreibe die Therapeuteninitialen noch mit in das Array
-                            $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patient->code, false );
-                            $remind_date = $this -> Remind_model -> is_gas_remind_deleted( $therapeut, $patient->code );
-                            if( $remind_date === FALSE OR strtotime($remind_date) <= strtotime('-8 weeks')){
-							    $gasReminds[] = array( 'therapeut' => $therapeut, 'code'=> $patient->code );
-                            }
-						}//if					
-					}//if		
-				}//if		
-			}//foreach  
-        }//if
-        return $gasReminds;
-    }//get_reminds_of_user()
-
-    public function get_zw_reminds_of_user( $username )
-    {
-		//Initialisiere eine leeres Arrays
-		$reminds = array(); 
-        if( isset( $username ) )
-        {
-			//Anzahl der Sitzungen, die nach einer Zwischenmessung vergangen sein m�ssen um eine Meldung zu erzeugen
-			$anzahlSitzungen = 2;
-			//Alle Patienten eines Therapeuten
-			$patients = $this->Patient_model->get_all_patients( $username );
-			//Als "letztes Datum" soll nun das Datum des letzten TSTB geholt werden, aber nur bei den "laufenden" Patienten
-			foreach( $patients as $patient )
-			{
-				//Dabei m�ssen nur die Patienten betrachetet werden, bei denen der Zustand 1 ist (also Laufend).
-				if( strcasecmp($patient->zustand, "1") == 0 )
-				{
-					//Hole letzte "Instance" aus den Sitzungsb�gen
-					$this -> db -> db_select( );
-					$sql = "SELECT code, instance
-							 FROM `1 einzelfragen patient sitzungsbogen`
-							 WHERE code=? 
-							 ORDER BY instance DESC
-							 LIMIT 1";		 
-					$query = $this -> db -> query( $sql, array( $patient->code ) );
-					if( $query -> num_rows( ) == 1 )
-					{
-						$last_instance = $query -> row(0) -> instance;
-						if( strcasecmp( $last_instance, 'KI' ) != 0 && is_numeric( $last_instance ) )
-						{
-							for( $i=1; $i<( $last_instance-$anzahlSitzungen )/5; $i++ )
-							{
-								$instance_number = $i * 5;
-								if( $instance_number == 5 )
-									$instance = 'Z05';
-								else
-									$instance = 'Z'.$instance_number;
-								$sql = "SELECT instance
-										FROM `1 oq-30`
-										WHERE code=? && instance=?";
-								$query = $this -> db -> query( $sql, array( $patient->code, $instance ) );
-								if( $query -> num_rows( ) == 0 )
-								{
-                                    $therapeut = $this->Patient_model->get_therapist_of_patient( $username, $patient->code, false );
-                                    $remind_date = $this -> Remind_model -> is_zw_remind_deleted( $therapeut, $patient->code, $instance ); 
-									if($remind_date === FALSE OR  strtotime($remind_date) <= strtotime('-8 weeks')){
-										//Schreibe die Therapeuteninitialen noch mit in das Array
-										$reminds[] = array( 'therapeut' => $therapeut, 'code'=> $patient->code, 'instance' => $instance );
-                                    }
-								}	
-							}
-						}
-					}					
-				}//if		
-			}//foreach  
-        }//if
-        return $reminds;
-    }//get_zw_reminds_of_user()
-
-    WARTEN BIS GEKLÄRT
-    */
-
-
+  
 
     /*
     get_status_data existierte vorher sowohl im patient controller, als auch im dashboard view 
@@ -419,7 +257,7 @@ class Therapy_Model extends CI_Model
         }
 
         return $status;
-    }//extract_status_data_from_patients
+    }//extract_status_data_from_patients()
 
     /*Vereinigung der alten "get_count_of ..." Funktionen
     Der Parameter $zustand determiniert, welcher Count zurückgegeben wird
@@ -442,7 +280,7 @@ class Therapy_Model extends CI_Model
 				$this->db->select( 'dok012' );
 				$this->db->from( 'dokumentation' );
 				$this->db->join( 'subjects', 'dokumentation.code = subjects.code' );
-                $this->db->where( 'therpist', $username );
+                $this->db->where( 'therapist', $username );
                 //Dies ist die einzige Zeile gewesen, in der sich die alten Funktionen unterschieden haben
                 switch($zustand)
                 {
@@ -460,17 +298,17 @@ class Therapy_Model extends CI_Model
                         break;
                     case 'dropout':
                         $this->db->where( 'dok012', self::DROPOUT );
-                        $this->db->or_where( 'therpist', $username );
+                        $this->db->or_where( 'therapist', $username );
                         $this->db->where( 'dok012', self::DROPOUT_IN_PROBATORIK );	
-                        $this->db->or_where( 'therpist', $username );
+                        $this->db->or_where( 'therapist', $username );
                         $this->db->where( 'dok012', self::DROPOUT_in_PROBATORIK_THERAPEUT  );	
-                        $this->db->or_where( 'therpist', $username );
+                        $this->db->or_where( 'therapist', $username );
                         $this->db->where( 'dok012', self::DROPOUT_in_PROBATORIK_PATIENT );	
-                        $this->db->or_where( 'therpist', $username );
+                        $this->db->or_where( 'therapist', $username );
                         $this->db->where( 'dok012', self::DROPOUT_THERAPEUT );	
-                        $this->db->or_where( 'therpist', $username );
+                        $this->db->or_where( 'therapist', $username );
                         $this->db->where( 'dok012', self::DROPOUT_PATIENT );						
-                        $this->db->or_where( 'therpist', $username );
+                        $this->db->or_where( 'therapist', $username );
                         $this->db->where( 'dok012', self::DROPOUT_FORMAL );
                         break;
                 }
@@ -481,7 +319,7 @@ class Therapy_Model extends CI_Model
                 break;
             default:
                 log_message( 'error', 'Userrole is not valid.');
-                log_message( 'error', '> Userrole:.' - $user_role );
+                log_message( 'error', '> Userrole:.' . $user_role );
         }//switch
 
         return $count;

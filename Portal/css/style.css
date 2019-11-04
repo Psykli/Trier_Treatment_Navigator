@@ -43,23 +43,6 @@
  * @author Martin Kock <code @ deeagle.de>
  */
  
-#main_content_container /*.wrapper*/ {
-    padding-left: 100px;
-    padding-right: 100px;
-	height: auto;
-	margin-bottom: 70px; 
-}
-
-#header_container {
-    bottom: 0;
-    content: "";
-    display: block;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin-top: 50px;
-}
 p {color: black;
    font-size: 16px;
    text-align: justify;
@@ -71,12 +54,6 @@ p {color: black;
 	padding: 20px 20px 20px 30px;
 }
 
-
-
-.logo_container {
-    height: auto;
-    margin-bottom: 20px;
-}
 
 #portal_entries ul {
     margin-top: 50px;
@@ -129,10 +106,6 @@ fieldset {
     margin: auto;
     margin-bottom: 2em;
     display: block;
-}
-
-.bottom_spacer {
-    margin-bottom: 50px;
 }
 
 #member_area .info {
@@ -542,7 +515,77 @@ fieldset {
     right: -25px;
 }
 
-/* Questionnaire tool */
+caption{
+    caption-side: top;
+}
+
+
+/* Questionnaire tool and messages */
 .clickable {
     cursor: pointer !important;
+}
+
+
+/* Messages */
+.remove_text_decoration {
+    text-decoration: none !important;
+}
+
+.display_block {
+    display: block;
+}
+
+.remove_margin_bottom {
+    margin-bottom: 0 !important;
+}
+
+/* Profile */
+.password-progress {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.password-progress-bar {
+    width: 0;
+}
+
+#header_container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.75);
+    height: 119px;
+    background-image: url('../img/header_logo.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* admin's create new user page */
+.no-left-padding {
+    padding-left: 0;
+}
+
+/* admin's user statistics page */
+.scrollable-dropdown {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+/* General styles */
+select.custom-select {
+    /* Hide the up/down arrows for <select> form elements styled by datatables because already have a dropdown button */
+    background: none;
+}
+
+.bottom_spacer_25px {
+    margin-bottom: 25px;
+}
+
+.bottom_spacer_50px {
+    margin-bottom: 50px;
 }

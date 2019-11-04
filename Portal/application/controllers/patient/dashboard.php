@@ -25,8 +25,8 @@ class Dashboard extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-		
-		$this->load->Model( 'Exercise_model' );
+		$this->load->Model('membership_model');
+        $this->load->Model('session_model');
 		$this->load->Model( 'Patient_model' );
         $this->load->Model( 'Message_model' );
         $this->load->Model( 'Questionnaire_tool_model' );
@@ -70,14 +70,17 @@ class Dashboard extends CI_Controller
         $username = $this->data[TOP_NAV_STRING]['username'];
 
         $this->data[CONTENT_STRING]['anzahlMsg'] = $this-> Message_model -> get_count_of_unread_received_msgs( $username );	
-        $this->data[CONTENT_STRING]['questionnaireAvailable'] = $this->Questionnaire_tool_model->is_questionnaire_available($username);
-
         $this->data[CONTENT_STRING]['datenschutz_status'] = $this-> Patient_model -> get_datenschutz_status_by_patient( $username );
         
+        $qid = $this->Questionnaire_tool_model->get_questionnaire_id_by_table('ziel-fragebogen-internetinterventionen');
+        $this->data[CONTENT_STRING]['zfi'] = $this -> Questionnaire_tool_model -> get_single_released_questionnaire($username, $qid, null, 0);
+
+        $this->data[CONTENT_STRING]['questionnaire_list'] = $this -> Questionnaire_tool_model -> get_released_not_finished_questionnaires( $username );
+
         $loginDate = $this -> Piwik_model -> get_last_date_for_user( $username );
         $login = $this -> Questionnaire_tool_model -> get_last_login( $username );
         
-        if( !empty( $loginDate ) AND strtotime( $loginDate ) > strtotime( $login ) ) {
+        if( !empty( $loginDate ) && strtotime( $loginDate ) > strtotime( $login ) ) {
             $login = $loginDate;
         }
         
@@ -87,12 +90,12 @@ class Dashboard extends CI_Controller
         $qid = $this -> Questionnaire_tool_model -> get_questionnaire_id_by_table( "einhaltung_von_internetinterventionen" );
         $fei = $this -> Questionnaire_tool_model -> get_single_released_questionnaire( $username, $qid, null, false );
         
-        if( !empty( $login ) AND strtotime( "-1 week" ) > strtotime( $login ) AND empty( $fei ) ) {
+        if( !empty( $login ) && strtotime( "-1 week" ) > strtotime( $login ) && empty( $fei ) && !is_null( $qid ) ) {
             $otNum = $this -> Questionnaire_tool_model -> get_next_instance_of_questionnaire( $qid, $username, $therapist, "OT" );
             $this -> Questionnaire_tool_model -> insert_questionnaire( $therapist, $username, $qid, "OT".$otNum );
         }
 
-        $this -> template -> set( TOP_NAV_STRING, 'patient/top_nav', $this->data[TOP_NAV_STRING] );
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'patient/dashboard', $this->data[CONTENT_STRING] );        
         $this -> template -> load( 'template' );
     }//index()

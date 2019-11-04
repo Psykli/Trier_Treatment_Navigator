@@ -1,5 +1,5 @@
 <div id="member_area" class="patient">
-    <div class="media bottom_spacer place_headline">
+    <div class="media bottom_spacer_50px place_headline">
         <a class="pull-left">
             <img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient-index.png" data-src="holder.js/32x32">
         </a>

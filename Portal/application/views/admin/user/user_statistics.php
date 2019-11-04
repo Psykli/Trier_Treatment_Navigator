@@ -10,17 +10,13 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <ol class="breadcrumb">
-                <li><a href="<?php echo base_url(); ?>/index.php/admin/user">Benutzer</a> </li>
-                <li><a href="<?php echo base_url(); ?>/index.php/admin/user/list_all">Liste</a> </li>
-                <li><a href="<?php echo base_url().'index.php/admin/user/edit_user/'.$id ?>">Benutzerprofil</a> </li>
-                <li class="active">Benutzerstatistik</li>
-            </ol>
-        </div>
-    </div>
+<div class="menu">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<?php echo base_url(); ?>/index.php/admin/user">Benutzer</a></li>
+        <li class="breadcrumb-item"><a href="<?php echo base_url(); ?>/index.php/admin/user/list_all">Liste</a></li>
+        <li class="breadcrumb-item"><a href="<?php echo base_url().'index.php/admin/user/edit_user/'.$id ?>">Benutzerprofil</a></li>
+        <li class="active breadcrumb-item">Benutzerstatistik</li>
+    </ul>        
 </div>
 
 <script>
@@ -68,18 +64,18 @@
 ?>
 
 <div class="btn-group">
-    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <button class="btn btn-info dropdown-toggle" type="button" id="listDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Ansicht
         <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu">
+    <div class="dropdown-menu scrollable-dropdown" aria-labelledby="listDropdownButton">
     <?php 
-        echo '<li><a href="'.base_url().'index.php/admin/user/user_statistics/'.$id.'">Alle</a></li>';
+        echo '<a class="dropdown-item" href="'.base_url().'index.php/admin/user/user_statistics/'.$id.'">Alle</a>';
         foreach ($patients as $patient) {
-            echo '<li><a href="'.base_url().'index.php/admin/user/user_statistics/'.$id.'/'.$patient.'">'.$patient.'</a></li>';
+            echo '<a class="dropdown-item" href="'.base_url().'index.php/admin/user/user_statistics/'.$id.'/'.$patient.'">'.$patient.'</a>';
         }
     ?>
-    </ul>
+    </div>
 </div>
 
 <?php 

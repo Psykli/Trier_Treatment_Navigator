@@ -1,7 +1,7 @@
 <script src="<?php echo base_url(); ?>js/charts/status.js"></script>
 <script src="<?php echo base_url(); ?>js/charts/suicideSingle.js"></script>
 
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
 	<a class="pull-left" href="#">
 		<img class="media-object" src="<?php echo base_url( ); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
 	</a>
@@ -11,13 +11,15 @@
 </div>
 
 <!-- Navigation -->
-<ol class="breadcrumb">
-	<li><a href="<?php echo base_url( ); ?>index.php/<?php echo $userrole; ?>/dashboard">Meine Patientenübersicht</a></li>
-	<li><?php $link = $userrole.'/patient/list_all' ?>
-		<?php echo anchor( $link, 'Patientenliste' ); ?></li>
-	<li><a href="<?php echo base_url( ); ?>index.php/user/patient/list/<?php echo $patientcode; ?>">Patientendetails</a></li>
-	<li class="active">Statusrückmeldung</li>
-</ol>
+<nav class="menu">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<?php echo base_url( ); ?>index.php/<?php echo $userrole; ?>/dashboard">Meine Patientenübersicht</a></li>
+        <li class="breadcrumb-item"><?php $link = $userrole.'/patient/list_all' ?>
+            <?php echo anchor( $link, 'Patientenliste' ); ?></li>
+        <li class="breadcrumb-item"><a href="<?php echo base_url( ); ?>index.php/user/patient/list/<?php echo $patientcode; ?>">Patientendetails</a></li>
+        <li class="breadcrumb-item active">Statusrückmeldung</li>
+    </ol>
+</nav>
 <?php if( !isset( $instance ) OR !isset( $patientcode ) ): //ERROR during transmit ?>
 	<div class="alert alert-danger">
 		Fehlerhafte Übermittlung von Sitzung und Patientencode.
@@ -29,8 +31,8 @@
 <?php else: ?>
     <div class="row">
         <div class="col-sm-8">
-            <div class="panel panel-default">
-                    <div class="panel-body">
+            <div class="card ">
+                    <div class="card-body">
                         <b>Code: </b> <?php echo $patientcode; ?> - 
                         <b>Sitzung: </b>                        
                         <?php if( isset( $instance ) ): ?>
@@ -46,44 +48,36 @@
                         <?php endif; ?>
                         <hr />
                         <?php $link = $instance !== "PR-PO Vergleich" ? 'user/status/index' . $instance . '/' .$patientcode.'/status_all' : 'user/status/index/NULL/' .$patientcode.'/pr_po_status_all'; ?>			
-                    </div><!-- panel-body -->
-                </div><!-- panel panel-default -->
+                    </div><!-- card-body -->
+                </div><!-- card  -->
             <!-- Init Index für Graphiken; wird nach jeder erstellten Graphik inkrementiert und dem Funktionsaufruf übergeben, da alle Graphiken in einem JS Object vorhanden sind; der andere Index wird für die Darstellung der Statusinformation benötigt-->
             <?php $graphindex = 0; ?>
-			<div class="panel panel-default">
-				<div class="panel-heading">Suizidalitäts-Items</div>
-				<div class="panel-body">
-					<?php if (isset($suicideItems[0])): ?>
-						<canvas id="suicideOne" width="100" height="70"></canvas>
-						<br>
-						<script>
-							createSingleSuicide('suicideOne',<?php echo json_encode($suicideItems[0]['PHQ009'])?>,["Gedanken, dass Sie lieber tot wären","oder sich Leid zufügen möchten (PHQ009)"],<?php echo json_encode($graphindex);?>,[3,3,3],3,{0: ['überhaupt','nicht'], 1: 'einzelne Tage', 2: ['mehr als die','Hälfte der Tage'], 3: ['beinahe','jeden Tag']},true,"Wie oft fühlten Sie sich im Verlauf der letzten 2 Wochen durch die folgenden Beschwerden beeinträchtigt?");
-						</script>
-						<?php $graphindex++; ?>
-					<?php endif; ?>
-					<?php if (isset($suicideItems[1])): ?>
-						<canvas id="suicideTwo" width="100" height="70"></canvas>
-						<script>
-							createSingleSuicide('suicideTwo',<?php echo json_encode($suicideItems[1]['HSC010'])?>,["Gedanken an den Tod und das Sterben ? (HSC010)"],<?php echo json_encode($graphindex);?>,[3,3,3],3,{0: ['überhaupt','nicht'], 1: 'ein bisschen', 2: 'ziemlich', 3: 'sehr'},false,"Wie sehr litten Sie in den letzten sieben Tagen unter ...",);
-						</script>
-						<?php $graphindex++; ?>
-					<?php endif; ?>
+            <?php if (isset($suicideItems[0])): ?>
+			<div class="card ">
+				<div class="card-header">Suizidalitäts-Items</div>
+				<div class="card-body">
+                    <canvas id="suicideTwo" width="100" height="70"></canvas>
+                    <script>
+                        createSingleSuicide('suicideTwo',<?php echo json_encode($suicideItems[0]['HSC010'])?>,["Gedanken an den Tod und das Sterben ? (HSC010)"],<?php echo json_encode($graphindex);?>,[3,3,3],3,{0: ['überhaupt','nicht'], 1: 'ein bisschen', 2: 'ziemlich', 3: 'sehr'},false,"Wie sehr litten Sie in den letzten sieben Tagen unter ...",);
+                    </script>
+                    <?php $graphindex++; ?>		
 				</div>
 			</div>
-			<!-- Dieser Index dient zum Referenzieren der Fragebögen im Array-->
-            <div class="panel-group" id="accordion3">
+            <?php endif; ?>
+            <!-- Dieser Index dient zum Referenzieren der Fragebögen im Array-->
+            
+            <div id="accordion3">
                 <?php foreach ($means as $table => $mean): ?>
-						<?php 
-							$names = array_keys($mean);
+                    <?php 
+                    if(array_key_exists($instance, $mean[array_keys($mean)[0]])):
+                            $names = array_keys($mean);                           
 						?>
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion3" href="#1<?php echo $table; ?>"><?php echo $table; ?></a>
-                                </h3>
-                            </div>
-                            <div id="1<?php echo $table ?>" class="panel-collapse collapse">
-                                <div class="panel-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse<?php echo $table;?>"><?php echo $table;?></button></h5>
+                        </div>
+                        <div id="collapse<?php echo $table;?>" class="collapse" data-parent="#accordion3">
+                        <div class="card-body">
                                     <p>
                                         <?php echo $infos[$table][array_keys($mean)[0]]->description;?>
                                     </p>
@@ -144,7 +138,7 @@
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                                                 </div><!-- end:.modal-footer -->
                                             </div><!-- end:.modal.content -->
                                         </div><!-- end:.modal-dialog -->
@@ -192,17 +186,17 @@
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                                                 </div><!-- end:.modal-footer -->
                                             </div><!-- end:.modal.content -->
                                         </div><!-- end:.modal-dialog -->
                                     </div><!-- end:.modal -->
                                 </div>
-                            </div>                       
                         </div>
-                        <?php $index++; ?>
-                <?php endforeach ?>
-            </div><!-- panel-group -->
+                    </div>
+                    <?php $index++; ?>
+                    <?php endif;endforeach ?>
+            </div><!-- card-group -->
         </div><!-- col-sm-8 -->
     </div><!-- row -->
 <?php endif ?>

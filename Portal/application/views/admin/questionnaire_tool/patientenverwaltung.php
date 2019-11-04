@@ -5,22 +5,19 @@
 			<h3>Fragebogen-Tool</h3>
 			
 			<ul class="nav nav-tabs" role="tablist">
-				<li><?php echo anchor( 'admin/questionnaire_tool', 'Startseite' ); ?></li>
-				<li class="active"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array('class' => 'clickable') ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung' ); ?></li>
-                <li><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung' ); ?></li>
-				
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array("class" => 'nav-link active') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array("class" => 'nav-link') ); ?></li>
 			</ul>
 		</div>
 	</div>
     <br/><br/><br/>
 <div class="row">
 	<div class="col-md-6">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Fragebogen für Patienten</h3>
-			</div>
-			<div class="panel-body">
+		<div class="card">
+			<h3 class="card-header">Fragebogen für Patienten</h3>
+			<div class="card-body">
 				<p>In diesem Bereich können Sie nach einzelnen Patienten suchen oder nach Patienten, die zu einem Therapeuten gehören.</p>
 				<div class="col-md-12">
 					<?php echo form_open( 'admin/questionnaire_tool/patientenverwaltung', array( 'role' => 'form' ) ); ?>
@@ -33,7 +30,7 @@
 					<br/>
 				</div>
 			</div>
-		</div><!-- /.panel panel-default -->
+		</div><!-- /.card  -->
 	</div><!-- /.col-md-6 -->
 </div><!-- /.row -->
 
@@ -51,7 +48,14 @@
 		<?php 
 			if( isset( $patients ) ):
 		?>
-			<table class="table table-bordered table-striped">
+			<script>
+				$(document).ready(function(){
+					$('#patientQueryResults').DataTable( {
+						"searching": false
+					 } );
+				});
+			</script>
+			<table id="patientQueryResults" class="table table-bordered table-striped">
 				<thead>
 					<tr>
 						<th width="5%">Patientencode</th>
@@ -63,37 +67,37 @@
 				<?php foreach( $patients as $patient ): ?>
 						<tr>
 							<td>
-								<a class="btn btn-default" href="<?php echo site_url();?>/admin/questionnaire_tool/show_questionnaire_list/<?php echo $patient -> CODE;?>"><?php echo $patient -> CODE; ?></a>
+								
+								<a class="btn btn-outline-secondary" href="<?php echo site_url();?>/admin/questionnaire_tool/show_questionnaire_list/<?php echo $patient -> CODE;?>"><?php echo $patient -> CODE;  ?></a>
 							</td>
 							<td>
-								<?php echo $patient -> THERPIST; ?>
+								<?php echo $patient -> THERAPIST; ?>
 							</td>
 							<td>
 								<?php 
-									$questionnaire_released = $this -> Questionnaire_tool_model -> get_released_questionnaires( $patient -> CODE, 0 );
+									$questionnaire_released = $released_questionnaires[$patient -> CODE];
 									$ordered_quests = array();
 									if(isset($questionnaire_released)){
 										foreach($questionnaire_released as $questionnaire){
 											$ordered_quests[$questionnaire->tablename][] = $questionnaire;
 										}
 									}
-								
 								?>
 								<?php if (isset($questionnaire_released)): ?>
 
 									<?php foreach ($ordered_quests as $key => $quest): ?>
-										<div class="dropdown">
-											<button class="btn btn-default dropdown-toggle" type="button" id="questionnaire_<?php echo $key; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 100%;">
+										<div class="dropup">
+											<button class="btn btn-outline-secondary dropdown-toggle" type="button" id="questionnaire_<?php echo $key; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 100%;">
 												<?php echo $key; ?>
 												<span class="caret"></span>
 											</button>
-											<ul class="dropdown-menu list-group" aria-labelledby="questionnaire_<?php echo $key; ?>">
+											<div class="dropdown-menu" aria-labelledby="questionnaire_<?php echo $key; ?>">
 												<?php foreach ($quest as $value): ?>
-													<li class="list-group-item"><span class="label label-<?php echo $value->finished ? 'success' : 'warning'; ?>"><?php echo $value->instance; ?></span><span> <?php echo $value->datum;?></span> <br/>Wird aktiviert am:<br/> <span><?php echo $value->activation;?></span><span> <a class="btn btn-xs btn-danger" href="<?php echo site_url();?>/admin/questionnaire_tool/delete_questionnaire_from_patient/<?php echo $patient -> CODE;?>/<?php echo $value->id;?>">
-													<span class="glyphicon glyphicon-remove"></span></a></span>
-														</li>
+													<p class="dropdown-item"><span class="badge badge-<?php echo $value->finished ? 'success' : 'warning'; ?>"><?php echo $value->instance; ?></span><span> <?php echo $value->datum;?></span> <br/>Wird aktiviert am:<br/> <span><?php echo $value->activation;?></span><span> <a class="btn btn-sm btn-danger" href="<?php echo site_url();?>/admin/questionnaire_tool/delete_questionnaire_from_patient/<?php echo $patient -> CODE;?>/<?php echo $value->id;?>">
+													<i class="fas fa-trash-alt"></i></a></span>
+														</p>
 												<?php endforeach; ?>
-											</ul>
+											</div>
 										</div>
 										<br/>
 									<?php endforeach; ?>

@@ -5,11 +5,10 @@
 			<h3>Fragebogen-Tool</h3>
 			
 			<ul class="nav nav-tabs" role="tablist">
-				<li><?php echo anchor( 'admin/questionnaire_tool', 'Startseite' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung' ); ?></li>
-                <li class="active"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung' ); ?></li>
-				
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array("class" => 'nav-link active') ); ?></li>
 			</ul>
 		</div>
 	</div>
@@ -17,11 +16,12 @@
     <br/><br/><br/>
 	<div class="row">	
         <div class="col-sm-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Batterie Feedback</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Batterie Feedback</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
+                    <div class="row">
                     <div class="col-md-8">
                         <ul style="min-height:10px;" class="list-group sortable">
                             <?php if(isset($feedback)):?>
@@ -44,23 +44,24 @@
                                             break;
                                     }?>
                                     <div class="pull-right">
-                                        <a class="btn btn-xs btn-danger" href="<?php echo site_url('admin/questionnaire_tool/feedback_remove_item/'.$f->id.'/'.$bid);?>">
-                                        <span class="glyphicon glyphicon-remove"></span></a>
+                                        <a class="btn btn-sm btn-danger" href="<?php echo site_url('admin/questionnaire_tool/feedback_remove_item/'.$f->id.'/'.$bid);?>">
+                                        <i class="fas fa-trash-alt"></i></a>
                                     </div>
                                 </li>
                             <?php endforeach;?>
                                 <?php endif;?>
                         </ul>
-                        <button type="button" class="btn btn-default" onclick="save_order()">Reihenfolge speichern</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="save_order()">Reihenfolge speichern</button>
                         <div id="save_info" class="alert alert-success" style="display:none;">
                             Reihenfolge gespeichert!
                         </div>
                     </div>
 
                     <div class="col-md-4">
-                        <button class="btn btn-default form-control" id="add_text" data-toggle="modal" data-target="#text_modal">Textelement hinzufügen</button>
-                        <button class="btn btn-default form-control" id="add_process" data-toggle="modal" data-target="#process_modal">Verlauf hinzufügen</button>
-                        <button class="btn btn-default form-control" id="add_review" data-toggle="modal" data-target="#review_modal">Auswertung hinzufügen</button>
+                        <button class="btn btn-outline-secondary form-control" id="add_text" data-toggle="modal" data-target="#text_modal">Textelement hinzufügen</button>
+                        <button class="btn btn-outline-secondary form-control" id="add_process" data-toggle="modal" data-target="#process_modal">Verlauf hinzufügen</button>
+                        <button class="btn btn-outline-secondary form-control" id="add_review" data-toggle="modal" data-target="#review_modal">Auswertung hinzufügen</button>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -82,7 +83,7 @@
                 <textarea class="form-control" id="textelement" name="textelement"></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                 <button type="submit" class="btn btn-primary">Hinzufügen</button>
             </div>
             </div><!-- /.modal-content -->
@@ -116,7 +117,7 @@
                 </select>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                 <button type="submit" class="btn btn-primary">Hinzufügen</button>
             </div>
             </div><!-- /.modal-content -->
@@ -143,7 +144,7 @@
                 </select>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
                 <button type="submit" class="btn btn-primary">Hinzufügen</button>
             </div>
             </div><!-- /.modal-content -->

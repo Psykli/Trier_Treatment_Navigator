@@ -1,28 +1,30 @@
 <div id="member_area" class="patient">
-    <div class="media bottom_spacer place_headline">
+    <div class="media bottom_spacer_50px place_headline">
         <a class="pull-left">
             <img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patients.png" data-src="holder.js/32x32">
         </a>
         <div class="media-body">
-            <h1 class="media-heading">Patientenliste</h1>
+            <h1 class="media-heading"><?php echo lang('list_list1');?></h1>
         </div>
     </div>
-    <div class="menu">
-        <ul class="breadcrumb">
-            <li><a href="../dashboard">Dashboard</a></li>
-            <li class="active">Liste</li>
-        </ul>        
-    </div><!-- end:.usermenu -->     
+    <nav class="menu">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Liste</li>
+        </ol>        
+    </nav><!-- end:.usermenu -->     
 	
-    <div class="dashrow status">      
         <?php if( isset( $patients ) ): ?>
-            <table class="table table-bordered table-striped">
+            <div id="list_info" class="alert alert-info" role="alert">
+                Tabelle wird geladen...
+            </div>
+            <table id="patient_list" style="display:none;" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Zustand</th>
-                        <th>Erstsichtung</th>
-                        <th>Therapeut</th>
+                        <th><?php echo lang('list_code');?></th>
+                        <th><?php echo lang('list_state');?></th>
+                        <th><?php echo lang('list_erstsichtung');?></th>
+                        <th><?php echo lang('list_therapist');?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,49 +37,48 @@
                         </td>
                         <td><!-- patientzustand -->
                             <?php
-                                        //TODO @see application->views->user->patient->list_all.php
-                                        $zustand_to_print;
+                                    $zustand_to_print;
                                     switch( $patient->zustand )
                                     {
                                         case 0:
-                                            $zustand_to_print = 'Wartezeit';
+                                            $zustand_to_print = lang('list_waiting_time');;
                                             break;
                                         case 1:
-                                            $zustand_to_print = 'Laufend';
+                                            $zustand_to_print = lang('list_run');
                                             break;
                                         case 2:
-                                            $zustand_to_print = 'Regulärer Abschluss';
+                                            $zustand_to_print = lang('list_regular_completion');
                                             break;
                                         case 3:
-                                            $zustand_to_print = 'Abbruch mit bewilligten Sitzungen';
+                                            $zustand_to_print = lang('list_case1');
                                             break;
                                         case 4:
-                                            $zustand_to_print = 'Abbruch in Probatorik';
+                                            $zustand_to_print = lang('list_case2');
                                             break;
                                         case 5:
-                                            $zustand_to_print = 'Unterbrechung';
+                                            $zustand_to_print = lang('list_stop');
                                             break;
                                         case 6:
-                                            $zustand_to_print = 'Therapie nicht zustandegekommen';
+                                            $zustand_to_print = lang('list_therapy_fall_through');
                                             break;
                                         case 7:
-                                            $zustand_to_print = 'Abbruch in Probatorik durch Therapeut';
+                                            $zustand_to_print = lang('list_case3');
                                             break;
                                         case 8:
-                                            $zustand_to_print = 'Abbruch in Probatorik durch Patient';
+                                            $zustand_to_print = lang('list_case4');
                                             break;
                                         case 9:
-                                            $zustand_to_print = 'Abbruch mit bewilligten Sitzungen durch Therapeut';
+                                            $zustand_to_print = lang('list_case5');
                                             break;
                                         case 10:
-                                            $zustand_to_print = 'Abbruch mit bewilligten Sitzungen durch Patient';
+                                            $zustand_to_print = lang('list_case6');
                                             break;
                                         case 11:
-                                            $zustand_to_print = 'Abbruch aus formalen Gründen';
+                                            $zustand_to_print = lang('list_case7');
                                             break;
                                         default:
                                             // for example: -1 -> not in database
-                                            $zustand_to_print = 'Kein Eintrag vorhanden';
+                                            $zustand_to_print = lang('list_no_entry');
                                     }
                                     
                                     echo $zustand_to_print;
@@ -88,7 +89,7 @@
                             <?php echo $patient->erstsich; ?>
                         </td>
                         <td><!--Therapeut -->
-                            <?php echo $patient->therpist; ?>
+                            <?php echo $patient->therapist; ?>
                         </td>
                     </tr>
                     <?php $i++; ?>
@@ -97,8 +98,16 @@
             </table>
         <?php else: ?>
             <div class="alert alert-info">
-                Keine Datensätze vorhanden.
+                <?php echo lang('list_nodata'); ?>
             </div>
-        <?php endif; ?>
-    </div><!-- end:.dashrow -->       
+        <?php endif; ?> 
 </div>
+
+<script>
+$(document).ready(function () {
+    $('#patient_list').DataTable();
+    $('#list_info').hide();
+    $('#patient_list').show();
+});
+
+</script>

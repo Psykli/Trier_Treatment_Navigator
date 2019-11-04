@@ -4,7 +4,7 @@
             <li><a href="#">Home</a></li>
         </ul>        
     </div><!-- end:.usermenu -->
-    <div class="media bottom_spacer place_headline">
+    <div class="media bottom_spacer_50px place_headline">
         <a class="pull-left">
             <img class="media-object" src="<?php echo base_url(); ?>/img/48x48/user-home.png" data-src="holder.js/32x32">
         </a>
@@ -12,13 +12,13 @@
             <h1 class="media-heading">Administratorfunktionen</h1>
         </div>
     </div>
-                
-	<div class=" col-sm-4">
-		<div class="panel panel-default">
-			<div class="panel-heading">
+<div class="row">         
+	<div class="col-sm-4">
+		<div class="card ">
+			<div class="card-header">
 				<h4>Patientenübersicht</h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<ul class="list-group">
 					<li class="list-group-item"><?php echo anchor(base_url() . 'index.php/admin/patient/list_all','Patientenliste'); ?></li>
 					<li class="list-group-item"><?php echo anchor(base_url() . 'index.php/admin/patient/search','Nach Patienten suchen'); ?></li>
@@ -26,18 +26,18 @@
 				</ul>	
 			</div>
 		</div>
-		
 	</div>
 	
 	<div class="col-sm-4">
-		<div class="panel panel-default">
-			<div class="panel-heading">
+		<div class="card ">
+			<div class="card-header">
 				<h4>Tools</h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<ul class="list-group">
-					<li class="list-group-item"><?php echo anchor( base_url() . 'index.php/admin/questionnaire_tool/','Fragenbogen-Tool' ); ?></li>					
-					<li class="list-group-item"><?php echo anchor(base_url() . 'index.php/admin/mail/index','Admin Mail'); ?></li>
+					<li class="list-group-item"><?php echo anchor( base_url() . 'index.php/admin/questionnaire_tool/','Fragenbogen-Tool' ); ?></li>				
+					<li class="list-group-item"><?php echo anchor( base_url() . 'index.php/admin/mail/index','Admin Mail' ); ?></li>
+					<li class="list-group-item"><?php echo anchor( base_url() . 'index.php/admin/patient/messages','Nachrichten' ); ?></li>
 				</ul>	
 				<button id="purge_button" class="btn btn-info" onclick="purge_testpatients()">Testpatienten auf Sitzung 10 zurücksetzen</button>
 				<div id="save_info" class="alert alert-success" style="display:none;"> 
@@ -45,7 +45,8 @@
 				</div>
 			</div>
 		</div>
-	</div>		
+	</div>	
+</div>	
 
 <script>
 function purge_testpatients(){

@@ -1,0 +1,24 @@
+import 'jquery';
+import 'jquery-ui-dist/jquery-ui.js';
+import 'bootstrap';
+import 'bootstrap-datepicker';
+import 'bootstrap-select';
+import 'chart.js';
+import 'jplayer';
+import 'mithril';
+import 'select2';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-buttons';
+import 'datatables.net-buttons/js/buttons.colVis';
+import 'datatables.net-buttons/js/buttons.html5';
+import 'datatables.net-buttons/js/buttons.print';
+import 'datatables.net-buttons-bs4';
+import '@fortawesome/fontawesome-free/js/all.js';
+import 'jquery-sortable';
+import './main.scss';
+import 'jquery-validation';
+import 'formBuilder';
+import 'zxcvbn';
+import 'video.js';
+

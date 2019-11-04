@@ -4,7 +4,7 @@ class SB_Model extends CI_Model {
     public function __construct( )
     {
         parent::__construct();
-        
+        $this -> db = $this -> load -> database( 'default', TRUE );
     }
 
     /*
@@ -219,7 +219,6 @@ class SB_Model extends CI_Model {
 	}
 
 	public function endTherapy($instance, $patientcode) {
-
 		#Zur Kompatibilität mit altem Fragebogen; Enthält nur Nullwerte
 		#Löschen wenn nicht mehr benötigt, bzw. Fragebogen nicht mehr in Portal-DB enthalten.
 		$therapist = NULL;
@@ -227,7 +226,7 @@ class SB_Model extends CI_Model {
 		$sql = "SELECT MAX(ETS011) AS ABSCHLUSS FROM `einzelfragen_therapeut_sitzungsbogen` WHERE CODE=? LIMIT 1";
 		$query = $this->db -> query($sql, array($patientcode));
 		
-		if($query->num_rows() == 1) {
+		if($query->num_rows() === 1) {
 			$therapist = $query->result();
 		}
 
@@ -235,9 +234,10 @@ class SB_Model extends CI_Model {
 		$sql = "SELECT MAX(ETN011) AS ABSCHLUSS FROM `einzelfragen_therapeut_sitzungsbogen_neu` WHERE CODE=? LIMIT 1";
 		$query = $this->db -> query($sql, array($patientcode));
 		
-		if($query->num_rows() == 1) {
+		if($query->num_rows() === 1) {
 			$therapist = $query->result();
 		}
+
 		return $therapist;
 	}//endTherapy()
 
@@ -279,10 +279,13 @@ class SB_Model extends CI_Model {
 	public function get_columns($table, $patientcode, $instance, $columns)
 	{
 		$this-> db -> db_select();
+		
 		$sql = "SELECT " . implode(', ', array_values($columns)) . " FROM `" . $table . "` WHERE CODE=? AND INSTANCE=? LIMIT 1";
 		// da INSTANCE als varchar abgespeichert ist -> CONVERT(INSTANCE, UNSIGNED INTEGER)
-		if(is_numeric($instance) AND $instance < 10)
+		if(is_numeric($instance) AND $instance < 10) {
 			$instance = '0'.intval($instance);
+		}
+
 		$query = $this-> db ->query($sql, array($patientcode, $instance));
 		
 		return $query -> result();
@@ -293,7 +296,7 @@ class SB_Model extends CI_Model {
 		$therapist = null;
 
 		$this->db->db_select();
-		$this->db->select('THERPIST');
+		$this->db->select('THERAPIST');
 		$this->db->from('subjects');
 		$this->db->where('CODE', $patientcode);
 

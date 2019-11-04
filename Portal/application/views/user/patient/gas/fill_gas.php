@@ -1,5 +1,5 @@
 <?php if(!$sb): ?>
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
     <a class="pull-left" href="#">
         <img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
     </a>
@@ -56,7 +56,7 @@
     $size = $section != $max_sections ? 3 : sizeof($bereiche) % 3;
     ?>
     <div>
-        Bereiche wechseln: <button <?php if(!$not_filled OR $u == 0) echo 'disabled';?> id="section_left" class="toggle-vis btn btn-sm btn-primary" data-column="left"><span class="glyphicon glyphicon-backward"></span></button> - <button <?php if($section == $max_sections) echo 'disabled';?> id="section_right" class="toggle-vis btn btn-sm btn-primary" data-column="right"><span class="glyphicon glyphicon-forward"></span></button>
+        Bereiche wechseln: <button <?php if(!$not_filled OR $u == 0) echo 'disabled';?> id="section_left" class="toggle-vis btn btn-sm btn-primary" data-column="left"><span class="fas fa-backward"></span></button> - <button <?php if($section == $max_sections) echo 'disabled';?> id="section_right" class="toggle-vis btn btn-sm btn-primary" data-column="right"><span class="fas fa-forward"></span></button>
     </div>    
     <?php echo form_open( 'user/gas_tool/save_gas/'.$patientcode.'/'.$instance.'?bereiche='.sizeof($bereiche).'&sb='.$sb,  array('role' => 'form' ) ); ?>
         <table class="table table-bordered" id="myTable" cellspacing="0" width="<?php switch ($size) {
@@ -129,7 +129,7 @@ echo '...<a onclick=" displayAll(\''.$lid.'\',\''.str_replace(array("\r\n", "\r"
             }
         </script>
         <?php if(!$immutable OR $sb): ?>
-            <button type="submit" class="btn btn-default" onclick="reactivate_columns();">Eintragen</button>
+            <button type="submit" class="btn btn-outline-secondary" onclick="reactivate_columns();">Eintragen</button>
         <?php endif; ?>
     </form>
 </div>

@@ -52,6 +52,11 @@ Das Feedbackportal wurde auf einem Windows Server 2012 R2 (Apache 2.4) gestestet
 */
 $config['r_path'] = 'R/bin/x64';
 ```
+## Automatische Installation der Datenbank
+
+Ist keine Datenbank in database.php gesetzt, wird beim ersten Aufrufen der Seite auf eine Installationsmaske weitergeleitet. In dieser kann man bequem im Browser alle nötigen Schritte ausführen, um die Seite für die erste Anwendung einsatzbereit zu machen. Hier wird ebenfalls ein Administrator erstellt, mit dem die Seite verwaltet werden kann. Trotzdem sollten alle Config Dateien selbst nochmals überprüft werden.
+
+## Manuelle Installation der Datenbank
 
 ### Änderungen in database.php
 

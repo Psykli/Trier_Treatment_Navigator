@@ -14,9 +14,8 @@
 		<div class="col-sm-12">
 			<div class="menu">
 				<ol class="breadcrumb">
-					<li><a href="<?php echo base_url(); ?>/index.php/admin/user">Patient</a></li>
-					<li><a href="<?php echo base_url(); ?>/index.php/admin/user/list_all">Liste</a></li>
-					<li class="active">Patienten erstellen</li>
+					<li class="breadcrumb-item"><a href="<?php echo base_url(); ?>index.php/admin/patient">Patient</a></li>
+					<li class="breadcrumb-item active">Patienten erstellen</li>
 				</ol>        
 			</div><!-- end:.usermenu -->
 		</div>
@@ -37,8 +36,9 @@
 </div>
 
 <div class="container">
-	<div class="row">
+	
 		<?php echo form_open( 'admin/patient/new_patientlogin',  array('class' => 'form-horizontal', 'role' => 'form', 'id' => 'createLogin' )); ?>
+		<div class="row">
 			<div class="col-sm-6">	
 				<h4>Personalien</h4>
 				
@@ -113,9 +113,9 @@
 					</div>
 				</div>
 			</div>
-
+			</div><!-- /.row-->
 		</form>
-	</div><!-- /.row-->
+	
 </div>
 
 

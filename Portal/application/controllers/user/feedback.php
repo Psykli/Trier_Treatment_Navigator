@@ -20,17 +20,13 @@ class Feedback extends CI_Controller
         );
 
         $this -> load -> Helper( 'text' );
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->Model( 'Patient_model' );
         $this->load->Model( 'Questionnaire_model' );
         $this->load->Model( 'Supervisor_model' );
         
         $this->lang->load( 'user_patient' );
-        $this->lang->load('user_feedback_motivation');
-		$this->lang->load('user_feedback_emotion');
-		$this->lang->load('user_feedback_relation');
-		$this->lang->load('user_feedback_social');
-		$this->lang->load('user_feedback_life');
-        $this->lang->load('user_feedback_risk');
 
         $this->template->set(HEADER_STRING, 'all/header', $this->data[HEADER_STRING]);
         $this->template->set(FOOTER_STRING, 'all/footer', $this->data[FOOTER_STRING]);
@@ -84,30 +80,7 @@ class Feedback extends CI_Controller
             if( empty( $therapist ) AND $this->data[CONTENT_STRING]['userrole'] === 'admin' ){
                 $therapist = 'admin';
             }
-
-            //ZIEMLICH VERTRACKT !!!
-            /*
-            $process['hscl-11'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"hscl-11");
-            $process['tsb-ee1'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee1");
-            $process['tsb-ee2'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee2");
-            $process['tsb-ee3'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee3");
-            $process['tsb-ee4'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee4");
-            $process['tsb-ee5'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee5");
-            $process['tsb-ee6'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee6");
-            $process['tsb-ee7'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-ee7");
-            $process['tsb-wb'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-wb");
-            $process['tsb-tb'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-tb");
-            $process['tsb-pbmo'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-pbmo");
-            $process['tsb-pa'] = $this->Questionnaire_model->get_process_of_questionnaire($therapist,$patientcode,"tsb-pa");
-            */
             $this->data[CONTENT_STRING]['process'] = $process;
-
-            /* AS REMINDER !!! DELETE AFTER ACCOMPLISHING !!!
-            $result['INSTANCES'] = $instances;
-            $result['BOUNDARIES'] = $boundaries;
-            $result['EXPECTED'] = $expected;
-            $result['MEANS'] = $means;
-            */
 
             //Boundary check
             $lastInstance;
@@ -165,14 +138,15 @@ class Feedback extends CI_Controller
                 array('farbe_asq_emotion',$color['farbe_asq_emotion']));
 
             if($color['farbe_oq'] == 'red'){
-                $boundary = $this->Patient_model->get_boundary($patientcode, $lastHscl->instance);
+                $boundary = $this->Patient_model->get_boundary($patientcode, $lastHscl->instance, "BOUNDARY_UEBERSCHRITTEN");
                 // -1 um die aktuelle Sitzung mit zu zählen 
                 $over = $boundary->BOUNDARY_UEBERSCHRITTEN-1;
             } else {
                 // Wir wollen hier herausfinden wann die Boundary das letzte mal überschritten war. 
                 // In BOUNDARY_UEBERSCHRITTEN steht nur wann sie das erste mal überschritten wurde
                 for($i = $lastHscl->instance; $i >= $lastHscl->instance-3; $i--){
-                    $boundary = $this->Patient_model->get_boundary($patientcode, $i);
+                    $boundary = $this->Patient_model->get_boundary($patientcode, $i, "BOUNDARY_UEBERSCHRITTEN");
+                    
                     if($boundary->BOUNDARY_UEBERSCHRITTEN > 0){
                         $over = $i;
                         break;
@@ -205,11 +179,11 @@ class Feedback extends CI_Controller
             //For showing
             $this->data[CONTENT_STRING]['show_cs_tools'] = TRUE;
 
-            $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
-            
-            $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
-            $this -> template -> set(CONTENT_STRING, 'user/patient/feedback/overview', $this->data[CONTENT_STRING]);
-            $this -> template -> load('template');
+        $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
+        
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set(CONTENT_STRING, 'user/patient/feedback/overview', $this->data[CONTENT_STRING]);
+        $this -> template -> load('template');
         }
     }//overview()
 
@@ -241,25 +215,23 @@ class Feedback extends CI_Controller
     Beispiel:
     load/$path/$page/$patientcode
     ->
-    echo anchor('user/feedback/load/feedbackAlliance/step_4/'.$patientcode, 'Weiter <span class="glyphicon glyphicon-arrow-right"></span> ', array('class' => 'btn btn-default'))
+    echo anchor('user/feedback/load/feedbackAlliance/step_4/'.$patient[0]->code, 'Weiter <span class="fas fa-arrow-right"></span> ', array('class' => 'btn btn-outline-secondary'))
     */
     public function load ( $path, $page, $patientcode ) {
         if( !$this -> _check_permissions( $this->data[TOP_NAV_STRING]['username'], $patientcode ) ) {
             show_error( 'Access denied. It\'s not a patient of yours!', 403 );
         }
         else {
-            if ($path === "feedbackRisk") {
-                $this->data[CONTENT_STRING]['suicideItems'] = $this->Questionnaire_model->get_suicide_data($patientcode);
-                $this->data[CONTENT_STRING]['riskColor'] = $this->Questionnaire_model->get_risk($patientcode);
-            }
+            $this->data[CONTENT_STRING]['suicideItems'] = $this->Questionnaire_model->get_suicide_data($patientcode);
+            $this->data[CONTENT_STRING]['riskColor'] = $this->Questionnaire_model->get_risk($patientcode);
+        }
             
-            //TODO process is needed in the view user/patient/feedback/feedbackSocLif/step_1.php but $verlauf isn't defined
-            $this->data[CONTENT_STRING]['process'] = $verlauf;
+        $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
+        
+        $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
+        $this -> template -> set(CONTENT_STRING, 'user/patient/feedback/'.$path.'/'.$page, $this->data[CONTENT_STRING]);
+        $this -> template -> load('template');
 
-            $this -> template -> set( TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this -> data[TOP_NAV_STRING] );
-            $this -> template -> set(CONTENT_STRING, 'user/patient/feedback/'.$path.'/'.$page, $this->data[CONTENT_STRING]);
-            $this -> template -> load('template');
-        }//else
     }//load()
 }//class Feedback
 

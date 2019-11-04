@@ -11,16 +11,25 @@ class Questionnaire_model extends CI_Model
     
     private $psyeq_fep2 = 'fep-2';
 
-    public function __construct()
+    /**
+     * Constructer
+     * Init of the Psychoeq-Database-Connection.
+     */
+    public function __construct( )
     {
+        $this -> db = $this -> load -> database( 'default', TRUE );
+			
+		$CI =& get_instance();
+		if( !property_exists( $CI, 'db_default' ) ) {
+            $CI->db_default =& $this -> db;
+        }
+
         $this-> pf_utils = new PF_Utils();
         $this-> pf_math = new PF_Math();
 
         //Verlauf 
         $this-> process_questionnaires = new ArrayList();
     }
-
-
 
     /**
      * Get all counts for the instances in FEP2.
@@ -151,91 +160,89 @@ class Questionnaire_model extends CI_Model
     {
         $data = NULL;
 
-        if( isset( $username ) AND isset( $patientcode ) AND isset( $instance ) )
-        {
-            if(!isset($table_name)){
-            //collect the output-data
-                for( $i = 0; $i < $this -> _questionnaires -> size( ); $i++ )
-                {
-                    //get the databasetablename
-                    $psychoeq_table = $this -> _questionnaires -> get( $i ) -> get_psychoeq_table( );
-                    //get the db_data
-                    $db_result = $this -> Patient_model -> get_questionnaire_data( $username, $patientcode, $psychoeq_table, $instance );
-                    //perform the results (scales, ...)
-                    $tmp = $this -> _questionnaires -> get( $i ) -> get_patient_data( $db_result );
-                    $current_quest_name =  $this -> _questionnaires -> get( $i ) -> get_name( );
-
-                    //if bow is IIP-32, use an other graph
-                    if( $this -> _questionnaires -> get( $i ) -> get_name( ) == 'iip32' )
-                    {	
-                        $graph = array( 'graph' => $this -> jpgraph -> iip32_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
-                        $graph2 = array( 'graph2' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], 800, $tmp['scales'], $tmp['title'] ) );
-                    }//if
-                    elseif ( $current_quest_name == 'hag-s' || $current_quest_name == 'hag-f')
-                    {
-                        $graph = array( 'graph' => $this -> jpgraph -> status_graph_haq( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'], 800 ) );
-                    }
-                    else 
-                    {
-                        $graph = array( 'graph' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
-                    }//else
-
-                    if( !is_null( $tmp ) )
-                    {			
-                        $data[$i] = array_merge( $tmp, $graph );
-                    }//if
-                }//foreach
-            } else {
-                
-                    $i = $this-> find_questionnaire_index_by_name($table_name);
-                    
-                    if(isset($i)){
-                        //get the databasetablename
-                        $psychoeq_table = $this -> _questionnaires -> get( $i ) -> get_psychoeq_table( );
-                        //get the db_data
-                        $db_result = $this -> Patient_model -> get_questionnaire_data( $username, $patientcode, $psychoeq_table, $instance );
-                        //perform the results (scales, ...)
-                        
-                        $tmp = $this -> _questionnaires -> get( $i ) -> get_patient_data( $db_result );
-                        $current_quest_name =  $this -> _questionnaires -> get( $i ) -> get_name( );
-
-                        //if bow is IIP-32, use an other graph
-                        if( $this -> _questionnaires -> get( $i ) -> get_name( ) == 'iip32' )
-                        {	
-                            $graph = array( 'graph' => $this -> jpgraph -> iip32_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
-                            $graph2 = array( 'graph2' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], 800, $tmp['scales'], $tmp['title'] ) );
-                        }//if
-                        elseif ( $current_quest_name == 'hag-s' || $current_quest_name == 'hag-f')
-                        {
-                            $graph = array( 'graph' => $this -> jpgraph -> status_graph_haq( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'], 800 ) );
-                        }
-                        else 
-                        {
-                            $graph = array( 'graph' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
-                        }//else
-
-                        if( !is_null( $tmp ) )
-                        {			
-                            $data = array_merge( $tmp, $graph );
-                        }//if
-                    }
-            }
-
-            switch( $instance )
+        if(!isset($table_name)) {
+        //collect the output-data
+            for( $i = 0; $i < $this -> _questionnaires -> size( ); $i++ )
             {
-                case 'WZ':
-                case 'PR':
-                case 'PO':
-                case 'K3':
-                    $data['medi'] = $this -> medec_model -> get_medi( $patientcode, $instance );
-                    break;
-                default:
-                    $data['medi'] = NULL;
-            }//switch
-        }//if
+                //get the databasetablename
+                $psychoeq_table = $this -> _questionnaires -> get( $i ) -> get_psychoeq_table( );
+                //get the db_data
+                $db_result = $this -> Patient_model -> get_questionnaire_data( $username, $patientcode, $psychoeq_table, $instance );
+                //perform the results (scales, ...)
+                $tmp = $this -> _questionnaires -> get( $i ) -> get_patient_data( $db_result );
+                $current_quest_name =  $this -> _questionnaires -> get( $i ) -> get_name( );
+
+                //if bow is IIP-32, use an other graph
+                if( $this -> _questionnaires -> get( $i ) -> get_name( ) == 'iip32' )
+                {	
+                    $graph = array( 'graph' => $this -> jpgraph -> iip32_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
+                    $graph2 = array( 'graph2' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], 800, $tmp['scales'], $tmp['title'] ) );
+                }//if
+                elseif ( $current_quest_name == 'hag-s' || $current_quest_name == 'hag-f')
+                {
+                    $graph = array( 'graph' => $this -> jpgraph -> status_graph_haq( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'], 800 ) );
+                }
+                else 
+                {
+                    $graph = array( 'graph' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
+                }//else
+
+                if( !is_null( $tmp ) )
+                {			
+                    $data[$i] = array_merge( $tmp, $graph );
+                }//if
+            }//foreach
+        } else {
+            $i = $this-> find_questionnaire_index_by_name($table_name);
+                
+            if(isset($i)) {
+                //get the databasetablename
+                $psychoeq_table = $this -> _questionnaires -> get( $i ) -> get_psychoeq_table( );
+                //get the db_data
+                $db_result = $this -> Patient_model -> get_questionnaire_data( $username, $patientcode, $psychoeq_table, $instance );
+                //perform the results (scales, ...)
+                
+                $tmp = $this -> _questionnaires -> get( $i ) -> get_patient_data( $db_result );
+                $current_quest_name =  $this -> _questionnaires -> get( $i ) -> get_name( );
+
+                //if bow is IIP-32, use an other graph
+                if( $this -> _questionnaires -> get( $i ) -> get_name( ) == 'iip32' )
+                {	
+                    $graph = array( 'graph' => $this -> jpgraph -> iip32_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
+                    $graph2 = array( 'graph2' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], 800, $tmp['scales'], $tmp['title'] ) );
+                }//if
+                elseif ( $current_quest_name == 'hag-s' || $current_quest_name == 'hag-f')
+                {
+                    $graph = array( 'graph' => $this -> jpgraph -> status_graph_haq( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'], 800 ) );
+                }
+                else 
+                {
+                    $graph = array( 'graph' => $this -> jpgraph -> status_graph( $username, $instance, $tmp['name'], $tmp['graph_height'], $tmp['scales'], $tmp['title'] ) );
+                }//else
+
+                if( !is_null( $tmp ) )
+                {			
+                    $data = array_merge( $tmp, $graph );
+                }//if
+            }
+        }
+
+        switch( $instance )
+        {
+            case 'WZ':
+            case 'PR':
+            case 'PO':
+            case 'K3':
+                $data['medi'] = $this -> medec_model -> get_medi( $patientcode, $instance );
+                break;
+            default:
+                $data['medi'] = NULL;
+        }//switch
+        
         return $data;
     }//get_data()
-        /**
+    
+    /**
      * Returns all data of a patient and the process of therapy.
      *
      * Combines the different process data graphs:
@@ -263,82 +270,79 @@ class Questionnaire_model extends CI_Model
     {
         $data = NULL;
 
-        if (isset($username) AND isset($patientcode))
+        $sbtype = 1;
+        
+        if (substr($patientcode, 0, 4) < 1078)
+        {$sbtype = 2;}
+        if (isset($therapy_type))
+        {$sbtype = 3;}
+
+        //collect the output-data
+        for( $i = 0; $i < $this -> process_questionnaires -> size( ); $i++ )
         {
-            $sbtype = 1;
-            
-            if (substr($patientcode, 0, 4) < 1078)
-            {$sbtype = 2;}
-            if (isset($therapy_type))
-            {$sbtype = 3;}
+            $name = $this -> process_questionnaires -> get( $i ) -> get_name( );
 
-            //collect the output-data
-            for( $i = 0; $i < $this -> process_questionnaires -> size( ); $i++ )
+            switch($sbtype)
             {
-                $name = $this -> process_questionnaires -> get( $i ) -> get_name( );
+                case 2:
+                    switch( $name )
+                    {
+                        case 'hscl-11':
+                        case 'fep-2':
+                        case 'asq':
+                        case 'ink-10':
+                        case 'step-b':
+                        case 'step-k':
+                        case 'step-p':
+                        case 'gad-7':
+                        case 'phq-9':
+                        case 'gas':
+                            $tmp = $this -> _fetch_process_data( $username, $patientcode, $name, $i );
+                            break;
+                        default:
+                            $tmp = NULL;
+                    }//switch
+                    break;
+                case 3:
+                    $tmp = $this -> _get_therapy_specific_process( $username, $patientcode, $name, $i,$therapy_type );
+                    break;
+                default:
+                    switch( $name )
+                    {
+                        case 'hscl-11':
+                        case 'fep-2':
+                        case 'asq':
+                        case 'ink-10':
+                        case 'tsb-mk':
+                        case 'tsb-pa':
+                        case 'tsb-pb':
+                        case 'tsb-ra':
+                        case 'tsb-tb':
+                        case 'tsb-ee1':
+                        case 'tsb-ee2':
+                        case 'tsb-ee3':
+                        case 'tsb-ee4':
+                        case 'tsb-ee5':
+                        case 'tsb-ee6':
+                        case 'tsb-ee7':
+                        case 'tsb-wb':
+                        case 'tsb-pbmo':
+                        case 'gas':
+                        case 'phq-9':
+                        case 'gad-7':
+                            $tmp = $this -> _fetch_process_data( $username, $patientcode, $name, $i );
+                            break;
+                        default:
+                            $tmp = NULL;
+                    }//switch
+            }//switch
 
-                switch($sbtype)
-                {
-                    case 2:
-                        switch( $name )
-                        {
-                            case 'hscl-11':
-                            case 'fep-2':
-                            case 'asq':
-                            case 'ink-10':
-                            case 'step-b':
-                            case 'step-k':
-                            case 'step-p':
-                            case 'gad-7':
-                            case 'phq-9':
-                            case 'gas':
-                                $tmp = $this -> _fetch_process_data( $username, $patientcode, $name, $i );
-                                break;
-                            default:
-                                $tmp = NULL;
-                        }//switch
-                        break;
-                    case 3:
-                        $tmp = $this -> _get_therapy_specific_process( $username, $patientcode, $name, $i,$therapy_type );
-                        break;
-                    default:
-                        switch( $name )
-                        {
-                            case 'hscl-11':
-                            case 'fep-2':
-                            case 'asq':
-                            case 'ink-10':
-                            case 'tsb-mk':
-                            case 'tsb-pa':
-                            case 'tsb-pb':
-                            case 'tsb-ra':
-                            case 'tsb-tb':
-                            case 'tsb-ee1':
-                            case 'tsb-ee2':
-                            case 'tsb-ee3':
-                            case 'tsb-ee4':
-                            case 'tsb-ee5':
-                            case 'tsb-ee6':
-                            case 'tsb-ee7':
-                            case 'tsb-wb':
-                            case 'tsb-pbmo':
-                            case 'gas':
-                            case 'phq-9':
-                            case 'gad-7':
-								$tmp = $this -> _fetch_process_data( $username, $patientcode, $name, $i );
-								break;
-                            default:
-                                $tmp = NULL;
-                        }//switch
-                }//switch
-
-                if( !is_null( $tmp ) )
-                {
-                        $data[] = $tmp;
-                }//if
-            }//for    
-
-        }//if
+            if( !is_null( $tmp ) )
+            {
+                $data[] = $tmp;
+            }//if
+        }//for
+        
         return $data;
     }//get_process_data()
 
@@ -589,25 +593,15 @@ class Questionnaire_model extends CI_Model
 
             $result[] = $query->result_array()[0];
         } else {
-            $this -> db -> select ('PHQ009');
-            $this -> db -> from ('phq-9');
-            $this -> db -> where ('CODE',$patientcode);
-            $this -> db -> where ('INSTANCE',$instance);
+            $this -> db -> select ('HSC010');
+            $this -> db -> from ('hscl-11');
+            $this -> db -> where ('CODE', $patientcode);
+            $this -> db -> where ('INSTANCE', $instance );
             $this -> db -> limit( 1 );
             $query = $this -> db -> get ();
 
             $result[] = $query->result_array()[0];
-
-            if ( preg_match( "/Z\d\d/", $instance ) ) {
-                $this -> db -> select ('HSC010');
-                $this -> db -> from ('hscl-11');
-                $this -> db -> where ('CODE', $patientcode);
-                $this -> db -> where ('INSTANCE', substr( $instance, -2 ) );
-                $this -> db -> limit( 1 );
-                $query = $this -> db -> get ();
-
-                $result[] = $query->result_array()[0];
-            }
+            
         }
 
         return $result;

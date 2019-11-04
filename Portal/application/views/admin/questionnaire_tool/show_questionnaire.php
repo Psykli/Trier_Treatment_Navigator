@@ -5,26 +5,24 @@
 			<h3>Fragebogen-Tool</h3>
 			
 			<ul class="nav nav-tabs" role="tablist">
-				<li><?php echo anchor( 'admin/questionnaire_tool', 'Startseite' ); ?></li>
-				<li class="active"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung' ); ?></li>
-                <li><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung' ); ?></li>
-				
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array("class" => 'nav-link active') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array("class" => 'nav-link') ); ?></li>
 			</ul>
 		</div>
 	</div>
     <br/><br/><br/>
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Fragebogen</h3>
+		<div class="card ">
+			<div class="card-header">
+				<h3 class="card-title">Fragebogen</h3>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 			<?php 
-					$_GET['tables'] = $tables;
 					function selected($table, $item) {
-						foreach($_GET['tables'] as $key => $value) {
+						foreach($tables as $key => $value) {
 							if($key === $item)
 								return $value;
 						}
@@ -66,5 +64,5 @@
 
 					?>
 			</div>
-		</div><!-- /.panel panel-default -->
+		</div><!-- /.card  -->
 	</div><!-- /.col-md-6 -->

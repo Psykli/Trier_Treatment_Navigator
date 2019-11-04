@@ -26,7 +26,8 @@ class Patient extends CI_Controller
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->Model( 'Patient_model' );
         $this->load->Model( 'Message_model' );
         $this->load->Model( 'Therapy_model' );
@@ -86,7 +87,7 @@ class Patient extends CI_Controller
 		
 		$this->data[CONTENT_STRING]['questionnaires'] = $questionnaires;
 
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav', $this->data[TOP_NAV_STRING]);
+        $this->template->set(TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/questionnaire/overview', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//_questionnaire()
@@ -158,7 +159,7 @@ class Patient extends CI_Controller
         $allowed_receivers = array_merge( $allowed_receivers, $this->membership_model->get_all_admin_codes( ) ) ;
         $this->data[CONTENT_STRING]['allowed_receivers'] = $allowed_receivers;
 
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav', $this->data[TOP_NAV_STRING]);
+        $this->template->set(TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/patient/messages', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//messages()
@@ -186,7 +187,7 @@ class Patient extends CI_Controller
         //mark message as read
 		$this -> Message_model -> set_status( $msgid, 1, $this->data[TOP_NAV_STRING]['username'] );
 
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav', $this->data[TOP_NAV_STRING]);
+        $this->template->set(TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/patient/showMessage', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//showMessage()
@@ -236,7 +237,7 @@ class Patient extends CI_Controller
             show_error( 'Error sending message. You can only send messages to your therapist, yourself and all admins, as well as supervisors who sent you a message first. Your subject was "'.$request['betreff'].'" and your message was: '.$request['nachricht'], 403 );
         }
 
-		$this -> messages( );
+		redirect( 'patient/patient/messages' );
     }//send_msg()
 }//class Patient
 

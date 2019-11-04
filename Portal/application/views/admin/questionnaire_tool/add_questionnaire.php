@@ -5,11 +5,10 @@
 			<h3>Fragebogen-Tool</h3>
 			
 			<ul class="nav nav-tabs" role="tablist">
-				<li><?php echo anchor( 'admin/questionnaire_tool', 'Startseite' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung' ); ?></li>
-				<li class="active"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array('class' => 'clickable') ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung' ); ?></li>
-				
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array("class" => 'nav-link active') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array("class" => 'nav-link') ); ?></li>
 			</ul>
 		</div>
 	</div>
@@ -39,12 +38,12 @@
 	</div>
 <?php endif;?>
 	<div class="row">	
-        <div class="col-sm-9">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Vorhandenen Fragebögen</h3>
+        <div class="col-sm-9 bottom_spacer_25px">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Vorhandenen Fragebögen</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<table class="table table-hover" id="questionnaires">
 						<thead>
 							<tr>
@@ -90,7 +89,7 @@
 									<td><?php echo ( $short_str ); ?></td>
 									<?php if(ENVIRONMENT == 'development'):?>
 									<td>
-										<a href="<?php echo site_url('admin/questionnaire_tool/edit_questionnaire/'.$questionnaire->id);?>" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+										<a href="<?php echo site_url('admin/questionnaire_tool/edit_questionnaire/'.$questionnaire->id);?>" class="btn btn-warning btn-sm"><i class="fas fa-cog" aria-hidden="true"></i></a>
 									</td>
 									<?php endif;?>
 								</tr>								
@@ -101,26 +100,25 @@
 			</div>
 		</div>
 		<div class="col-sm-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">XML hinzufügen</h3>
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">XML hinzufügen</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<?php echo form_open_multipart('admin/questionnaire_tool/do_upload' ); ?>
 						<input type="file" name="userfile" size="15" />
 						<br><br>
-						<input type="submit" value="XML einfügen" />
+						<input type="submit" class="btn btn-secondary" value="XML einfügen" />
 					</form>
 				</div>
 			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">XML erstellen</h3>
+			<br><br>
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">XML erstellen</h3>
 				</div>
-				<div class="panel-body">
-					<form method="GET" action="<?php echo site_url('admin/questionnaire_tool/create_questionnaire/'); ?>">
-						<input type="submit" value="XML erstellen">
-					</form>
+				<div class="card-body">
+					<a type="button" class="btn btn-secondary" href="<?php echo site_url('admin/questionnaire_tool/create_questionnaire/'); ?>" />XML erstellen</a>
 				</div>
 			</div>
 		</div>
@@ -129,7 +127,7 @@
 
 <script>
     $(document).ready(function() { 
-		$('#questionnaires').DataTable({
+		$('#questionnaires').dataTable({
 			scrollX: true,
 			dom: 'frtip'
 		});   

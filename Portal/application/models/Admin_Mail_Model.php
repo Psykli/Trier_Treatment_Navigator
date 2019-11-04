@@ -5,6 +5,20 @@ if( !defined( 'BASEPATH' ) )
 
 class Admin_mail_model extends CI_Model
 {
+    /**
+     * Constructer
+     * Init of the Psychoeq-Database-Connection.
+     */
+    public function __construct( )
+    {
+        $this -> db = $this -> load -> database( 'default', TRUE );
+			
+		$CI =& get_instance();
+		if( !property_exists( $CI, 'db_default' ) ) {
+            $CI->db_default =& $this -> db;
+        }
+    }
+    
     public function get_all_messages(){
 
         $this -> db -> from( 'admin_mail_messages' );
@@ -34,30 +48,24 @@ class Admin_mail_model extends CI_Model
     }
 
     public function save_new_message($subject,$message){
-        if( isset( $subject ) && isset( $message ) )
-		{		
-			$data = array(
-				'subject' => $subject,
-				'message' => $message
-                );
+        $data = array(
+			'subject' => $subject,
+			'message' => $message
+            );
 
-			$this -> db -> insert( 'admin_mail_messages', $data );
+		$this -> db -> insert( 'admin_mail_messages', $data );
 			
-			return true;
-		}
-
-        return false;
+		return true;
     }
 
     public function update_message($id,$subject,$message){
-        if(isset($id)){
-            $data = array(
-                'subject' => $subject,
-                'message' => $message
-            );
-            $this->db->where('id',$id);
-            $this->db->update('admin_mail_messages',$data);
-        }
+        $data = array(
+            'subject' => $subject,
+            'message' => $message
+        );
+        
+        $this->db->where('id',$id);
+        $this->db->update('admin_mail_messages',$data);
     }
 
     public function delete_single_message($id){

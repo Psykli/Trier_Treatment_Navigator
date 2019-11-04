@@ -1,4 +1,4 @@
-<div class="media bottom_spacer">
+<div class="media bottom_spacer_50px">
 	<a class="pull-left" href="#">
 		<img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
 	</a>
@@ -14,26 +14,14 @@
 	<li class="active"><?php echo lang('details_details2');?></li>
 </ol>
 
-<?php 
-$rechte_nn = $this -> membership_model -> is_rechte_set( $username, 'rechte_nn' );
-$rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'rechte_uebungen' ); 
-?>
-
-<div class="panel panel-default">
-	<div class="panel-body">
+<div class="card ">
+	<div class="card-body">
 		<ul class="nav nav-pills">		
 			<!--GAS-->
-			<li>
+			<li class="nav-item">
 				<?php $link = 'index.php/' . 'user/Gas_Tool/index/create_gas/' . $patientcode; ?>
 				<a href="<?php echo base_url( $link ); ?>" role="button" class="btn btn-link" style="width:100%;">GAS</a>
 			</li>
-
-			<?php if( $userrole === 'admin' ):?>
-				<li>
-					<?php $link = 'index.php/' . 'user/patient/index/create_modul/' . $patientcode; ?>
-					<a href="<?php echo base_url( $link ); ?>" role="button" class="btn btn-link" style="width:100%;">Übungen</a>
-				</li>
-			<?php endif;?>
 		</ul>
 	</div>
 </div>
@@ -44,12 +32,12 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 <div class="row">	
 	<div class="col-sm-6">	
 			
-		<?php if( $this -> membership_model -> is_rechte_set( $username, 'rechte_feedback' ) ): ?>
+		<?php if( $rechte_feedback ): ?>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title"><?php echo lang('details_statusreport');?></h3>
 				</div>
-				<div class="panel-body">				
+				<div class="card-body">				
 					<?php if( !isset( $status ) ): ?>
 						<div class="alert alert-info">
 							<?php echo lang('details_nodata');?>
@@ -87,11 +75,11 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 
 	<div class="col-sm-6">
 	
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php echo lang('details_verlaufsreport');?></h3>
+		<div class="card ">
+			<div class="card-header">
+				<h3 class="card-title"><?php echo lang('details_verlaufsreport');?></h3>
 			</div>
-			<div class="panel-body">				
+			<div class="card-body">				
 				<table class="table table-bordered table-striped">
 					<tbody>
 						<tr>
@@ -164,7 +152,7 @@ $rechte_uebungen = $this -> membership_model -> is_rechte_set( $username, 'recht
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Schließen</button>
 					<?php echo form_submit(array('class' => 'btn btn-primary'), 'Nachricht abschicken'); ?>
 				</div>
 			</form>

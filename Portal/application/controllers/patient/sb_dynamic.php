@@ -10,7 +10,8 @@ class SB_dynamic extends CI_Controller {
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
         );
-        
+        $this->load->Model('membership_model');
+        $this->load->Model('session_model');
         $this->load->Model('SB_Model');
         $this->load->Model('Patient_Model');
         $this->load->Model('Gas_Model');
@@ -23,13 +24,18 @@ class SB_dynamic extends CI_Controller {
         $this->template->set(FOOTER_STRING, 'all/footer', $this->data[FOOTER_STRING]);
 
         $this -> evaluationXSL = "application/views/patient/questionnaire/bows/feedback.xsl";
+
+        if( $this->session_model->is_logged_in( $this->session->all_userdata( ) ) )
+        {
+            $this->data[TOP_NAV_STRING]['username'] = $this -> session -> userdata( 'username' );
+            $this->data[CONTENT_STRING]['userrole'] = $this -> membership_model -> get_role( $this->data[TOP_NAV_STRING]['username'] );
+        }
     }//__construct()
 
     public function index()
     {
         //set_cookie('language', 'de', 0, '/portal/index.php/patient/sb_dynamic/');
         $this->template->set(HEADER_STRING, 'all/header_sb', $this->data[HEADER_STRING]);
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav_sb', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/sb_dyn/start', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//index()
@@ -49,7 +55,7 @@ class SB_dynamic extends CI_Controller {
         {   
             //PreSessionChecks
             $has_gas = $this-> SB_Model ->has_gas($patientcode);
-            $is_immutable = $this-> Gas_Model ->is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
+            $this->data[CONTENT_STRING]['is_immutable'] = $this-> Gas_Model ->is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
             $view_status = $this-> Patient_model ->get_view_status( $patientcode );
             
             //Skipped an Instance? --> Send Skipped-Mail
@@ -58,11 +64,11 @@ class SB_dynamic extends CI_Controller {
                 $this->skipped_instance_mail($therapist,$patientcode,$instance);
 
             //Has not filled GAS yet? --> Send GAS-Mail
-            if($has_gas AND $instance > 10 AND ($instance-1) % 5 == 0 AND !$is_immutable AND $view_status > 0)
+            if($has_gas AND $instance > 10 AND ($instance-1) % 5 == 0 AND !$this->data[CONTENT_STRING]['is_immutable'] AND $view_status > 0)
                 $this->immutable_gas_mail($therapist,$patientcode,$instance);
             
 
-           //Get Batterie-Data for this User from database
+            //Get Batterie-Data for this User from database
             $batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode);
             $patientcode = strtoupper($patientcode);
             $this->SB_Model->insert_into_sb_start($instance,$patientcode,$therapist);
@@ -71,7 +77,7 @@ class SB_dynamic extends CI_Controller {
             //CASE: User is not allowed to fill this sb --> redirect to index()
             if($view_status == 0 OR !isset($batterie)){     
                 $therapist_from_subjects = $this->SB_Model->get_therapist($patientcode);
-			    $therapist_from_subjects = (is_null($therapist_from_subjects) || $therapist_from_subjects[0]->THERPIST === "")  ? "niemand" : $therapist_from_subjects[0]->THERPIST ;
+			    $therapist_from_subjects = (is_null($therapist_from_subjects) || $therapist_from_subjects[0]->THERAPIST === "")  ? "niemand" : $therapist_from_subjects[0]->THERAPIST ;
                 $this->session->unset_userdata(array('patientcode' => '','instance' => '','therapist' => '','step' => '','batterie' => '','gas' => '','section' => '','sb_dynamic' => ''));
                 $this->session->set_userdata( array('CODE' => $patientcode, 'INSTANCE' => ($instance < 10  ? '0'.$instance : $instance), 'THERAPIST' => $therapist,
 										'THERAPIST_FROM_SUBJECTS' => $therapist_from_subjects, 'patient_vb' => false, 'patient_nb' => false, 'therapist_tb' => false, 'seen_feedback' => false, 'gas' => false ));
@@ -129,9 +135,39 @@ class SB_dynamic extends CI_Controller {
         $this->data[CONTENT_STRING]['section'] = $section;
 
         $this->data[CONTENT_STRING]['batterie'] = $batterie;
+        
+        $lastHscl = $this->Patient_model->get_last_hscl( $patientcode );
+        $this->data[CONTENT_STRING]['over_boundary'] = -1;
+
+        // Wir wollen hier herausfinden wann die Boundary das letzte mal überschritten war. 
+        // In BOUNDARY_UEBERSCHRITTEN steht nur wann sie das erste mal überschritten wurde
+        for($i = $lastHscl->instance; $i >= $lastHscl->instance-3; $i--){
+            $boundary = $this->Patient_Model->get_boundary($patientcode, $i, "BOUNDARY_UEBERSCHRITTEN");
+
+            if($boundary->BOUNDARY_UEBERSCHRITTEN > 0){
+                $this->data[CONTENT_STRING]['over_boundary'] = $i;
+                break;
+            }
+        }
+
+        $this->data[CONTENT_STRING]['view_status'] = $this->Patient_model->get_view_status( $patientcode );
+
+        $z_instance = ($instance - ($instance % 5)); 
+        $z_instance = intval($z_instance) < 10 ? 'Z0'.intval($z_instance) : 'Z'.intval($z_instance);
+        $this->data[CONTENT_STRING]['z_instance'] = $z_instance;
+
+        if($instance % 5 == 0 && ENVIRONMENT === 'development' ) {  
+            $this->data[CONTENT_STRING]['has_zwischen'] = $this -> Questionnaire_tool_model -> has_zwischen($patientcode, $z_instance);
+        }
+        
+        if( !isset( $this->data[CONTENT_STRING]['is_immutable'] ) ) {
+            //set is_immutable now, if it hasn't been set earlier in this function
+            $this->data[CONTENT_STRING]['is_immutable'] = $this-> Gas_Model ->is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);   
+        }
+
+        $this->data[CONTENT_STRING]['pr_exists'] = $this-> Gas_Model ->does_pr_exist($patientcode, $this->data[TOP_NAV_STRING]['username']);
 
         $this->template->set(HEADER_STRING, 'all/header_sb', $this->data[HEADER_STRING]);
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav_sb', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/sb_dyn/overview', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//overview()
@@ -193,8 +229,8 @@ class SB_dynamic extends CI_Controller {
         }
 
         $correct_therapist = $this-> SB_Model ->get_therapist($patientcode);
-        if(strtolower($correct_therapist[0]->THERPIST) !== strtolower($therapist) AND !$danger){
-            $errors[] = array('not_therapist',$therapist,$correct_therapist[0]->THERPIST);
+        if(strtolower($correct_therapist[0]->THERAPIST) !== strtolower($therapist) AND !$danger){
+            $errors[] = array('not_therapist',$therapist,$correct_therapist[0]->THERAPIST);
             
         }
 
@@ -224,7 +260,7 @@ class SB_dynamic extends CI_Controller {
             //if(strtotime($PR_date) < strtotime($this->cut_off_date) OR !isset($batterie)){
             if( $view_status == 0 OR !isset($batterie)){    
                 $therapist_from_subjects = $this->SB_Model->get_therapist($patientcode);
-			    $therapist_from_subjects = (is_null($therapist_from_subjects) || $therapist_from_subjects[0]->THERPIST === "")  ? "niemand" : $therapist_from_subjects[0]->THERPIST ;
+			    $therapist_from_subjects = (is_null($therapist_from_subjects) || $therapist_from_subjects[0]->THERAPIST === "")  ? "niemand" : $therapist_from_subjects[0]->THERAPIST ;
 			    $this->session->unset_userdata(array('patientcode' => '','instance' => '','therapist' => '','step' => '','batterie' => '','gas' => '','section' => '','sb_dynamic' => '', 'acknowledged_missing_data' => ''));
                 $this->session->set_userdata( array('CODE' => $patientcode, 'INSTANCE' => ($instance < 10  ? '0'.$instance : $instance), 'THERAPIST' => $therapist,
 										'THERAPIST_FROM_SUBJECTS' => $therapist_from_subjects, 'patient_vb' => false, 'patient_nb' => false, 'therapist_tb' => false, 'seen_feedback' => false, 'gas' => false ));
@@ -265,8 +301,9 @@ class SB_dynamic extends CI_Controller {
         }
 
         $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
+        $this->data[CONTENT_STRING]['view_status'] = $this -> Patient_model -> get_view_status( $patientcode );
+
         $this->template->set(HEADER_STRING, 'all/header_sb', $this->data[HEADER_STRING]);
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav_sb', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/sb_dyn/section_finish', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//section_finish()
@@ -293,7 +330,7 @@ class SB_dynamic extends CI_Controller {
             $info[$key] = $this->Questionnaire_Model->get_process_scales_info($key);
         }
 
-        $this->data[CONTENT_STRING]['hsclData'] = $this->Questionnaire_Model->get_hscl_process_data($patientcode);
+        $this-> data[CONTENT_STRING]['hsclData'] = $this->Questionnaire_Model->get_hscl_process_data($patientcode);
         $this-> data[CONTENT_STRING]['means'] = $means;
         $this-> data[CONTENT_STRING]['infos'] = $info;
         $this-> data[CONTENT_STRING]['graphs'] = $graphs; 
@@ -314,8 +351,9 @@ class SB_dynamic extends CI_Controller {
         $this->data[CONTENT_STRING]['tables'] = $tables;
         $this->data[CONTENT_STRING]['feedback'] = $feedback;
 
+        $this->data[CONTENT_STRING]['view_status'] = $this -> Patient_model -> get_view_status( $patientcode );
+
         $this->template->set(HEADER_STRING, 'all/header_sb', $this->data[HEADER_STRING]);
-        $this->template->set(TOP_NAV_STRING, 'patient/top_nav_sb', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/sb_dyn/process', $this->data[CONTENT_STRING]);
         $this->template->load('template');
     }//process()
@@ -436,7 +474,6 @@ class SB_dynamic extends CI_Controller {
         
         $this->data[CONTENT_STRING]['gas_process'] = $gas;
 		
-		$this->template->set(TOP_NAV_STRING, 'patient/top_nav_sb', $this->data[TOP_NAV_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/sb_dyn/gas_feedback', $this->data[CONTENT_STRING]);
 		$this->template->set(HEADER_STRING, 'all/header', $this->data[HEADER_STRING]);
         $this->template->load('template');	

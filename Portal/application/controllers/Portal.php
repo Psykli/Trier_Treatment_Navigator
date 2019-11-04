@@ -4,12 +4,35 @@ class Portal extends CI_Controller {
 
 	function __construct(){
 		parent::__construct();
+
+		
+		if(!file_exists(FCPATH.'dist/js/out.js')){
+			redirect('setup/step1');
+			return;
+		}
+		try{
+			$this->db->db_select();
+		} catch( Exception $e){
+			redirect('setup/step2');
+			return;
+		}
+		catch(Error $e){
+			redirect('setup/step2');
+			return;
+		}
+
+		$admins = $this->membership_model->get_all_admin_codes();
+		if(!isset($admins)){
+			redirect('setup/step3');
+			return;
+		}
+
 		$this->data = array(HEADER_STRING => array('title' => 'Portal'),
                             TOP_NAV_STRING => array(),
                             CONTENT_STRING => array(),
                             FOOTER_STRING => array()
 		);
-
+		
 		$this->lang->load('portal');
 		$this->lang->load('login');
 		
@@ -36,9 +59,11 @@ class Portal extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->data[CONTENT_STRING]['is_priviledged_user'] = $this->data[CONTENT_STRING]['userrole'] === 'priviledged_user';
+
 		
-		$this->template->set(TOP_NAV_STRING, $this->data[CONTENT_STRING]['userrole'].'/top_nav', $this->data[TOP_NAV_STRING]);   
+		$this->data[CONTENT_STRING]['is_privileged_user'] = $this->data[CONTENT_STRING]['userrole'] === 'privileged_user';
+		
+		$this->template->set(TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING]);   
 		$this->template->set(CONTENT_STRING, 'portal', $this->data[CONTENT_STRING]);
         $this->template->load('template');
 	}//index()

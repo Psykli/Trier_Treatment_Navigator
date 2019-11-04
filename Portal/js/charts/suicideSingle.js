@@ -61,29 +61,12 @@ function createSingleSuicide (id,value,desc,index,data,maxVal,labels,scaleHasZer
         data: data,
         options: options,
         plugins: [{
-            //passt die Skalen dynamisch an die Canvasgröße an und sorgt dafür, dass sie immer an der gleichen Stelle anfangen
-            adjustSize: function (chartInstance) {
-                //aktuelle Canvasgröße, damit dynamisch
-                var sizeX = chartInstance.canvas.width;
-                //platziert die Skala
-                chartInstance.chartArea.left = sizeX/2;
-                chartInstance.scales['x-axis-0'].left = sizeX/2;
-                //Subtraktionen müssen gleich sein, damit alles passt
-                chartInstance.chartArea.right = sizeX-30;
-                chartInstance.scales['x-axis-0'].right = sizeX-30;
-                chartInstance.scales['x-axis-0'].width = sizeX-30-sizeX/2;
-                //platziert die Labels an der Skala
-                chartInstance.scales['y-axis-0'].right = sizeX/2;
-            },
             //einzeichnen der Punkte
             drawPoints: function (chartInstance) {
                 var context = chartInstance.chart.ctx;
                 var xaxis = chartInstance.scales['x-axis-0'];
                 ctx.fillStyle = '#000000';
                 circle(context,xaxis.getPixelForValue(value),chartInstance.config.data.datasets[0]._meta[index].data[0]._model.y,5,'black');
-            },
-            beforeRender: function (chartInstance) {
-                this.adjustSize(chartInstance);
             },
             afterDraw: function (chartInstance) {
                 this.drawPoints(chartInstance);

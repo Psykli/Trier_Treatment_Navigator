@@ -4,8 +4,7 @@
 <div class="container quest_container">
 <div class="col-md-12">
 <!--<h2><a href="<?php echo site_url('patient/sb_dynamic/index');?>"> Stundenbogen beenden </a></h2>-->
-<?php $view_status = $this->Patient_model->get_view_status( $patientcode );
-        $directory_number = 0; ?> 
+<?php $directory_number = 0; ?>
 <?php if( $view_status != 2 ): ?>
     <div class="text-center" style="margin-top:9%;">
         <h1>Vielen Dank!<h1>
@@ -15,9 +14,10 @@
 <?php else:?>
 
 <?php 
-    $_GET['tables'] = $tables;
+$_GET['tables'] = $tables;
     function selected($table, $item) {
-		foreach($_GET['tables'][$table] as $key => $value) {
+        $tables = $_GET['tables'][$table];
+		foreach($tables as $key => $value) {
 			if($key === $item)
 				return $value;
 		}
@@ -34,7 +34,7 @@
         case 'process':?>
             <div class="col-md-6">
                 <canvas id="<?php echo $f->data?>"></canvas>
-                <?php if($f->data == 'HSCL-11'):?>
+                <?php if(strtoupper($f->data) == 'HSCL-11'):?>
                 <script>
                     createHsclChart("<?php echo $f->data;?>", "<?php echo $f->data;?>", <?php echo json_encode($hsclData['MEANS']);?>,
                                     <?php echo json_encode($hsclData['INSTANCES']);?>,<?php echo json_encode($hsclData['BOUNDARIES']);?>,

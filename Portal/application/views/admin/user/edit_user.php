@@ -13,9 +13,9 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<ol class="breadcrumb">
-				<li><a href="<?php echo base_url(); ?>/index.php/admin/user">Benutzer</a> </li>
-				<li><a href="<?php echo base_url(); ?>/index.php/admin/user/list_all">Liste</a> </li>
-				<li class="active">Benutzerprofil</li>
+				<li class="breadcrumb-item"><a href="<?php echo base_url(); ?>index.php/admin/user">Benutzer</a> </li>
+				<li class="breadcrumb-item"><a href="<?php echo base_url(); ?>index.php/admin/user/list_all">Liste</a> </li>
+				<li class="breadcrumb-item active">Benutzerprofil</li>
 			</ol>   
 		</div>
 	</div>
@@ -47,9 +47,9 @@
 </div>
 
 <div class="container">
-	<div class="row">
+	
 		<?php echo form_open( 'admin/user/edit_user/'.$userdata['id'],  array('class' => 'form-horizontal', 'role' => 'form' ) ); ?>
-			
+		<div class="row">
 			<div class="col-sm-6">
 				<h4>Personalien</h4><hr />		
 
@@ -104,7 +104,7 @@
 					<div class="col-sm-8">
 						<select class="form-control" id="role" name="role">
 								<option value="admin" id="admin"<?php echo $userdata['ROLE'] === 'admin' ? 'selected':''?>>Administrator</option>
-								<option value="priviledged_user" id="priviledged_user"<?php echo $userdata['ROLE'] === 'priviledged_user' ? 'selected':''?>>Privilegierter Benutzer (Indikation)</option>	
+								<option value="privileged_user" id="privileged_user"<?php echo $userdata['ROLE'] === 'privileged_user' ? 'selected':''?>>Privilegierter Benutzer (Indikation)</option>	
 								<option value="user" id="user"<?php echo $userdata['ROLE'] === 'user' ? 'selected':''?>>Benutzer (Therapeut)</option>					
 								<option value="supervisor" id="supervisor" <?php echo $userdata['ROLE'] == 'supervisor' ? 'selected':''?>>Supervisor</option>
 								<option value="patient" id="patient"<?php echo $userdata['ROLE'] === 'patient' ? 'selected':''?>>Patient</option>
@@ -136,12 +136,23 @@
 							</label>
 						</div>
 					</div>
-				</div>		
-				
+				</div>			
+				<div class="row">
+				<button type="submit" class="btn btn-primary">Benutzer ändern</button>
+				<a class="btn btn-primary" href="<?php echo site_url('admin/user/reset_password/'.$userdata['id']);?>">Passwort zurücksetzen</a>
+				<?php $popover_content = "Es wird ein zufälliges Passwort erstellt und gesetzt. Zusätzlich wird eine E-Mail an den Therapeuten versendet und informiert diesen über die Änderungen."; ?>
+				<a data-toggle="popover" title="Hinweis" data-content="<?php echo $popover_content; ?>"><i class="fas fa-info-circle"></i></a>
+
+				<script>
+				$(document).ready(function(){
+					$('[data-toggle="popover"]').popover({html:true});   
+				});
+				</script>
+			</div>		
 			</div><!-- /.col -->
 
 
-			<div class="col-sm-3" id="other_rights">
+			<div class="col-sm-6" id="other_rights">
 				<h4>Zugriffsrechte setzen</h4>
 				
 				<hr />
@@ -201,58 +212,28 @@
 						
 					</div>
 				</div>
+
+				<div class="form-group">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" name="rechte_zuweisung" <?php echo ( $userdata['rechte_zw'] == 1 ) ? 'checked' : ''; ?>>
+							Zuweisungs-Tool
+						</label>
+					</div>
+				</div>
 				<script>
 				$(document).ready(function(){
 					$('[data-toggle="popover"]').popover();   
 				});
 				</script>
 			</div>
-
 			
 
-			<div class="col-sm-3" id="patient_rights">
-				<h4>Patientenrechte setzen</h4>
-				<hr />
-
-				<div class="form-group">
-					<div class="checkbox">
-						<label>
-							<input type="checkbox" name="rechte_zw" <?php echo ( $userdata['rechte_zw'] == 1 ) ? 'checked' : ''; ?>>
-							Zwischenmessung
-						</label>
-					</div>
-				</div>
-			</div>
-
-
-
-			<div class="form-group">
-				<div class="col-sm-8">
-					<button type="submit" class="btn btn-primary">Benutzer ändern</button>
-				</div>
-			</div>	
-		</form>
-
-		<?php echo form_open( 'admin/user/reset_password/'.$userdata['id'],  array('class' => 'form-horizontal', 'role' => 'form' ) ); ?>
-			<div class="form-group">
-				<div class="col-sm-8" id="other_rights2">
-					<button type="submit" class="btn btn-primary">Passwort zurücksetzen</button>
-					<?php $popover_content = "Es wird ein zufälliges Passwort erstellt und gesetzt. Zusätzlich wird eine E-Mail an den Therapeuten versendet und informiert diesen über die Änderungen."; ?>
-					<a href="#" data-toggle="popover" title="Hinweis" data-content="<?php echo $popover_content; ?>"><span class="glyphicon glyphicon-info-sign"></span></a>
-
-					<script>
-					$(document).ready(function(){
-						$('[data-toggle="popover"]').popover({html:true});   
-					});
-					</script>
-				</div>
-			</div>	
-		</form>
-
-
-		
+		</form>		
 		
 	</div><!-- /.row -->
+	
+	
 </div>
 
 <script>

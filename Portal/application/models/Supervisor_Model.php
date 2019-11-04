@@ -20,19 +20,16 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'code' );
-			$this->db->from( 'antrag' );
-			$this->db->where( 'ant006', $username );
+        $this->db->select( 'code' );
+		$this->db->from( 'antrag' );
+		$this->db->where( 'ant006', $username );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
 		
         return $patients_of_supervisor;
     }//get_all_patients()
@@ -47,72 +44,65 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'ant.code as patientcode, sub.therpist as therpist' );
-			$this->db->from( 'antrag ant' );
-			$this->db->join( 'subjects sub', 'ant.code = sub.code' );
-			$this->db->where( 'ant.ant006', $username );
-			$this->db->distinct ();
-			$this->db->order_by( 'therpist', 'ASC' );
-			$this->db->order_by( 'patientcode', 'ASC' );
+        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'antrag ant' );
+		$this->db->join( 'subjects sub', 'ant.code = sub.code' );
+		$this->db->where( 'ant.ant006', $username );
+		$this->db->distinct();
+		$this->db->order_by( 'therapist', 'ASC' );
+		$this->db->order_by( 'patientcode', 'ASC' );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
-        return $patients_of_supervisor;
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
+		
+		return $patients_of_supervisor;
     }//get_all_patients_with_therapeut()
 	
 	public function is_patient_of_supervisor( $supervisor, $patientcode )
     {
         $is_patient_of_supervisor = FALSE;
-        
-        if( isset( $supervisor ) &&  isset( $patientcode ) )
-        {        
-			$this->db->from( 'antrag' );
-			$this->db->where( 'code', $patientcode );
-			$this->db->where( 'ant006', $supervisor );
+		
+		$this->db->select('1');
+        $this->db->from( 'antrag' );
+		$this->db->where( 'code', $patientcode );
+		$this->db->where( 'ant006', $supervisor );
+		$this->db->limit(1);
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) == 1 )
-			{
-				$is_patient_of_supervisor = TRUE;	
-			}//if
-		}
-			
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) === 1 )
+		{
+			$is_patient_of_supervisor = TRUE;	
+		}//if
+		
         return $is_patient_of_supervisor;
     }//is_patient_of_supervisor()
-    
     
     public function get_all_patients_with_therapeut_with_status_open( $username )
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'ant.code as patientcode, sub.therpist as therpist' );
-			$this->db->from( 'antrag ant' );
-			$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-            $this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-			$this->db->where( 'ant.ant006', $username );
-			$this->db->where( 'd.dok012', 1 );
-			$this->db->distinct();
-			$this->db->order_by( 'therpist', 'ASC' );
-			$this->db->order_by( 'patientcode', 'ASC' );
+        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'antrag ant' );
+		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
+		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
+		$this->db->where( 'ant.ant006', $username );
+		$this->db->where( 'd.dok012', 1 );
+		$this->db->distinct();
+		$this->db->order_by( 'therapist', 'ASC' );
+		$this->db->order_by( 'patientcode', 'ASC' );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
-			
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
+		
         return $patients_of_supervisor;
     }//get_all_patients_with_therapeut_with_status_open()
     
@@ -120,25 +110,22 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'ant.code as patientcode, sub.therpist as therpist' );
-			$this->db->from( 'antrag ant' );
-			$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-            $this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-			$this->db->where( 'ant.ant006', $username );
-            $this->db->where( 'd.dok012', 5 );
-			$this->db->order_by( 'therpist', 'ASC' );
-			$this->db->order_by( 'patientcode', 'ASC' );
+        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'antrag ant' );
+		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
+		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
+		$this->db->where( 'ant.ant006', $username );
+		$this->db->where( 'd.dok012', 5 );
+		$this->db->order_by( 'therapist', 'ASC' );
+		$this->db->order_by( 'patientcode', 'ASC' );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
-			
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
+		
         return $patients_of_supervisor;
     }//get_all_patients_with_therapeut_with_status_temp_break()
     
@@ -146,25 +133,22 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'ant.code as patientcode, sub.therpist as therpist' );
-			$this->db->from( 'antrag ant' );
-			$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-            $this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-			$this->db->where( 'ant.ant006', $username );
-            $this->db->where( 'd.dok012', 2 );
-			$this->db->order_by( 'therpist', 'ASC' );
-			$this->db->order_by( 'patientcode', 'ASC' );
+        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'antrag ant' );
+		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
+		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
+		$this->db->where( 'ant.ant006', $username );
+		$this->db->where( 'd.dok012', 2 );
+		$this->db->order_by( 'therapist', 'ASC' );
+		$this->db->order_by( 'patientcode', 'ASC' );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
-			
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
+		
         return $patients_of_supervisor;
     }//get_all_patients_with_therapeut_with_status_closed()
     
@@ -172,25 +156,22 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'ant.code as patientcode, sub.therpist as therpist' );
-			$this->db->from( 'antrag ant' );
-			$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-            $this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-			$this->db->where( 'ant.ant006', $username );
-            $this->db->where( 'd.dok012', 0 );
-			$this->db->order_by( 'therpist', 'ASC' );
-			$this->db->order_by( 'patientcode', 'ASC' );
+        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'antrag ant' );
+		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
+		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
+		$this->db->where( 'ant.ant006', $username );
+		$this->db->where( 'd.dok012', 0 );
+		$this->db->order_by( 'therapist', 'ASC' );
+		$this->db->order_by( 'patientcode', 'ASC' );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
-			
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
+		
         return $patients_of_supervisor;
     }//get_all_patients_with_therapeut_with_status_waiting()
     
@@ -198,28 +179,25 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        if( isset( $username ) )
-        {        
-			$this->db->select( 'ant.code as patientcode, sub.therpist as therpist' );
-			$this->db->from( 'antrag ant' );
-			$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-            $this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-			$this->db->where( 'ant.ant006', $username );
-            $this->db->where( 'd.dok012', 4 );
-            //$this->db->or_where( 'd.dok012', 3 );
-            // $this->db->or_where( 'd.dok012 >=', 7 );
-            // $this->db->where( 'd.dok012 <=', 11 );
-			$this->db->order_by( 'therpist', 'ASC' );
-			$this->db->order_by( 'patientcode', 'ASC' );
+        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'antrag ant' );
+		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
+		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
+		$this->db->where( 'ant.ant006', $username );
+		$this->db->where( 'd.dok012', 4 );
+		//$this->db->or_where( 'd.dok012', 3 );
+		// $this->db->or_where( 'd.dok012 >=', 7 );
+		// $this->db->where( 'd.dok012 <=', 11 );
+		$this->db->order_by( 'therapist', 'ASC' );
+		$this->db->order_by( 'patientcode', 'ASC' );
 
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows( ) > 0 )
-			{
-				$patients_of_supervisor = $query -> result( );	
-			}//if
-		}
-			
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0 )
+		{
+			$patients_of_supervisor = $query -> result( );	
+		}//if
+		
         return $patients_of_supervisor;
     }//get_all_patients_with_therapeut_with_status_abort()	
 }//class Supervisor_model

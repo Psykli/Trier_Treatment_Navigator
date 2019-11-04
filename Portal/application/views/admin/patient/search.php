@@ -1,5 +1,5 @@
 
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
 	<a class="pull-left">
 		<img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patients.png" data-src="holder.js/32x32">
 	</a>
@@ -8,12 +8,13 @@
 	</div>
 </div>
 
-<div class="menu">
+<nav class="menu">
 	<ol class="breadcrumb">
-		<li><a href="<?php echo site_url();?>/admin/dashboard">Dashboard</a></li>
-		<li class="active">Liste</li>
+		<li class="breadcrumb-item"><a href="../dashboard">Dashboard</a></li>
+		<li class="breadcrumb-item active">Liste</li>
 	</ol>        
-</div><!-- end:.usermenu -->
+</nav><!-- end:.usermenu -->     
+	
 
 <div class="row">
 	<div class="col-lg-3">
@@ -21,7 +22,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" id="patientcode" name="patientcode" placeholder="Suche nach Patientencode..." <?php if( isset( $searched_patientcode ) ) { echo "value='$searched_patientcode'"; } ?> required autofocus >
 				<span class="input-group-btn">
-					<button type="submit" class="btn btn-default">Los!</button>
+					<button type="submit" class="btn btn-outline-secondary">Los!</button>
 				</span>
 			</div><!-- /input-group -->
 		</form>
@@ -38,8 +39,18 @@
 <div class="row">
 	<div class="col-lg-12">
 		<?php if( !is_null( $patient_data ) ):?>
-		
-			<table class="table">
+			<script>
+				/* Add basic pagination and ordering to the user table.
+				   The search feature is disabled because it may confuse the user if there's more than one search field.
+				*/
+				$(document).ready(function(){
+					$('#searchResultTable').DataTable( { 
+						searching: false
+					});
+				});
+			</script>
+
+			<table id="searchResultTable" class="table">
 				<thead>
 					<tr>
 						<th>Patientcode</th>

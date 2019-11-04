@@ -4,31 +4,58 @@ if( !defined( 'BASEPATH' ) )
 
 class Questionnaire_tool_model extends CI_Model
 {
-    /**
+      /**
      * Constructer
      * Init of the Psychoeq-Database-Connection.
      */
     public function __construct( )
     {
-		parent::__construct();
-        //$this -> db = $this -> load -> database( 'default', TRUE );
+        $this -> db = $this -> load -> database( 'default', TRUE );
+			
+		$CI =& get_instance();
+		if( !property_exists( $CI, 'db_default' ) ) {
+            $CI->db_default =& $this -> db;
+		}
 		$this -> load -> Model( 'SB_Model' );
-	}//__construct()
+    }
 
 	public function get_sb_batterie($patientcode, $get_Z = false){
-		if(isset($patientcode)){
-			$this->db->db_select();
-			$this -> db -> from( 'questionnaire_batterie_patient bp' );
-			$this -> db -> join( 'questionnaire_batterie b', 'bp.bid = b.id'  );
-			$this -> db -> join( 'questionnaire_batterie_hat bh', 'bp.bid = bh.bid'  );
+		$this->db->db_select();
+		$this -> db -> from( 'questionnaire_batterie_patient bp' );
+		$this -> db -> join( 'questionnaire_batterie b', 'bp.bid = b.id'  );
+		$this -> db -> join( 'questionnaire_batterie_hat bh', 'bp.bid = bh.bid'  );
+		$this -> db -> join( 'questionnaire_list ql', 'bh.qid = ql.id'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
+		
+		if($get_Z){
+			$this -> db -> where( 'bh.is_Z', 1 );
+		} else {
+			$this -> db -> where( 'bh.is_Z', 0 );
+		}
+		
+		$this -> db -> where( 'bp.patientcode', $patientcode );
+		$this -> db -> order_by( 'bh.section', 'ASC' );
+		$this -> db -> order_by( 'bh.section_order', 'ASC' );
+
+		$query = $this -> db -> get( );
+
+		if( $query -> num_rows( ) > 0  ){
+			$result = $query->result();
+			$result = $this->group_questionnaires($result);
+			return $result;
+		} else {								
+			$this -> db -> from( 'questionnaire_batterie b' );
+			$this -> db -> join( 'questionnaire_batterie_hat bh', 'b.id = bh.bid'  );
 			$this -> db -> join( 'questionnaire_list ql', 'bh.qid = ql.id'  );
 			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
+			
 			if($get_Z){
 				$this -> db -> where( 'bh.is_Z', 1 );
 			} else {
 				$this -> db -> where( 'bh.is_Z', 0 );
 			}
-			$this -> db -> where( 'bp.patientcode', $patientcode );
+			
+			$this -> db -> where( 'b.is_standard', 1 );
 			$this -> db -> order_by( 'bh.section', 'ASC' );
 			$this -> db -> order_by( 'bh.section_order', 'ASC' );
 
@@ -38,28 +65,7 @@ class Questionnaire_tool_model extends CI_Model
 				$result = $query->result();
 				$result = $this->group_questionnaires($result);
 				return $result;
-			} else {								
-				$this -> db -> from( 'questionnaire_batterie b' );
-				$this -> db -> join( 'questionnaire_batterie_hat bh', 'b.id = bh.bid'  );
-				$this -> db -> join( 'questionnaire_list ql', 'bh.qid = ql.id'  );
-				$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
-				if($get_Z){
-					$this -> db -> where( 'bh.is_Z', 1 );
-				} else {
-					$this -> db -> where( 'bh.is_Z', 0 );
-				}
-				$this -> db -> where( 'b.is_standard', 1 );
-				$this -> db -> order_by( 'bh.section', 'ASC' );
-				$this -> db -> order_by( 'bh.section_order', 'ASC' );
-
-				$query = $this -> db -> get( );
-
-				if( $query -> num_rows( ) > 0  ){
-					$result = $query->result();
-					$result = $this->group_questionnaires($result);
-					return $result;
-				}		
-			}
+			}		
 		}
 
 		return NULL;
@@ -99,19 +105,17 @@ class Questionnaire_tool_model extends CI_Model
     }//group_questionnaires()
     
     public function inactive_patients($therapist){
-		if(isset($therapist)){
-			$this -> db -> from( 'questionnaire_released qr' );
-			$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
-			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
-			$this -> db -> where( 'therapist', $therapist );
-			$this -> db -> where( 'finished', 0 );
+		$this -> db -> from( 'questionnaire_released qr' );
+		$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
+		$this -> db -> where( 'therapist', $therapist );
+		$this -> db -> where( 'finished', 0 );
 
-			$query = $this -> db -> get( );
-			if( $query -> num_rows( ) > 0  ){
-				$result = $query->result();
-				$result = $this->group_questionnaires($result);
-				return $result;
-			}
+		$query = $this -> db -> get( );
+		if( $query -> num_rows( ) > 0  ){
+			$result = $query->result();
+			$result = $this->group_questionnaires($result);
+			return $result;
 		}
 	}//inactive_patients()
 
@@ -120,33 +124,30 @@ class Questionnaire_tool_model extends CI_Model
 	{
 		$questionnaire = NULL; 
 		
-		if( isset( $user ) )
-		{	
-			$this -> db -> select( 'qr.id, qr.therapist, qr.patientcode, qr.qid, qr.datum, qr.finished, qr.instance, qr.activation, ql.tablename, ql.filename, qln.language, qln.header_name, qln.description' );
-			$this -> db -> from( 'questionnaire_released qr' );
-			$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
-            $this -> db -> join( 'questionnaire_list_names qln', 'qr.qid = qln.qid'  );
-            if(preg_match('/\d{4}\D\d{2}/',$user))
-            {
-                $this -> db -> where( 'patientcode', $user );
-            }
-            elseif(preg_match('/\D{2}\d{2}/',$user)) 
-            {
-                $this -> db -> where( 'qr.therapist', $user );
-            }
-			$this -> db -> order_by( 'qln.header_name', 'ASC' );
-			$this -> db -> order_by( 'datum', 'DESC' );
-			$this -> db -> order_by( 'finished', 'ASC' );
-			$this -> db -> group_by( 'tablename, instance');
-			
+		$this -> db -> select( 'qr.id, qr.therapist, qr.patientcode, qr.qid, qr.datum, qr.finished, qr.instance, qr.activation, ql.tablename, ql.filename, qln.language, qln.header_name, qln.description' );
+		$this -> db -> from( 'questionnaire_released qr' );
+		$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'qr.qid = qln.qid'  );
+		if(preg_match('/\d{4}\D\d{2}/',$user))
+		{
+			$this -> db -> where( 'patientcode', $user );
+		}
+		elseif(preg_match('/\D{2}\d{2}/',$user)) 
+		{
+			$this -> db -> where( 'qr.therapist', $user );
+		}
+		$this -> db -> order_by( 'qln.header_name', 'ASC' );
+		$this -> db -> order_by( 'datum', 'DESC' );
+		$this -> db -> order_by( 'finished', 'ASC' );
+		$this -> db -> group_by( 'tablename, instance');
+		
 
-			$query = $this -> db -> get( );
+		$query = $this -> db -> get( );
 
-			if( $query -> num_rows( ) > 0  )
-			{
-				$questionnaire = $query -> result( );
-				$questionnaire = $this->group_questionnaires($questionnaire);
-			}
+		if( $query -> num_rows( ) > 0  )
+		{
+			$questionnaire = $query -> result( );
+			$questionnaire = $this->group_questionnaires($questionnaire);
 		}
 		
 		return $questionnaire;	
@@ -154,22 +155,20 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function is_questionnaire_available($patientcode)
 	{
-		
-		if( isset( $patientcode ) )
-		{	
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'finished', 0 );
-			$this -> db -> where( 'activation <=', date('Y-m-d',time()));
+		$this -> db -> select( '1' );
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'finished', 0 );
+		$this -> db -> where( 'activation <=', date('Y-m-d',time()));
+		$this -> db -> limit( 1 );
 
-			$query = $this -> db -> get( );
+		$query = $this -> db -> get( );
 
-			if( $query -> num_rows( ) > 0  )
-				return true;
-				
+		if( $query -> num_rows( ) === 1 ) {
+			return true;
 		}
 		
-		return $false;	
+		return false;
 	}//is_questionnaire_available()
 
 	public function get_last_login($patientcode)
@@ -184,58 +183,59 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function get_ex_activity($patientcode)
 	{
-		if(isset($patientcode)){
-			$this->db->from('ex_activity');
-			$this->db->where('patientcode',$patientcode);
-			$query = $this -> db -> get( );
-			if($query->num_rows > 0){
-				$result = $query->result();
-				return $result[0];
-			} 
-		}
+		$this->db->from('ex_activity');
+		$this->db->where('patientcode',$patientcode);
+		$this -> db -> limit( 1 );
 
+		$query = $this -> db -> get( );
+		
+		if($query->num_rows === 1) {
+			return $query->result()[0];
+		} 
+		
 		return NULL;
 	}//get_ex_activity()
 
 	public function get_questionnaire_id_by_table( $table ) {
-		if( isset( $table ) ){
-
-			$this -> db -> from('questionnaire_list ql');
-			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
-			$this -> db -> where('ql.tablename',$table);
-			$query = $this -> db -> get( );
-			
-			if( $query -> num_rows() > 0) {
-				$result = $query->result( );
-				$result = $this->group_questionnaires( $result );
-				return $result[0] -> qid;
-			}
+		$this -> db -> from('questionnaire_list ql');
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
+		$this -> db -> where('ql.tablename',$table);
+		
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows() > 0) {
+			$result = $query->result( );
+			$result = $this->group_questionnaires( $result );
+			return $result[0] -> qid;
 		}
+		
 		return null;
 	}//get_questionnaire_id_by_table()
 
 	public function get_single_released_questionnaire($patientcode, $id, $instance = null, $finished = null)
 	{
-
 		$result = NULL;
-		if(isset($patientcode) AND isset($id)){
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'qid', $id );
-			if(isset($instance)){
-				$this -> db -> where( 'instance', $instance );
-			}
-			if(isset($finished)){
-				$this -> db -> where( 'finished', $finished );
-			}
-
-			$query = $this -> db -> get( );
-
-			if( $query -> num_rows( ) > 0  ){
-				$result = $query->result();
-				$result = $result[0];
-			}
+		
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'qid', $id );
+		
+		if(isset($instance)){
+			$this -> db -> where( 'instance', $instance );
 		}
+		
+		if(isset($finished)){
+			$this -> db -> where( 'finished', $finished );
+		}
+
+		$this -> db -> limit( 1 );
+
+		$query = $this -> db -> get( );
+
+		if( $query -> num_rows( ) === 1 ){
+			$result = $query->result()[0];
+		}
+		
 		return $result;
 	}//get_single_released_questionnaire()
 
@@ -243,23 +243,20 @@ class Questionnaire_tool_model extends CI_Model
 	{
 		$questionnaires = NULL; 
 		
-		if( isset( $username ) )
-		{	
-			$this -> db -> select( 'qr.id, qr.therapist, qr.patientcode, qr.qid, qr.datum, qr.finished, qr.instance, qr.activation, ql.tablename, ql.filename, qln.language, qln.header_name, qln.description' );
-			$this -> db -> from( 'questionnaire_released qr' );
-			$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
-			$this -> db -> join( 'questionnaire_list_names qln', 'qr.qid = qln.qid'  );
-			$this -> db -> where( 'patientcode', $username );
-			$this -> db -> where( 'finished', 0 );
-			$this -> db -> order_by( 'qln.header_name', 'ASC' );
-			$this -> db -> order_by( 'datum', 'DESC' );
-			
-			$query = $this -> db -> get( );
+		$this -> db -> select( 'qr.id, qr.therapist, qr.patientcode, qr.qid, qr.datum, qr.finished, qr.instance, qr.activation, ql.tablename, ql.filename, qln.language, qln.header_name, qln.description' );
+		$this -> db -> from( 'questionnaire_released qr' );
+		$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'qr.qid = qln.qid'  );
+		$this -> db -> where( 'patientcode', $username );
+		$this -> db -> where( 'finished', 0 );
+		$this -> db -> order_by( 'qln.header_name', 'ASC' );
+		$this -> db -> order_by( 'datum', 'DESC' );
+		
+		$query = $this -> db -> get( );
 
-			if( $query -> num_rows( ) > 0  ){
-				$questionnaires = $query -> result( );
-				$questionnaires = $this->group_questionnaires($questionnaires);
-			}
+		if( $query -> num_rows( ) > 0  ){
+			$questionnaires = $query -> result( );
+			$questionnaires = $this->group_questionnaires($questionnaires);
 		}
 		
 		return $questionnaires;	
@@ -290,25 +287,22 @@ class Questionnaire_tool_model extends CI_Model
 	{
 		$questionnaires = NULL; 
 		
-		if( isset( $id ) )
-		{	
-			$this -> db -> select('qbh.id as id, qbh.bid as bid, qbh.section as section, qbh.section_order as section_order, qbh.is_Z as is_Z, ql.id as qid, ql.tablename as tablename, ql.filename as filename, qln.language, qln.header_name, qln.description');
-			$this -> db -> from( 'questionnaire_batterie_hat qbh' );
-			$this -> db -> join( 'questionnaire_list ql', 'ql.id = qbh.qid'  );
-			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );			
-			$this -> db -> where( 'qbh.bid', $id );
-			if($is_Z){
-				$this -> db -> where( 'qbh.is_Z', 1 );
-			}
-			$this -> db -> order_by( 'qbh.section', 'ASC' );
-			$this -> db -> order_by( 'qbh.section_order', 'ASC' );
-			
-			$query = $this -> db -> get( );
+		$this -> db -> select('qbh.id as id, qbh.bid as bid, qbh.section as section, qbh.section_order as section_order, qbh.is_Z as is_Z, ql.id as qid, ql.tablename as tablename, ql.filename as filename, qln.language, qln.header_name, qln.description');
+		$this -> db -> from( 'questionnaire_batterie_hat qbh' );
+		$this -> db -> join( 'questionnaire_list ql', 'ql.id = qbh.qid'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );			
+		$this -> db -> where( 'qbh.bid', $id );
+		if($is_Z){
+			$this -> db -> where( 'qbh.is_Z', 1 );
+		}
+		$this -> db -> order_by( 'qbh.section', 'ASC' );
+		$this -> db -> order_by( 'qbh.section_order', 'ASC' );
+		
+		$query = $this -> db -> get( );
 
-			if( $query -> num_rows( ) > 0  ){
-				$questionnaires = $query -> result( );
-				$questionnaires = $this->group_questionnaires($questionnaires);
-			}
+		if( $query -> num_rows( ) > 0  ){
+			$questionnaires = $query -> result( );
+			$questionnaires = $this->group_questionnaires($questionnaires);
 		}
 		
 		return $questionnaires;	
@@ -335,75 +329,76 @@ class Questionnaire_tool_model extends CI_Model
 
 		$result = $instance != 'Z' ? '01' : '05';
 
-		if( isset( $questionnaireID ) AND isset( $patientcode ) AND isset( $instance ) ) {
-			$highestNumber = 0;
-			$where = "instance REGEXP '^".$instance."[0-9]+$'";
+		$highestNumber = 0;
+		$where = "instance REGEXP '^".$instance."[0-9]+$'";
 
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'qid', $questionnaireID );
-			$this -> db -> where($where);
-			$this -> db -> group_start()
-								->where( 'therapist', $therapist)
-								->or_where( 'therapist', 'admin' )
-							->group_end();
-			$this -> db -> order_by( 'instance', 'ASC' );
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'qid', $questionnaireID );
+		$this -> db -> where($where);
+		$this -> db -> group_start()
+							->where( 'therapist', $therapist)
+							->or_where( 'therapist', 'admin' )
+						->group_end();
+		$this -> db -> order_by( 'instance', 'ASC' );
 
-			$query = $this -> db -> get( );
-			if( $query -> num_rows( ) > 0  ){
-				$data = $query -> result( );
+		$query = $this -> db -> get( );
+		
+		if( $query -> num_rows( ) > 0  ){
+			$data = $query -> result( );
 
-				$next = substr($data[sizeof($data)-1] -> instance,0,-2);
-				$nextNum = intval(substr($data[sizeof($data)-1] -> instance,-2,2));
-				$highestNumber = $nextNum;
-				if(strcasecmp($instance,'Z') === 0){				
-					$nextNum += 5;
-				} else {
-					$nextNum++;
-				}
-				if($nextNum < 10){
-					$result = '0' . $nextNum;
-				} else {
-					$result = $nextNum;
-				}
-			} 
-		}
+			$next = substr($data[sizeof($data)-1] -> instance,0,-2);
+			$nextNum = intval(substr($data[sizeof($data)-1] -> instance,-2,2));
+			$highestNumber = $nextNum;
+
+			if(strcasecmp($instance,'Z') === 0){				
+				$nextNum += 5;
+			} else {
+				$nextNum++;
+			}
+			
+			if($nextNum < 10){
+				$result = '0' . $nextNum;
+			} else {
+				$result = $nextNum;
+			}
+		} 
 
 		return $result;
 	}//get_next_instance_of_questionnaire()
-	
+
 	public function get_next_sb_instance($questionnaireID, $patientcode, $therapist){
-		if(isset($patientcode)){
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'therapist', $therapist );
-			$this -> db -> where( 'qid', $questionnaireID );
-			$where = "instance REGEXP '^[0-9]*$'";
-			$this -> db -> where($where);
-			$query = $this -> db -> get( );
-			
-			$highestNumber = 1;
-			if($query->num_rows() == 1) {
-				$tmpres = $query->result();
-				$highestNumber = intval($tmpres[0]->instance) + 1;
-			}
-			return $highestNumber;
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'therapist', $therapist );
+		$this -> db -> where( 'qid', $questionnaireID );
+		$where = "instance REGEXP '^[0-9]*$'";
+		$this -> db -> where($where);
+		$this -> db -> limit( 1 );
+		$query = $this -> db -> get( );
+		
+		$highestNumber = 1;
+		
+		if($query->num_rows() === 1) {
+			$tmpres = $query->result()[0];
+			$highestNumber = intval($tmpres->instance) + 1;
 		}
+
+		return $highestNumber;
 	}//get_next_sb_instance()
 	
 	public function instance_exists($questionnaireID, $patientcode, $therapist, $instance){
-		if(isset($patientcode)){
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'therapist', $therapist );
-			$this -> db -> where( 'qid', $questionnaireID );
-			$this -> db -> like('instance',$instance);
-			$query = $this -> db -> get( );
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'therapist', $therapist );
+		$this -> db -> where( 'qid', $questionnaireID );
+		$this -> db -> like('instance',$instance);
+		$this -> db -> limit( 1 );
 
-			if($query->num_rows() > 0) {
-				$result = $query -> result();
-				return $result[0]->id;
-			}
+		$query = $this -> db -> get( );
+
+		if($query->num_rows() === 1) {
+			return $query -> result()[0]->id;
 		}
 	}//instance_exists()
 
@@ -411,38 +406,31 @@ class Questionnaire_tool_model extends CI_Model
 	{
 		$questionnaires = NULL; 
 		
-		if( isset( $id ) )
-		{	
-			$this -> db -> select('qbh.id as id, qbh.bid as bid, qbh.section as section, qbh.section_order as section_order, qbh.is_Z as is_Z, ql.id as qid, ql.tablename as tablename, ql.filename as filename, qln.language, qln.header_name, qln.description');
-			$this -> db -> from( 'questionnaire_batterie_hat qbh' );
-			$this -> db -> join( 'questionnaire_list ql', 'ql.id = qbh.qid'  );
-			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );			
-			$this -> db -> where( 'qbh.bid', $id );
-			if($is_Z){
-				$this -> db -> where( 'qbh.is_Z', 1 );
-			}
-			$this -> db -> order_by( 'qbh.section', 'ASC' );
-			$this -> db -> order_by( 'qbh.section_order', 'ASC' );
-			
-			
+		$this -> db -> select('qbh.id as id, qbh.bid as bid, qbh.section as section, qbh.section_order as section_order, qbh.is_Z as is_Z, ql.id as qid, ql.tablename as tablename, ql.filename as filename, qln.language, qln.header_name, qln.description');
+		$this -> db -> from( 'questionnaire_batterie_hat qbh' );
+		$this -> db -> join( 'questionnaire_list ql', 'ql.id = qbh.qid'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );			
+		$this -> db -> where( 'qbh.bid', $id );
+		
+		if($is_Z){
+			$this -> db -> where( 'qbh.is_Z', 1 );
+		}
+		
+		$this -> db -> order_by( 'qbh.section', 'ASC' );
+		$this -> db -> order_by( 'qbh.section_order', 'ASC' );
+		
+		$query = $this -> db -> get( );
 
-			$query = $this -> db -> get( );
-
-			if( $query -> num_rows( ) > 0  ){
-				$questionnaires = $query -> result( );
-				$questionnaires = $this->group_questionnaires($questionnaires);
-			}
-		}//get_all_questionnaire_by_batterie()
+		if( $query -> num_rows( ) > 0  ) {
+			$questionnaires = $query -> result( );
+			$questionnaires = $this->group_questionnaires($questionnaires);
+		}
 		
 		return $questionnaires;	
-	}
+	}//get_all_questionnaire_by_batterie()
 
-	public function insert_questionnaire( $therapist, $patientcode, $questionnaire, $instance, $activation = null, $days_interval = null )
+	public function insert_questionnaire( $therapist, $patientcode, $questionnaire, $instance = 'OT', $activation = null, $days_interval = null )
 	{
-		if( !isset( $instance ) ) {
-			$instance = 'OT';
-		}
-
 		if( !isset( $activation ) ) {
 			$activation = date("Y-m-d H:i:s", time());
 		}
@@ -451,110 +439,116 @@ class Questionnaire_tool_model extends CI_Model
 			$days_interval = 0;
 		}
 		
-		if( isset( $patientcode ) AND isset( $questionnaire ))
-        {
-			$today = date("Y-m-d", time());
-			$data = array(
-				'therapist' => $therapist ,
-				'patientcode' => $patientcode ,
-				'qid' => $questionnaire,
-				'datum' => $today,
-				'finished' => 0,
-				'instance' => $instance,
-				'activation' => $activation,
-				'daysInterval' => $days_interval
-				);
-			
-			$query = $this-> db ->insert('questionnaire_released', $data);
+		$today = date("Y-m-d", time());
+		$data = array(
+			'therapist' => $therapist ,
+			'patientcode' => $patientcode ,
+			'qid' => $questionnaire,
+			'datum' => $today,
+			'finished' => 0,
+			'instance' => $instance,
+			'activation' => $activation,
+			'daysInterval' => $days_interval
+			);
+		
+		$query = $this-> db ->insert('questionnaire_released', $data);
 
-			return $this-> db ->insert_id();
-		}
-	}//insert_questionnaire
+		return $this-> db ->insert_id();
+	}//insert_questionnaire()
 
 	public function get_questionnaire_by_file( $file )
 	{
 		$questionnaire = NULL; 
 		
-		if( isset( $file ) )
-		{	
-			$this -> db -> from( 'questionnaire_list ql' );
-			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
-			$this -> db -> where( 'ql.filename', $file );
+		$this -> db -> from( 'questionnaire_list ql' );
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
+		$this -> db -> where( 'ql.filename', $file );
 
-			$query = $this -> db -> get( );
+		$query = $this -> db -> get( );
 
-			if( $query -> num_rows( ) >= 1 )
-				$questionnaire = $query -> result( );	
-				$questionnaire = $this->group_questionnaires($questionnaire);	
+		if( $query -> num_rows( ) > 0 ) {
+			$questionnaire = $query -> result( );	
+			$questionnaire = $this->group_questionnaires($questionnaire)[0];
 		}
 		
-		return $questionnaire[0];	
+		return $questionnaire;	
 	}//get_questionnaire_by_file()
 
 	public function update_questionnaire ($questionnaire)
 	{
-		if( isset( $questionnaire ) )
-        {
-			$data = array(
-				'finished' => 1
-				);
-				
-			$this->db->where('id', $questionnaire);
-			$this->db->update('questionnaire_released', $data); 
-		}
+		$data = array(
+			'finished' => 1
+		);
+			
+		$this->db->where('id', $questionnaire);
+		$this->db->update('questionnaire_released', $data); 
 	}//update_questionnaire()
 
 	public function get_questionnaire( $id )
 	{
 		$questionnaire = NULL; 
 		
-		if( isset( $id ) )
-		{	
-			$this -> db -> from( 'questionnaire_list ql' );
-			$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
-			$this -> db -> where( 'ql.id', $id );
+		$this -> db -> from( 'questionnaire_list ql' );
+		$this -> db -> join( 'questionnaire_list_names qln', 'ql.id = qln.qid'  );
+		$this -> db -> where( 'ql.id', $id );
 
-			$query = $this -> db -> get( );
+		$query = $this -> db -> get( );
 
-			if( $query -> num_rows( ) >= 1 ){
-				$questionnaire = $query -> result( );
-				$questionnaire = $this->group_questionnaires($questionnaire);
-			}		
+		if( $query -> num_rows( ) > 0 ){
+			$questionnaire = $query -> result( );
+			$questionnaire = $this->group_questionnaires($questionnaire);
 		}
-		
-		return $questionnaire;	
+
+		return $questionnaire;
 	}//get_questionnaire()
 
-	public function get_entry( $id )
+	public function get_entry( $id, $columns = NULL )
 	{
 		$entry = NULL; 
 		
-		if( isset( $id ) )
-		{	
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'id', $id );
+		if( !is_null( $columns ) ) {
+			$this -> db -> select( $columns );
+		}
 
-			$query = $this -> db -> get( );
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'id', $id );
+		$this -> db -> limit( 1 );
 
-			if( $query -> num_rows( ) == 1 )
-				$entry = $query -> result( );		
+		$query = $this -> db -> get( );
+
+		if( $query -> num_rows( ) === 1 ) {
+			$entry = $query -> result( )[0];
 		}
 		
 		return $entry;	
 	}//get_entry()
 
-	//TODO (Note from Nicolai to Nicolai) fix the security issues with this method
-	public function insert_row($data, $table) {
-		if(isset($data['CODE'])) {
+	public function insert_row_DANGEROUS($data, $table) {
+		/*
+			This method can be dangerous because it allows to insert any data into any table of the database.
+			It's important to sanitize $data and to check if $table is an expected tablename BEFORE this method gets called from e.g. a controller.
+			Otherwise an attacker is able to choose the "user"-table and insert a new admin user (the table structure for the insert is public too when this software got open-sourced).
+			At the time of writing, the only use of this method is from controllers/patient/questionnaire.php/send_questionnaire() and it should probably stay that way.
+			Follow the usual procedure of inserting data for all other insert queries whenever possible.
+		*/
+
+		if( isset( $data['CODE'] ) ) {
 			$data['CODE'] = strtoupper($data['CODE']);
+			
 			$this->db->db_select();
+			
+			/*
 			//Sicherheit? Test, ob alles in Ordnung ist?
 			$sql = 'INSERT INTO `' . $table . '` (' .
 			implode(", ", array_keys($data)) . ") VALUES ('" .
 			implode("', '", array_values($data)) . "')";
+			
 			$this->db->query($sql);
-
-
+			*/
+			//There are issues with the security and maintainability of the above custom SQL query,
+			//so it got replaced with the following using the CI query builder:
+			$this-> db -> insert($table, $data);
+			
 			if($table == 'HSCL-11')
 			{
 				$aktPosition = getcwd();
@@ -562,33 +556,30 @@ class Questionnaire_tool_model extends CI_Model
 				var_dump($path);
 				chdir($path);
 
-				  //SOLL DIENST ZUR AKTUALISIERUNG DES HSCL_GRAPHEN ersetzten, (wurde bisher per Eintrag in feedback_log getriggert)
+				//SOLL DIENST ZUR AKTUALISIERUNG DES HSCL_GRAPHEN ersetzten, (wurde bisher per Eintrag in feedback_log getriggert)
 				exec("Rscript entscheidungsregeln_mit200Faellen.R ".$data['CODE']." ".$data['INSTANCE']." &> /dev/null &");
 			}
 		}
-	}//insert_row()
+	}//insert_row_DANGEROUS()
 
 	public function get_remaining_questionnaires($patientcode){
 		$questionnaires = NULL; 
 		
-		if( isset( $patientcode ) )
-		{	
-			$this -> db -> select( 'qr.id, qr.therapist, qr.patientcode, qr.qid, qr.datum, qr.finished, qr.instance, qr.activation, ql.tablename, ql.filename, qln.language, qln.header_name, qln.description' );
-			$this -> db -> from( 'questionnaire_released qr' );
-			$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
-			$this -> db -> join( 'questionnaire_list_names qln', 'qr.qid = qln.qid'  );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'finished', 0 );
-			$this -> db -> where( "activation <= '".date('Y-m-d')."'" );
-			$this -> db -> order_by( 'qln.header_name', 'ASC' );
-			$this -> db -> order_by( 'datum', 'DESC' );
-			
-			$query = $this -> db -> get( );
-			$sql = $this->db->last_query();
-			if( $query -> num_rows( ) > 0  ){
-				$questionnaires = $query -> result( );
-				$questionnaires = $this->group_questionnaires($questionnaires);
-			}
+		$this -> db -> select( 'qr.id, qr.therapist, qr.patientcode, qr.qid, qr.datum, qr.finished, qr.instance, qr.activation, ql.tablename, ql.filename, qln.language, qln.header_name, qln.description' );
+		$this -> db -> from( 'questionnaire_released qr' );
+		$this -> db -> join( 'questionnaire_list ql', 'qr.qid = ql.id'  );
+		$this -> db -> join( 'questionnaire_list_names qln', 'qr.qid = qln.qid'  );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'finished', 0 );
+		$this -> db -> where( "activation <= '".date('Y-m-d')."'" );
+		$this -> db -> order_by( 'qln.header_name', 'ASC' );
+		$this -> db -> order_by( 'datum', 'DESC' );
+		
+		$query = $this -> db -> get( );
+		$sql = $this->db->last_query();
+		if( $query -> num_rows( ) > 0  ){
+			$questionnaires = $query -> result( );
+			$questionnaires = $this->group_questionnaires($questionnaires);
 		}
 		
 		return $questionnaires;	
@@ -596,73 +587,83 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function has_zwischen($patientcode, $z_instance)
 	{
+		$this -> db -> from( 'questionnaire_released' );
+		$this -> db -> where( 'patientcode', $patientcode );
+		$this -> db -> where( 'instance', $z_instance );
+		$this -> db -> limit( 1 );
 
-		if( isset( $patientcode ) && isset( $z_instance ) )
-		{	
-			$this -> db -> from( 'questionnaire_released' );
-			$this -> db -> where( 'patientcode', $patientcode );
-			$this -> db -> where( 'instance', $z_instance );
+		$query = $this -> db -> get( );
 
-			$query = $this -> db -> get( );
-
-			if( $query -> num_rows( ) >= 1 )
-				return TRUE;	
+		if( $query -> num_rows( ) === 1 ) {
+			return TRUE;
 		}
-		
-		return FALSE;	
+
+		return FALSE;
 	}//has_zwischen()
 
-	public function get_feedback_of_batterie($bid){
-		
+	public function get_feedback_of_batterie($bid) {
 		//$sql = "SELECT * FROM `questionnaire_batterie_feedback` WHERE bid = 2 ORDER BY feedback_order ASC";
 		
-		
-		$this-> db -> from('questionnaire_batterie_feedback');
-		$this-> db -> where('bid', $bid);
+		$this -> db -> from('questionnaire_batterie_feedback');
+		$this -> db -> where('bid', $bid);
 		$this -> db -> order_by( 'feedback_order', 'ASC' );
 		
+		$query = $this -> db -> get();
 		
-		$query = $this ->  db  -> get();
-		if($query->num_rows() > 0){
-			$result = $query->result();
-			return $result;
+		if($query->num_rows() > 0) {
+			return $query->result();
 		}
 
 		return null;
-	} //get_feedback of _batterie()
+	}//get_feedback_of_batterie()
 
-	public function get_review_by_data($bid,$data){
-		$this-> db ->from('questionnaire_batterie_feedback');
-		$this-> db ->where('bid',$bid);
-		$this-> db ->where('type','review');
-		$this-> db ->where('data',$data);
+	public function get_review_by_data($bid,$data) {
+		$this -> db -> from('questionnaire_batterie_feedback');
+		$this -> db -> where('bid',$bid);
+		$this -> db -> where('type','review');
+		$this -> db -> where('data',$data);
 		$this -> db -> order_by( 'feedback_order', 'ASC' );
 
-		$query = $this ->  db  -> get( );
-		if($query->num_rows() > 0){
-			$result = $query->result();
-			return $result[0];
+		$query = $this -> db -> get( );
+		
+		if($query->num_rows() > 0) {
+			return $query->result()[0];
 		}
 
 		return null;
 	}//get_review_by_data()
 
-	/**
-	 * Ersetzt: publ. func. get_questionnaire_DB($filename)
-	 
-	 *  @return StdObject mit entsprechenden Daten aus portal.questionnaire_list (int qid, String tablename, String filename)
-	 * 
-	 */
-	private function get_questionnaire_list_data($filename)
+	public function get_questionnaire_list_tablenames( )
 	{
-		$this-> db -> from ('questionnaire_list');
-		$this-> db -> where ('filename', $filename);
+		$this -> db -> distinct();
+		$this -> db -> select('tablename');
+		$this -> db -> from('questionnaire_list');
+		
 		$query = $this-> db -> get();
-		if ($query->num_rows() > 0)
-		{
-			$result = $query->result();
-			return $result[0];
+		
+		return $query->result_array();
+	}//get_questionnaire_list_tablenames()
+
+	/**
+	 * Ersetzt: publ. func. get_questionnaire_DB($filename) 
+	 */
+	private function get_questionnaire_list_data($filename, $columns = NULL)
+	{
+		if( isset($columns) ) {
+			$this -> db -> select( $columns );
 		}
+
+		$this -> db -> from ('questionnaire_list');
+		$this -> db -> where ('filename', $filename);
+		$this -> db -> limit( 1 );
+
+		$query = $this-> db -> get();
+		
+		if ($query->num_rows() === 1)
+		{
+			return $query->result()[0];
+		}
+
 		return null;
 	}//get_questionnaire_list_data()
 
@@ -670,62 +671,61 @@ class Questionnaire_tool_model extends CI_Model
 	{
 		$qid = null;
 
-		if(isset($tablename) AND isset($filename)) //Ist Questionnaire in DB vorhanden?
-		{
-			$get = $this-> get_questionnaire_list_data($filename);
-			$id = $get->id;
+		$get = $this-> get_questionnaire_list_data($filename, 'id');
+		$id = $get->id;
 
-			if (!isset($id)) //Bei Suche nach nicht XML-Dateien
-			{
-				$get = $this-> get_questionnaire_list_data(str_replace('.xml','',$filename));
-				$id = $get->id;
-			}
-			
-			//Daten für questionnaire_list zusammenstellen
-			$questionnaire_list_data = array(
-				'tablename' => $tablename,
-				'filename' => $filename
+		if (!isset($id)) //Bei Suche nach nicht XML-Dateien
+		{
+			$get = $this-> get_questionnaire_list_data(str_replace('.xml','',$filename), 'id');
+			$id = $get->id;
+		}
+		
+		//Daten für questionnaire_list zusammenstellen
+		$questionnaire_list_data = array(
+			'tablename' => $tablename,
+			'filename' => $filename
+		);
+
+		if(isset($id)) //Questionnaire bereits in DB vorhanden --> UPDATE
+		{
+			$this-> db -> where('id', $id);
+			$this-> db -> update('questionnaire_list', $questionnaire_list_data);
+			$qid = $id;
+		}
+		else // Questionnaire noch nicht in DB vorhanden --> INSERT
+		{
+			$this -> db -> insert('questionnaire_list', $questionnaire_list_data);
+			$qid = $this-> db -> insert_id();
+		}
+
+		// Daten für questionnaire_list_names zusammenstellen und jew. Eintrag updaten/einfügen
+		foreach($language as $key => $lang)
+		{
+			$this -> db -> select('1');
+			$this -> db -> from ('questionnaire_list_names');
+			$this -> db -> where ('qid', $qid);
+			$this -> db -> where ('language', $key);
+			$this -> db -> limit(1);
+			$query = $this -> db -> get();
+
+			$questionnaire_list_names_data = array(
+				'qid' => $qid,
+				'language' => $key,
+				'header_name' => $lang['header_name'],
+				'description' => $lang['description']
 			);
 
-			if(isset($id)) //Questionnaire bereits in DB vorhanden --> UPDATE
+			if($query->num_rows() === 1)
 			{
-				$this-> db -> where('id', $id);
-				$this-> db -> update('questionnaire_list', $questionnaire_list_data);
-				$qid = $id;
+				$this-> db -> where('qid', $qid);
+				$this-> db -> where('language', $key);
+				$this-> db -> update('questionnaire_list_names', $questionnaire_list_names_data);
 			}
-			else // Questionnaire noch nicht in DB vorhanden --> INSERT
+			else
 			{
-				$this -> db -> insert('questionnaire_list', $questionnaire_list_data);
-				$qid = $this-> db -> insert_id();
+				$this-> db -> insert('questionnaire_list_names', $questionnaire_list_names_data);
 			}
-
-			// Daten für questionnaire_list_names zusammenstellen und jew. Eintrag updaten/einfügen
-			foreach($language as $key => $lang)
-			{
-				$this -> db -> from ('questionnaire_list_names');
-				$this-> db -> where ('qid', $qid);
-				$this-> db -> where ('language', $key);
-				$query = $this -> db -> get();
-
-				$questionnaire_list_names_data = array(
-					'qid' => $qid,
-					'language' => $key,
-					'header_name' => $lang['header_name'],
-					'description' => $lang['description']
-				);
-
-				if($query->num_rows() > 0)
-				{
-					$this-> db -> where('qid', $qid);
-					$this-> db -> where('language', $key);
-					$this-> db -> update('questionnaire_list_names', $questionnaire_list_names_data);
-				}
-				else
-				{
-					$this-> db -> insert('questionnaire_list_names', $questionnaire_list_names_data);
-				}
-			}//foreach
-		}//if
+		}//foreach
 
 		return $qid;
 	}//add_or_update_questionnaire_DB()
@@ -734,9 +734,11 @@ class Questionnaire_tool_model extends CI_Model
 
 		foreach($scales as $name => $tables){
 			foreach($tables as $table_name => $items){
+				$this->db->select('1');
 				$this->db->from('questionnaire_process_scales');
 				$this->db->where('name',$name);
 				$this->db->where('table_name',$table_name);
+				$this->db->limit(1);
 				$query = $this->db->get();
 
 				$data = array(
@@ -749,7 +751,7 @@ class Questionnaire_tool_model extends CI_Model
 					'max' => $info[$table_name][$name]['max'],
 				);
 
-				if($query->num_rows() > 0){
+				if($query->num_rows() === 1){
 					$this->db->where('name',$name);
 					$this->db->where('table_name',$table_name);
 					$this->db->update('questionnaire_process_scales', $data);
@@ -764,9 +766,11 @@ class Questionnaire_tool_model extends CI_Model
 
 		foreach($scales as $name => $tables){
 			foreach($tables as $table_name => $items){
+				$this->db->select('1');
 				$this->db->from('questionnaire_status_scales');
 				$this->db->where('name',$name);
 				$this->db->where('table_name',$table_name);
+				$this->db->limit(1);
 				$query = $this->db->get();
 
 				$data = array(
@@ -784,7 +788,8 @@ class Questionnaire_tool_model extends CI_Model
 					'high' => $info[$table_name][$name]['high'],
 					'description' => $info[$table_name][$name]['description']
 				);
-				if($query->num_rows() > 0){
+
+				if($query->num_rows() === 1){
 					$this->db->where('name',$name);
 					$this->db->where('table_name',$table_name);
 					$this->db->update('questionnaire_status_scales', $data);
@@ -798,9 +803,11 @@ class Questionnaire_tool_model extends CI_Model
 	public function add_or_update_item_infos($item_infos){
 		foreach($item_infos as $table => $entry){
 			foreach($entry as $lang => $infos){
+				$this->db->select('1');
 				$this->db->from('questionnaire_item_infos');
 				$this->db->where('table_name', $table);
 				$this->db->where('language', $lang);
+				$this->db->limit(1);
 				$query = $this->db->get();
 
 				$data = array(
@@ -810,7 +817,7 @@ class Questionnaire_tool_model extends CI_Model
 					'language' => $lang
 				);
 
-				if($query->num_rows() > 0){
+				if($query->num_rows() === 1){
 					$this->db->where('table_name', $table);
 					$this->db->where('language', $lang);
 					$this->db->update('questionnaire_item_infos', $data);
@@ -846,75 +853,73 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function get_section_names($id)
 	{
+		$this-> db -> select('section_names');
 		$this-> db -> from('questionnaire_batterie');
 		$this-> db -> where('id', $id);
+		$this-> db -> limit(1);
 
 		$query = $this-> db -> get();
-		if($query->num_rows() > 0)
+
+		if($query->num_rows() === 1)
 		{
-			$result = $query->result();
-			return $result[0]->section_names;
+			return $query->result()[0]->section_names;
 		}
 	}//get_section_names()
 
 	public function insert_new_batterie_to_DB($name)
 	{
-		if (isset($name))
-		{
-			$data = array('name' => $name);
-			$this-> db -> insert('questionnaire_batterie', $data);
-			
-		}
+		$data = array('name' => $name);
+		$this-> db -> insert('questionnaire_batterie', $data);
 	}//insert_new_batterie()
 
 	public function delete_batterie_from_DB($bid)
 	{
-		if(isset($bid))
-		{
-			$this-> db -> where('id', $bid);
-			$this-> db -> delete('questionnaire_batterie');
+		$this-> db -> where('id', $bid);
+		$this-> db -> delete('questionnaire_batterie');
 
-			$this-> db -> where('bid', $bid);
-			$this-> db -> delete('questionnaire_batterie_hat');
-		}
+		$this-> db -> where('bid', $bid);
+		$this-> db -> delete('questionnaire_batterie_hat');
 	}//delete_batterie_from_DB()
 
 	public function add_section_to_batterie($bid)
 	{
+		$this-> db -> select('sections');
 		$this-> db -> from('questionnaire_batterie');
 		$this-> db -> where('id', $bid);
+		$this-> db -> limit(1);
 
 		$query = $this-> db -> get();
-		if($query->num_rows() > 0)
+		if($query->num_rows() === 1)
 		{
-			$result = $query->result();
-			$data = array('sections' => $result[0]->sections+1);
+			$data = array('sections' => $query->result()[0]->sections + 1);
 
 			$this-> db -> where('id', $bid);
 			$this-> db -> update('questionnaire_batterie', $data);
 
 			return TRUE;
 		}
+		
 		return FALSE;
 	}//add_section_to_batterie()
 
 	public function delete_section_from_batterie($bid)
 	{
+		$this-> db -> select('sections');
 		$this-> db -> from('questionnaire_batterie');
 		$this-> db ->where('id', $bid);
+		$this-> db -> limit(1);
 
 		$query = $this-> db -> get();
-		if($query->num_rows() > 0)
+		if($query->num_rows() === 1)
 		{
-			$result = $query->result();
-			$current_sections = $result[0]->sections;
+			$current_sections = $query->result()[0]->sections;
 
 			if($current_sections > 1)
 			{
 				//Update entries of batterie in qbh if any exist
 				$this-> db -> from('questionnaire_batterie_hat');
 				$this-> db -> where('bid', $bid);
-				$this-> db -> where('section', $current_sections-1);
+				$this-> db -> where('section', $current_sections - 1);
 
 				$query = $this-> db -> get();
 				if($query->num_rows() > 0)
@@ -922,7 +927,7 @@ class Questionnaire_tool_model extends CI_Model
 					$result = $query->result();
 					foreach($result as $questionnaire)
 					{
-						$data = array('section' => $questionnaire->section-1);
+						$data = array('section' => $questionnaire->section - 1);
 
 						$this-> db ->where('id', $questionnaire->id);
 						$this-> db ->update('questionnaire_batterie_hat', $data);
@@ -930,7 +935,7 @@ class Questionnaire_tool_model extends CI_Model
 				}//if
 
 				//Update entry for battery in qb
-				$data = array('sections' => $current_sections-1);
+				$data = array('sections' => $current_sections - 1);
 				$this-> db -> where ('id', $bid);
 				$this-> db -> update('questionnaire_batterie', $data);
 
@@ -943,13 +948,20 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function get_battery($bid)
 	{
+		$result = NULL;
+
 		$this-> db -> from('questionnaire_batterie');
 		$this-> db -> where('id', $bid);
+		$this-> db -> limit(1);
 
 		$query = $this-> db -> get();
-		$result = ($query) ? $query->result() : NULL;
 
-		return $result[0];
+		if($query->num_rows() === 1)
+		{
+			$result = $query->result()[0];
+		}
+
+		return $result;
 	}//get_battery()
 
 	public function set_section_names($bid, $section_names)
@@ -980,52 +992,56 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function set_quest_type($id, $is_Z)
 	{
-		if(isset($is_Z)) 
-		{
-			$data = array('is_Z' => $is_Z);
-			$this-> db -> where('id', $id);
-			$this-> db -> update('questionnaire_batterie_hat', $data);
-		}
-	}//set_quest_type
+		$data = array('is_Z' => $is_Z);
+		$this-> db -> where('id', $id);
+		$this-> db -> update('questionnaire_batterie_hat', $data);
+	}//set_quest_type()
 
 	public function insert_questionnaire_in_battery($bid, $qid)
 	{
-		if (isset($bid) && (isset($qid)))
+		$data = array(
+			'bid' => $bid,
+			'qid' => $qid
+		);
+
+		$this-> db -> select_max('section_order');
+		$this-> db -> from('questionnaire_batterie_hat');
+		$this-> db -> where('bid', $bid);
+		$this-> db -> where('section', 0);
+		$this-> db -> limit(1);
+
+		$query = $this-> db -> get();
+		
+		if($query -> num_rows() === 1)
 		{
-			$data = array(
-				'bid' => $bid,
-				'qid' => $qid
-			);
-			$this-> db -> select_max('section_order');
-			$this-> db -> from('questionnaire_batterie_hat');
-			$this-> db -> where('bid', $bid);
-			$this-> db -> where('section', 0);
-			$query = $this-> db -> get();
-			if($query -> num_rows() > 0)
-			{
-				$result = $query->result();
-				if(isset($result[0]->section_order))
-					$data['section_order'] = $result[0]->section_order+1;
+			$result = $query->result();
+			
+			if(isset($result[0]->section_order)) {
+				$data['section_order'] = $result[0]->section_order+1;
 			}
-			$this-> db -> insert('questionnaire_batterie_hat', $data);
 		}
+		
+		$this-> db -> insert('questionnaire_batterie_hat', $data);
 	}//insert_questionnaire_in_batterie()
 
 	private function reorder_battery($hid)
 	{
+		$this-> db -> select('section, section_order');
 		$this-> db -> from('questionnaire_batterie_hat');
 		$this-> db -> where('id', $hid);
+		$this-> db -> limit(1);
+
 		$query = $this-> db -> get();
 
-		if($query-> num_rows() > 0)
+		if($query-> num_rows() === 1)
 		{
-			$result = $query->result();
-			$section = $result[0] ->section;
-			$order = $result[0]->section_order;
+			$section = $query->result()[0]->section;
+			$order = $query->result()[0]->section_order;
 
 			$this-> db -> from('questionnaire_batterie_hat');
 			$this-> db -> where('section_order >', $order);
 			$query = $this-> db -> get();
+			
 			if($query -> num_rows() > 0)
 			{
 				$result = $query->result();
@@ -1050,42 +1066,37 @@ class Questionnaire_tool_model extends CI_Model
 
 	public function set_gas($bid, $gas_section)
 	{
-		if(isset($bid) && isset($gas_section))
-		{
-			$data = array('gas_section' => $gas_section);
-			
-			$this-> db -> where('id', $bid);
-			$this-> db -> update('questionnaire_batterie', $data);
-		}
+		$data = array('gas_section' => $gas_section);
+		
+		$this-> db -> where('id', $bid);
+		$this-> db -> update('questionnaire_batterie', $data);
 	}//set_gas()
 
 	public function add_feedback_item($bid, $type, $data)
 	{
-		if(isset($bid) && isset($type) && isset($data))
-		{
-			$order = 0;
-			$this-> db -> select_max('feedback_order');
-			$this-> db -> from('questionnaire_batterie_feedback');
-			$this-> db -> where('bid', $bid);
+		$order = 0;
+		$this-> db -> select_max('feedback_order');
+		$this-> db -> from('questionnaire_batterie_feedback');
+		$this-> db -> where('bid', $bid);
 
-			
-			$query = $this -> db -> get( );
-			if($query->num_rows() > 0){
-				$result = $query->result();
-				if(isset($result[0]->feedback_order))
-					$order = $result[0]->feedback_order+1;
+		$query = $this -> db -> get( );
+		
+		if($query->num_rows() > 0){
+			$result = $query->result();
+			if(isset($result[0]->feedback_order)) {
+				$order = $result[0]->feedback_order+1;
 			}
+		}
 
-			$insert = array(
-				'bid' => $bid,
-				'type' => $type,
-				'data' => $data,
-				'feedback_order' => $order
-			);
+		$insert = array(
+			'bid' => $bid,
+			'type' => $type,
+			'data' => $data,
+			'feedback_order' => $order
+		);
 
-			$this-> db ->where('bid', $bid);
-			$this-> db ->insert('questionnaire_batterie_feedback', $insert);
-		}//if
+		$this-> db ->where('bid', $bid);
+		$this-> db ->insert('questionnaire_batterie_feedback', $insert);
 	}//add_feedback_item()
 
 	public function delete_feedback_item($id, $bid)
@@ -1096,14 +1107,18 @@ class Questionnaire_tool_model extends CI_Model
 	}//delete_feedback_item()
 
 	private function reorder_feedback($id, $bid)
-	{	
+	{
+		$this-> db -> select('feedback_order');
 		$this-> db -> from('questionnaire_batterie_feedback');
 		$this-> db -> where('id', $id);
+		$this-> db -> limit(1);
 
 		$query = $this-> db -> get();
-		if($query-> num_rows() > 0) // True: Item  mit $id in Tabelle existiert 
+		if($query-> num_rows() === 1) // True: Item mit $id in Tabelle existiert 
 		{
 			$result = $query->result();
+
+			$this-> db -> select('feedback_order');
 			$this-> db -> from('questionnaire_batterie_feedback');
 			$this-> db -> where('bid', $bid);
 			$this-> db -> where('feedback_order <', $result[0]->feedback_order);
@@ -1111,42 +1126,42 @@ class Questionnaire_tool_model extends CI_Model
 			$query = $this-> db -> get();
 			if($query-> num_rows() > 0) // True: in Batterie $bid existieren Items mit höherer Feedback_Order als Item mit $id
 			{
-				$result = $query->result();
-				foreach($result2 as $r ) //Setze alle größeren Feedback_orders um eins herunter
+				$result2 = $query->result();
+				foreach($result2 as $r) //Setze alle größeren Feedback_orders um eins herunter
 				{
 					$data = array('feedback_order' => $r->feedback_order-1);
 
 					$this-> db -> where ('id', $id);
 					$this-> db -> update('questionnaire_batterie_feedback', $data);
-				}
-			}
-
-		}
+				}//foreach
+			}//if
+		}//if
 	}//reorder_feedback()
 
 	public function set_standard_battery($bid)
 	{
-		if(isset($bid))
+		//bisherige Standardbatterie zurücksetzen
+		$this-> db -> select('id');
+		$this-> db -> from('questionnaire_batterie');
+		$this-> db -> where('is_standard', 1);
+		$this-> db -> limit(1);
+
+		$query = $this-> db -> get();
+		
+		if($query->num_rows() === 1)
 		{
-			//bisherige Standardbatterie zurücksetzen
-			$this-> db -> from('questionnaire_batterie');
-			$this-> db -> where('is_standard', 1);
-			$query = $this-> db -> get();
-			if($query->num_rows() > 0)
-			{
-				$result = $query->result();
-				$data = array('is_standard' => 0);
+			$result = $query->result();
+			$data = array('is_standard' => 0);
 
-				$this-> db -> where('id', $result[0]->id);
-				$this-> db -> update('questionnaire_batterie', $data);
-			}//if
-
-			//neue Standardbatterie setzen
-			$data = array('is_standard' => 1);
-			$this-> db -> where('id', $bid);
+			$this-> db -> where('id', $result[0]->id);
 			$this-> db -> update('questionnaire_batterie', $data);
 		}//if
+
+		//neue Standardbatterie setzen
+		$data = array('is_standard' => 1);
+		$this-> db -> where('id', $bid);
+		$this-> db -> update('questionnaire_batterie', $data);
 	}//set_standard_batterie()
-}
+}//class Questionnaire_tool_model
 
 ?>

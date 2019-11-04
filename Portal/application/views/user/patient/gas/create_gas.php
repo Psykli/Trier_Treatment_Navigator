@@ -1,4 +1,4 @@
-<div class="media bottom_spacer place_headline">
+<div class="media bottom_spacer_50px place_headline">
     <a class="pull-left" href="#">
         <img class="media-object" src="<?php echo base_url(); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
     </a>
@@ -7,13 +7,14 @@
     </div>
 </div>
 
-<ol class="breadcrumb">
-    <li><a href="<?php echo base_url(); ?>index.php/<?php echo $userrole; ?>/dashboard">Meine Patientenübersicht</a></li>
-    <li><?php $link = $userrole.'/patient/list_all' ?> <?php echo anchor($link, 'Patientenliste'); ?> </li>
-    <li><a href="<?php echo base_url(); ?>index.php/user/patient/list/<?php echo $patientcode; ?>">Patientendetails</a></li>
-    <li class="active">GAS-Tool</li>
-</ol>
-
+<nav class="menu">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<?php echo base_url(); ?>index.php/<?php echo $userrole; ?>/dashboard">Meine Patientenübersicht</a></li>
+        <li class="breadcrumb-item"><?php $link = $userrole.'/patient/list_all' ?> <?php echo anchor($link, 'Patientenliste'); ?> </li>
+        <li class="breadcrumb-item"><a href="<?php echo base_url(); ?>index.php/user/patient/list/<?php echo $patientcode; ?>">Patientendetails</a></li>
+        <li class="breadcrumb-item active">GAS-Tool</li>
+    </ol>
+</nav>
 <div class="container">    
 
 
@@ -35,7 +36,7 @@
     <div id="table_size" class="col-md-12" style="margin-bottom:15px; margin-top:15px;">    
 
     <div>
-        Bereiche wechseln: <button disabled id="section_left" class="toggle-vis btn btn-sm btn-primary" data-column="left"><span class="glyphicon glyphicon-backward"></span></button> - <button id="section_right" class="toggle-vis btn btn-sm btn-primary" data-column="right"><span class="glyphicon glyphicon-forward"></span></button>
+        Bereiche wechseln: <button disabled id="section_left" class="toggle-vis btn btn-sm btn-primary" data-column="left"><i class="fas fa-angle-left"></i></button> - <button id="section_right" class="toggle-vis btn btn-sm btn-primary" data-column="right"><i class="fas fa-angle-right"></i></button>
     </div> 
     <?php echo form_open( 'user/gas_tool/set_gas/'.$patientcode,  array('role' => 'form' ) ); ?>
         <table class="table table-bordered" id="myTable" cellspacing="0" width="100%">
@@ -74,11 +75,11 @@
                         <th>
                             Zielbereich <?php echo $i; ?>
                             <?php if($missing_bereiche[$i] == true): ?>
-                                <span class="label label-warning"> In diesem Bereich fehlen Einträge </span>
+                                <span class="badge badge-warning"> In diesem Bereich fehlen Einträge </span>
                             <?php endif; ?>
                             <br/> 
                             <textarea <?php if($immutable) echo 'readonly'; ?> cols="40" rows="3" class="form-control" id="bereich<?php echo $i; ?>" name="bereich<?php echo $i; ?>" placeholder="Zielbereich" onchange="activate_section(<?php echo $i;?>);"><?php echo (isset($bereiche) AND isset($bereiche[$i-1]))?$bereiche[$i-1]:""; ?></textarea>
-                            <span class="label label-warning hidden" id="b_warning_<?php echo $i; ?>">Der Zielbereich muss ausgefüllt werden</span>
+                            <span class="badge badge-warning hidden" id="b_warning_<?php echo $i; ?>">Der Zielbereich muss ausgefüllt werden</span>
                         </th>
                     <?php endfor;?>
                 </tr>
@@ -93,11 +94,11 @@
                         <?php $index = $count + ($i-1)*7; ?>
                             <textarea <?php if($immutable) echo 'readonly'; ?> cols="50" rows="3" class="form-control" id="zielsetzung<?php echo $i; ?><?php echo $k; ?>" name="zielsetzung<?php echo $i; ?><?php echo $k; ?>" placeholder="Zielsetzung" onchange="section_warning(<?php echo $i;?>);"><?php echo (isset($stufen) AND isset($stufen[$index]))?$stufen[$index]:""; ?></textarea>
                             <?php if($missing['ziel_'.$i.'_'.$k] == true): ?>
-                                </br>
-                                <span class="label label-warning"> Bitte hier ein Ziel eingeben </span>
+                                <br/>
+                                <span class="badge badge-warning"> Bitte hier ein Ziel eingeben </span>
                             <?php elseif($k == 4 OR $k == 0 OR $k == -2): ?>
-                                </br>
-                                <span id="<?php echo 's_'.$i.'_'.$k; ?>" class="label label-info <?php if(empty($bereiche[$i-1])) echo 'hidden';?>"> Dieses Feld ist verpflichtend für einen Bereich</span>
+                                <br/>
+                                <span id="<?php echo 's_'.$i.'_'.$k; ?>" class="badge badge-info <?php if(empty($bereiche[$i-1])) echo 'hidden';?>"> Dieses Feld ist verpflichtend für einen Bereich</span>
                             <?php endif; ?>
                         </td>
                     <?php endfor;?>
@@ -115,9 +116,9 @@
             }
         </script>
         <?php if(!$immutable): ?>
-            <button type="submit" name="submit" value="mutable" class="btn btn-default" onclick="reactivate_columns();">Eintragen</button>
-            <button type="submit" name="submit" value="immutable" class="btn btn-default" onclick="reactivate_columns();">Endgültig eintragen</button>           
-            <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="right" 
+            <button type="submit" name="submit" value="mutable" class="btn btn-outline-secondary" onclick="reactivate_columns();">Eintragen</button>
+            <button type="submit" name="submit" value="immutable" class="btn btn-outline-secondary" onclick="reactivate_columns();">Endgültig eintragen</button>           
+            <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" 
             title="Beim Klick auf 'Endgültig eintragen' wird es für Sie nicht mehr möglich sein die Einträge zu ändern. 
             'Eintragen' lässt spätere Änderungen zu. Um keine Diskrepanzen in den Daten zu erlauben,
              sollten Sie den Fragebogen bis zum ersten Ausfüllen endgültig eingetragen haben."></span>

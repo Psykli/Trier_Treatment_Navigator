@@ -14,8 +14,9 @@ $lang['list_details'] = 'Patientendetails';
 */
 
 // Erklärung 
-$lang['list_instruction'] = 'Bitte auf den entsprechenden Therapiestatus 
-klicken, um die Patientenlisten einzusehen. Anschließend können Sie dann den gewünschten 
+$lang['list_instruction_part1'] = 'Bitte auf den entsprechenden Therapiestatus 
+klicken, um die Patientenlisten einzusehen. ';
+$lang['list_instruction_part2'] = 'Anschließend können Sie dann den gewünschten 
 Patientencode anklicken.';
 $lang['list_patient_ex_instruction'] = 'Bitte auf den entsprechenden Übungsstatus 
 klicken, um die Patientenlisten einzusehen. Anschließend können Sie dann den gewünschten 

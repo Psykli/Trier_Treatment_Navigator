@@ -5,22 +5,21 @@
 			<h3>Fragebogen-Tool</h3>
 			
 			<ul class="nav nav-tabs" role="tablist">
-				<li><?php echo anchor( 'admin/questionnaire_tool', 'Startseite' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung' ); ?></li>
-				<li><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung' ); ?></li>
-                <li class="active"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array('class' => 'clickable') ); ?></li>
-				
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung', array("class" => 'nav-link') ); ?></li>
+				<li class="nav-item"><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung', array("class" => 'nav-link active') ); ?></li>
 			</ul>
 		</div>
 	</div>
 	<br/><br/><br/>
 	<div class="row">	
         <div class="col-sm-8">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">vorhandenen Fragebogenbatterien</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Vorhandene Fragebogenbatterien</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<table class="table table-hover">
 						<thead>
 							<tr>
@@ -35,17 +34,17 @@
 								<tr>
                                     <th>
                                         <?php $link = base_url() . 'index.php/admin/questionnaire_tool/delete_batterie/'.$batterie->id; ?>
-										<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+										<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash-alt"></i></a>
                                     </th>
 									<td><?php echo ( $batterie->id ); ?></td>
 									<td><?php echo ( $batterie->name ); ?><br/><span id="sb-label_<?php echo $batterie->id;?>" class="label label-success sb-label <?php echo $batterie->is_standard ? '' : 'hidden';?>">SB Standard</span></td>
 									<td>
 									<input type="radio" id="gas_<?php echo $batterie->id; ?>_-1" name="gas<?php echo $batterie->id;?>" onchange="set_gas(this,<?php echo $batterie->id;?>,-1 )" <?php if($batterie->gas_section == -1) echo 'checked';?>>Kein GAS
                                     
-									<?php $questionnaires_batterie = $this -> Questionnaire_tool_model -> get_all_questionnaire_by_battery( $batterie->id ); ?>   
-									<?php $z_batterie = $this -> Questionnaire_tool_model -> get_all_questionnaire_by_battery( $batterie->id,true); ?>   
+									<?php $questionnaires_batterie = $questionnaires_batteries[$batterie -> id]; ?>   
+									<?php $z_batterie = $z_batteries[$batterie -> id]; ?>   
                                         <?php $index=0;
-											  $section_names = $this-> Questionnaire_tool_model ->get_section_names($batterie->id);
+											  $section_names = $section_names_collection[$batterie -> id];
 											  $section_name_array = explode(';',$section_names);
 										?>
 										<?php for ($i=0; $i < $batterie->sections; $i++):?>
@@ -57,7 +56,7 @@
 													<?php if($questionnaires_batterie[$j]->section == $i AND intval($questionnaires_batterie[$j]->is_Z) != 1):?>
 													<li class="list-group-item" id="<?php echo 'item_'.$questionnaires_batterie[$j]->id;?>">
 														<?php $link = base_url() . 'index.php/admin/questionnaire_tool/delete_questionnaire_from_battery/'.$batterie->id.'/'.$questionnaires_batterie[$j]->id; ?>
-														<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+														<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash-alt"></i></a>
 														<?php echo ( $questionnaires_batterie[$j]->tablename ); ?>
 													</li>
 													<?php $index++;?>
@@ -72,22 +71,21 @@
                                             for($i=0; $i < sizeof($z_batterie); $i++):?>
 											<li class="list-group-item" id="<?php echo 'item_'.$z_batterie[$i]->id;?>">
 														<?php $link = base_url() . 'index.php/admin/questionnaire_tool/delete_questionnaire_from_batterie/'.$batterie->id.'/'.$z_batterie[$i]->id; ?>
-														<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+														<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash-alt"></i></a>
 														<?php echo ( $z_batterie[$i]->tablename ); ?>
 											</li>
 										<?php endfor;} ?>
 										</ul>
 										<br/>
-										<a class="btn btn-default" href="<?php echo site_url();?>/admin/questionnaire_tool/add_section/<?php echo $batterie->id;?>">Sektion hinzufügen</a>
-										<a class="btn btn-default" href="<?php echo site_url();?>/admin/questionnaire_tool/delete_section/<?php echo $batterie->id;?>">Sektion entfernen</a>
+										<a class="btn btn-outline-secondary" href="<?php echo site_url();?>/admin/questionnaire_tool/add_section/<?php echo $batterie->id;?>">Sektion hinzufügen</a>
+										<a class="btn btn-outline-secondary" href="<?php echo site_url();?>/admin/questionnaire_tool/delete_section/<?php echo $batterie->id;?>">Sektion entfernen</a>
 										
-										<button id="save_changes<?php echo $batterie->id; ?>" class="btn btn-default" onclick="save_changes(<?php echo $batterie->id;?>)"> Änderungen Speichern </button>
+										<button id="save_changes<?php echo $batterie->id; ?>" class="btn btn-outline-secondary" onclick="save_changes(<?php echo $batterie->id;?>)"> Änderungen Speichern </button>
 										<div id="save_info<?php echo $batterie->id; ?>" class="alert alert-success" style="display:none;">
 											Änderungen gespeichert!
 										</div>
                                             <hr/>
                                             <?php echo form_open( 'admin/questionnaire_tool/add_questionnaire_to_battery', array('role' => 'form' ) ); ?>
-                                                <?php $questionnaire_list = $this -> Questionnaire_tool_model -> get_all_questionnaire( ); ?>   
                                                 <input type="hidden" name="bid" value="<?php echo ( $batterie->id ); ?>" />
                                                 <select class="form-control" id="qid" name="qid">
                                                     <option default>Bitte Fragebogen auswählen</option>
@@ -96,9 +94,9 @@
                                                     <?php endforeach; ?>
                                                 </select>
                                                 <br/>
-                                                <button type="submit" class="btn btn-default">Fragebogen hinzufügen</button>
+                                                <button type="submit" class="btn btn-outline-secondary">Fragebogen hinzufügen</button>
                                             </form>
-											<a class="btn btn-default" href="<?php echo site_url('admin/questionnaire_tool/batterie_feedback/'.$batterie->id);?>"> Feedbackseite gestalten </a>
+											<a class="btn btn-outline-secondary" href="<?php echo site_url('admin/questionnaire_tool/batterie_feedback/'.$batterie->id);?>"> Feedbackseite gestalten </a>
 											<br/>
 											<button type="button" class="btn btn-info" onclick="make_standard(<?php echo $batterie->id;?>);"> Als SB Standard setzen </button>
                                         
@@ -111,19 +109,19 @@
 			</div>
 		</div>
 		<div class="col-sm-4">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Fragebogenbatterien hinzufügen</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Fragebogenbatterien hinzufügen</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<p>Hier sehen Sie neue Fragebogenbatterien einfügen.</p>
 					<?php echo form_open( 'admin/questionnaire_tool/insert_new_batterie', array('role' => 'form', 'id' => 'batterieverwaltung' ) ); ?>
 						<div class="input-group">
-							<span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+							<span class="input-group-addon"><i class="fas fa-edit"></i></span>
 							<input type="text" class="form-control" id="name" name="name" placeholder="Name">
 						</div>
 						<br/>
-						<button type="submit" class="btn btn-default">Fragebogenbatterien hinzufügen</button>
+						<button type="submit" class="btn btn-outline-secondary">Fragebogenbatterien hinzufügen</button>
 					</form>
 				</div>
 			</div>
@@ -225,57 +223,5 @@
 			connectWith:'.sortable_<?php echo $batterie->id;?>'
 		});
 		<?php endforeach;?>
-
-        $('#batterieverwaltung')
-    		.on('init.field.fv', function(e, data) {
-                // data.fv      --> The FormValidation instance
-                // data.field   --> The field name
-                // data.element --> The field element
-    
-                var icon      = data.element.data('fv.icon'),
-                    options    = data.fv.getOptions(),                      // Entire options
-                    validators = data.fv.getOptions(data.field).validators; // The field validators
-    
-                if (validators.notEmpty && options.icon && options.icon.required) {
-                    // The field uses notEmpty validator
-                    // Add required icon
-                    icon.addClass(options.icon.required).show();
-                }
-            })      
-    		.formValidation({
-    			framework: 'bootstrap',
-    			
-    			//Feedback icons
-    			icon: {
-    				required: 'glyphicon glyphicon-asterisk',
-    				valid: 'glyphicon glyphicon-ok',
-    				invalid: 'glyphicon glyphicon-remove',
-    				validating: 'glyphicon glyphicon-refresh'
-    			},
-    			
-    			//List of fields and their validation rules
-    			fields: {
-                    name: {
-    					validators: {
-    						row: '.col-sm-12',
-    						notEmpty: {
-    							message: 'Das Feld "Name" wird benötigt.'
-    						}
-    					}
-    				}
-    			}
-    		})
-
-    			
-    		.on('status.field.fv', function(e, data) {
-                // Remove the required icon when the field updates its status
-                var icon      = data.element.data('fv.icon'),
-                    options    = data.fv.getOptions(),                      // Entire options
-                    validators = data.fv.getOptions(data.field).validators; // The field validators
-    
-                if (validators.notEmpty && options.icon && options.icon.required) {
-                    icon.removeClass(options.icon.required).addClass('glyphicon');
-                }
-            });
     });
 </script>

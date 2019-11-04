@@ -2,7 +2,7 @@
 <script src="<?php echo base_url(); ?>js/charts/compare.js"></script>
 
 <div id="member_area" class="process">
-    <div class="media bottom_spacer place_headline">
+    <div class="media bottom_spacer_50px place_headline">
         <a class="pull-left" href="#">
             <img class="media-object" src="<?php echo base_url( ); ?>/img/48x48/patient.png" data-src="holder.js/32x32">
         </a>
@@ -11,13 +11,15 @@
         </div>
     </div>
 
-<ol class="breadcrumb">
-	<li><a href="<?php echo base_url( ); ?>index.php/<?php echo $userrole; ?>/dashboard">Meine Patientenübersicht</a></li>
-	<li><?php $link = $userrole.'/patient/list_all' ?>
-		<?php echo anchor( $link, 'Patientenliste' ); ?></li>
-	<li><a href="<?php echo base_url( ); ?>index.php/user/patient/list/<?php echo $patientcode; ?>">Patientendetails</a></li>
-	<li class="active">Verlauf</li>
-</ol>  
+<nav class="menu">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="<?php echo base_url( ); ?>index.php/<?php echo $userrole; ?>/dashboard">Meine Patientenübersicht</a></li>
+		<li class="breadcrumb-item"><?php $link = $userrole.'/patient/list_all' ?>
+			<?php echo anchor( $link, 'Patientenliste' ); ?></li>
+		<li class="breadcrumb-item"><a href="<?php echo base_url( ); ?>index.php/user/patient/list/<?php echo $patientcode; ?>">Patientendetails</a></li>
+		<li class="breadcrumb-item active">Verlauf</li>
+	</ol>  
+</nav>
 
 <?php if( !isset( $patientcode ) ): //ERROR during transmit ?>
     <div class="alert alert-danger">
@@ -26,8 +28,8 @@
 <?php else: ?>
     <div class="dashrow status">	
 		<div class="table_box feedback_info">
-			<div class="panel panel-default">
-				<div class="panel-body">
+			<div class="card ">
+				<div class="card-body">
 					<b>Code: </b> <?php echo $patientcode; ?> - 
 					<b>Letzte Sitzung: </b>                         
 						<?php if( isset( $last ) ): ?>
@@ -41,22 +43,22 @@
                         <?php else: /* keine Daten vorhanden*/?>
                             kein Eintrag
                         <?php endif; ?> 			
-				</div><!-- end:.panel-body -->
-			</div><!-- end:.panel panel-default -->
+				</div><!-- end:.card-body -->
+			</div><!-- end:.card  -->
 			<!-- Der Counter wird auch als Index für den Graphen genutzt-->
 			
 			<?php $counter = 0; ?>
 			<?php foreach ($graphs as $graph): ?>
 				<div class="col-sm-12" id="graph<?php echo $counter; ?>">
-					<div class="panel-group">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
+					<div class="card-group">
+						<div class="card ">
+							<div class="card-header">
+								<h4 class="card-title">
 									<a data-toggle="collapse" href="#collapse<?php echo $counter ?>"><?php echo $graph;?></a>
 								</h4>
 							</div>
-							<div id="collapse<?php echo $counter ?>" class="panel-collapse collapse <?php if($counter === $graph_counter): echo "in"; endif; ?>">
-								<div class="panel-body">
+							<div id="collapse<?php echo $counter ?>" class="card-collapse collapse <?php if($counter === $graph_counter): echo "in"; endif; ?>">
+								<div class="card-body">
 									<form name="change_process_form">
 										Instanz: 
 										<select onchange="change_process(this.value, <?php echo $counter; ?>)">
@@ -94,15 +96,19 @@
 					$tables = array_keys($mean);
 				?>
 				<div class="col-sm-12" id="graph<?php echo $counter; ?>">
-					<div class="panel-group">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
+					<div class="card-group">
+						<div class="card ">
+							<div class="card-header">
+								<h4 class="card-title">
 									<a data-toggle="collapse" href="#collapse<?php echo $counter ?>"><?php echo $name;?></a>
 								</h4>
 							</div>
-							<div id="collapse<?php echo $counter ?>" class="panel-collapse collapse <?php if($counter === $graph_counter): echo "in"; endif; ?>">
-								<div class="panel-body">
+							<div id="collapse<?php echo $counter ?>" class="card-collapse collapse <?php if($counter === $graph_counter): echo "in"; endif; ?>">
+								<div class="card-body">
+									<p>
+                                        <?php echo $info[$name][0]->description;?>
+                                    </p>
+									<hr/>
 									<form name="change_process_form">
 										Instanz: 
 										<select onchange="change_process(this.value, <?php echo $counter; ?>)">

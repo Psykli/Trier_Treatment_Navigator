@@ -1,6 +1,13 @@
 #R Skript zur Erstellung des erwarteten Verlaufs sowie der Boundary f???r die nachfolgende Sitzung
 #Version f???r Open Source Portal
 
+#library("RODBC",lib.loc="C:/Program Files/R/R-3.2.5/library")
+#library("car",lib.loc="C:/Program Files/R/R-3.2.5/library")
+#library("fields",lib.loc="C:/Program Files/R/R-3.2.5/library")
+#library("cluster",lib.loc="C:/Program Files/R/R-3.2.5/library")
+#library("lme4",lib.loc="C:/Program Files/R/R-3.2.5/library")
+#library("foreign",lib.loc="C:/Program Files/R/R-3.2.5/library")
+
 library("RODBC")
 library("car")
 library(fields)

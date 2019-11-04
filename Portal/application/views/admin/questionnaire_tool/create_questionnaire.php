@@ -2,7 +2,7 @@
 	<div class="col-sm-12">
 		<h3>Fragebogen-Tool</h3>
 		<ul class="nav nav-tabs" role="tablist">
-			<li><?php echo anchor( 'admin/questionnaire_tool', 'Startseite' ); ?></li>
+			<li><?php echo anchor( 'admin/questionnaire_tool', 'Dashboard' ); ?></li>
 			<li><?php echo anchor( 'admin/questionnaire_tool/patientenverwaltung' , 'Patientenverwaltung' ); ?></li>
 			<li class="active"><?php echo anchor( 'admin/questionnaire_tool/add_questionnaire' , 'Fragebogenverwaltung' ); ?></li>
 			<li><?php echo anchor( 'admin/questionnaire_tool/batterieverwaltung' , 'Fragebogenbatterieverwaltung' ); ?></li>
@@ -49,7 +49,7 @@ var fields = [{
   attrs: {
     type: 'slider'
   },
-  icon: '<span class="glyphicon glyphicon-resize-horizontal"></span>'
+  icon: '<span class="fas fa-arrows-alt-h"></span>'
 }];
 
 var templates = {
@@ -108,7 +108,7 @@ var options = {
 	actionButtons: [{
 		id:'saveCreatedXml',
 		className: 'btn btn-success',
-		label: '<span class="glyphicon glyphicon-file"></span>',
+		label: '<span class="fas fa-file"></span>',
 		type: 'button',
 		events:{
 			click: function(){
