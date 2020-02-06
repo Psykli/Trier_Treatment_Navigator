@@ -37,7 +37,7 @@
 										<a href="<?php echo $link; ?>" class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash-alt"></i></a>
                                     </th>
 									<td><?php echo ( $batterie->id ); ?></td>
-									<td><?php echo ( $batterie->name ); ?><br/><span id="sb-label_<?php echo $batterie->id;?>" class="label label-success sb-label <?php echo $batterie->is_standard ? '' : 'hidden';?>">SB Standard</span></td>
+									<td><?php echo ( $batterie->name ); ?><br/><span id="sb-label_<?php echo $batterie->id;?>" class="badge badge-success sb-label" <?php echo $batterie->is_standard ? '' : 'style="display:none;"';?>>SB Standard</span></td>
 									<td>
 									<input type="radio" id="gas_<?php echo $batterie->id; ?>_-1" name="gas<?php echo $batterie->id;?>" onchange="set_gas(this,<?php echo $batterie->id;?>,-1 )" <?php if($batterie->gas_section == -1) echo 'checked';?>>Kein GAS
                                     
@@ -209,8 +209,8 @@
 			type: 'POST',
 			url: '<?php echo site_url(); ?>/admin/questionnaire_tool/set_as_standard_battery/'+bid, 
 			success: function() {
-				$('.sb-label').addClass("hidden");
-				$('#sb-label_'+bid).removeClass("hidden");
+				$('.sb-label').hide();
+				$('#sb-label_'+bid).show();
 			}
 		});
 	}

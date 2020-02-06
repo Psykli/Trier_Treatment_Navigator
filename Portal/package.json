@@ -14,7 +14,6 @@
     "formBuilder": "^3.2.5",
     "jplayer": "^2.9.2",
     "jquery": "^3.4.1",
-    "jquery-sortable": "^0.9.13",
     "jquery-ui": "^1.12.1",
     "jquery-ui-dist": "^1.12.1",
     "jquery-validation": "^1.19.1",

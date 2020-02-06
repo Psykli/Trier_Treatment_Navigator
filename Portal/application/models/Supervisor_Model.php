@@ -86,12 +86,10 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
-		$this->db->from( 'antrag ant' );
-		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-		$this->db->where( 'ant.ant006', $username );
-		$this->db->where( 'd.dok012', 1 );
+        $this->db->select( 'sub.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'subjects sub' );
+		$this->db->where( 'sub.therapist', $username );
+		$this->db->where( 'sub.zustand', 1 );
 		$this->db->distinct();
 		$this->db->order_by( 'therapist', 'ASC' );
 		$this->db->order_by( 'patientcode', 'ASC' );
@@ -110,12 +108,10 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
-		$this->db->from( 'antrag ant' );
-		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-		$this->db->where( 'ant.ant006', $username );
-		$this->db->where( 'd.dok012', 5 );
+        $this->db->select( 'sub.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'subjects sub' );
+		$this->db->where( 'sub.therapist', $username );
+		$this->db->where( 'sub.zustand', 5 );
 		$this->db->order_by( 'therapist', 'ASC' );
 		$this->db->order_by( 'patientcode', 'ASC' );
 
@@ -133,12 +129,10 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
-		$this->db->from( 'antrag ant' );
-		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-		$this->db->where( 'ant.ant006', $username );
-		$this->db->where( 'd.dok012', 2 );
+        $this->db->select( 'sub.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'subjects sub' );
+		$this->db->where( 'sub.therapist', $username );
+		$this->db->where( 'sub.zustand', 2 );
 		$this->db->order_by( 'therapist', 'ASC' );
 		$this->db->order_by( 'patientcode', 'ASC' );
 
@@ -156,12 +150,10 @@ class Supervisor_model extends CI_Model
     {
         $patients_of_supervisor = NULL;
         
-        $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
-		$this->db->from( 'antrag ant' );
-		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-		$this->db->where( 'ant.ant006', $username );
-		$this->db->where( 'd.dok012', 0 );
+        $this->db->select( 'sub.code as patientcode, sub.therapist as therapist' );
+		$this->db->from( 'subjects sub' );
+		$this->db->where( 'sub.therapist', $username );
+		$this->db->where( 'sub.zustand', 0 );
 		$this->db->order_by( 'therapist', 'ASC' );
 		$this->db->order_by( 'patientcode', 'ASC' );
 
@@ -180,11 +172,9 @@ class Supervisor_model extends CI_Model
         $patients_of_supervisor = NULL;
         
         $this->db->select( 'ant.code as patientcode, sub.therapist as therapist' );
-		$this->db->from( 'antrag ant' );
-		$this->db->join( 'subjects sub', 'ant.code = sub.code'  );
-		$this->db->join( 'dokumentation d', 'sub.code = d.code'  );
-		$this->db->where( 'ant.ant006', $username );
-		$this->db->where( 'd.dok012', 4 );
+		$this->db->from( 'subjects sub' );
+		$this->db->where( 'sub.therapist', $username );
+		$this->db->where( 'sub.zustand', 4 );
 		//$this->db->or_where( 'd.dok012', 3 );
 		// $this->db->or_where( 'd.dok012 >=', 7 );
 		// $this->db->where( 'd.dok012 <=', 11 );

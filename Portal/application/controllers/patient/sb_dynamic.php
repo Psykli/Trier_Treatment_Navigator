@@ -71,18 +71,7 @@ class SB_dynamic extends CI_Controller {
             //Get Batterie-Data for this User from database
             $batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode);
             $patientcode = strtoupper($patientcode);
-            $this->SB_Model->insert_into_sb_start($instance,$patientcode,$therapist);
             $PR_date = $this-> SB_Model ->get_PR_date($patientcode);  
-            
-            //CASE: User is not allowed to fill this sb --> redirect to index()
-            if($view_status == 0 OR !isset($batterie)){     
-                $therapist_from_subjects = $this->SB_Model->get_therapist($patientcode);
-			    $therapist_from_subjects = (is_null($therapist_from_subjects) || $therapist_from_subjects[0]->THERAPIST === "")  ? "niemand" : $therapist_from_subjects[0]->THERAPIST ;
-                $this->session->unset_userdata(array('patientcode' => '','instance' => '','therapist' => '','step' => '','batterie' => '','gas' => '','section' => '','sb_dynamic' => ''));
-                $this->session->set_userdata( array('CODE' => $patientcode, 'INSTANCE' => ($instance < 10  ? '0'.$instance : $instance), 'THERAPIST' => $therapist,
-										'THERAPIST_FROM_SUBJECTS' => $therapist_from_subjects, 'patient_vb' => false, 'patient_nb' => false, 'therapist_tb' => false, 'seen_feedback' => false, 'gas' => false ));
-                redirect('patient/sb/index');
-            }
             
             //set Userdata for whole Session
             $this->session->unset_userdata(array('CODE' => '','INSTANCE' => '','THERAPIST' => '','THERAPIST_FROM_SUBJECTS' => '','patient_vb' => '','patient_nb' => '','therapist_tb' => '','seen_feedback' => '','gas' => ''));
@@ -109,23 +98,6 @@ class SB_dynamic extends CI_Controller {
             $batterie = $this->session->userdata('batterie');
         }
 
-        //check for filled questionnaires
-        $has_request = $this->SB_Model->has_filled_request($patientcode);
-        $has_pers_dis = $this->SB_Model->has_filled_questionnaire($patientcode, 'abschluss_probatorik_persoenlichkeitsstoerung');
-        $has_psypharm = $this->SB_Model->has_filled_questionnaire($patientcode, 'psychopharm_beh');
-        $has_gas = $this->SB_Model->has_filled_questionnaire($patientcode, 'gas');
-
-        $zwReminds = $this->Therapy_Model->get_zw_reminds_of_patient($patientcode);
-        $haqReminds = $this->Therapy_Model->get_haq_reminds_of_patient($patientcode);
-
-        // assemble data[] and template
-        $this->data[CONTENT_STRING]['has_request'] = $has_request;
-        $this->data[CONTENT_STRING]['has_pers_dis'] = $has_pers_dis;
-        $this->data[CONTENT_STRING]['has_psypharm'] = $has_psypharm;
-        $this->data[CONTENT_STRING]['has_gas'] = $has_gas;
-        $this->data[CONTENT_STRING]['zwReminds'] = $zwReminds;
-        $this->data[CONTENT_STRING]['haqReminds'] = $haqReminds;
-
         $new_quartal = $this->SB_Model->firstInstanceInQuartal($patientcode,$instance);
         $this->data[CONTENT_STRING]['new_quartal'] = $new_quartal;
         $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
@@ -150,7 +122,6 @@ class SB_dynamic extends CI_Controller {
             }
         }
 
-        $this->data[CONTENT_STRING]['view_status'] = $this->Patient_model->get_view_status( $patientcode );
 
         $z_instance = ($instance - ($instance % 5)); 
         $z_instance = intval($z_instance) < 10 ? 'Z0'.intval($z_instance) : 'Z'.intval($z_instance);
@@ -158,11 +129,6 @@ class SB_dynamic extends CI_Controller {
 
         if($instance % 5 == 0 && ENVIRONMENT === 'development' ) {  
             $this->data[CONTENT_STRING]['has_zwischen'] = $this -> Questionnaire_tool_model -> has_zwischen($patientcode, $z_instance);
-        }
-        
-        if( !isset( $this->data[CONTENT_STRING]['is_immutable'] ) ) {
-            //set is_immutable now, if it hasn't been set earlier in this function
-            $this->data[CONTENT_STRING]['is_immutable'] = $this-> Gas_Model ->is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);   
         }
 
         $this->data[CONTENT_STRING]['pr_exists'] = $this-> Gas_Model ->does_pr_exist($patientcode, $this->data[TOP_NAV_STRING]['username']);
@@ -186,12 +152,6 @@ class SB_dynamic extends CI_Controller {
             return;
         }
 
-        $view_status = $this->Patient_model->get_view_status( $patientcode );
-        $subject = $this-> SB_Model ->is_subject($patientcode);
-        if(!$subject){
-            $errors[] = array('not_subject',$patientcode);
-            $danger = true;
-        }
 
         $is_user = $this->membership_model->get_role( $therapist );
         if($is_user == 'guest'){
@@ -203,35 +163,13 @@ class SB_dynamic extends CI_Controller {
         if(isset($batterie)){
             $current_instance = $this->SB_Model->get_instance($patientcode, $batterie[0]->tablename);
         } else {
-            $current_instance = $this->SB_Model->get_instance($patientcode, 'einzelfragen_patient_sitzungsbogen');
+            $errors[] = array('no_battery');
+            $danger = true;
         }
         $current_instance = $current_instance[0]->INSTANCE+1;
         if($current_instance > $instance){
             $errors[] = array('low_instance',$instance, $current_instance);
             $danger = true;
-        }
-
-        $allowed_instance = $this->Patient_model->get_sb_allowed($patientcode);
-        if(!isset($allowed_instance) OR $allowed_instance->allowed_until_instance < $instance){
-            $has_request = $this->SB_Model->has_filled_request($patientcode);
-            $has_gas = $this->SB_Model->has_gas($patientcode);
-            if(((!$has_request AND $instance >= 10) OR (!$has_gas AND $instance >= 15)) AND $view_status != 0) {
-                if(!$has_request){
-                    $errors[] = array('request_not_filled', $patientcode);
-                }
-                if(!$has_gas){
-                    $errors[] = array('gas_not_filled', $patientcode);
-                }
-                // sendet eine E-Mail an den Therapeuten sowie Viola und psyfeedback@uni-trier.de
-                $this -> _stopping_sb_tool_mail ($therapist, $patientcode, $instance); 
-                $danger = true;
-            }
-        }
-
-        $correct_therapist = $this-> SB_Model ->get_therapist($patientcode);
-        if(strtolower($correct_therapist[0]->THERAPIST) !== strtolower($therapist) AND !$danger){
-            $errors[] = array('not_therapist',$therapist,$correct_therapist[0]->THERAPIST);
-            
         }
 
         if($current_instance < $instance AND !$danger){
@@ -253,37 +191,24 @@ class SB_dynamic extends CI_Controller {
             if($has_gas AND $instance > 10 AND ($instance-1) % 5 == 0 AND !$is_immutable AND $view_status > 0 ) {
                 $this->immutable_gas_mail($therapist,$patientcode,$instance);
             }
-
-            $this->SB_Model->insert_into_sb_start($instance,$patientcode,$therapist);
-            //$PR_date = $this->SB_Model->get_PR_date($patientcode); 
             
-            //if(strtotime($PR_date) < strtotime($this->cut_off_date) OR !isset($batterie)){
-            if( $view_status == 0 OR !isset($batterie)){    
-                $therapist_from_subjects = $this->SB_Model->get_therapist($patientcode);
-			    $therapist_from_subjects = (is_null($therapist_from_subjects) || $therapist_from_subjects[0]->THERAPIST === "")  ? "niemand" : $therapist_from_subjects[0]->THERAPIST ;
-			    $this->session->unset_userdata(array('patientcode' => '','instance' => '','therapist' => '','step' => '','batterie' => '','gas' => '','section' => '','sb_dynamic' => '', 'acknowledged_missing_data' => ''));
-                $this->session->set_userdata( array('CODE' => $patientcode, 'INSTANCE' => ($instance < 10  ? '0'.$instance : $instance), 'THERAPIST' => $therapist,
-										'THERAPIST_FROM_SUBJECTS' => $therapist_from_subjects, 'patient_vb' => false, 'patient_nb' => false, 'therapist_tb' => false, 'seen_feedback' => false, 'gas' => false ));
-                echo "sb_standard";
-            } else {
-                $this->session->unset_userdata(array('CODE' => '','INSTANCE' => '','THERAPIST' => '','THERAPIST_FROM_SUBJECTS' => '','patient_vb' => '','patient_nb' => '','therapist_tb' => '','seen_feedback' => '','gas' => '', 'acknowledged_missing_data' => ''));
-                $this->session->set_userdata('patientcode', $patientcode);
-                $this->session->set_userdata('instance', ($instance < 10  ? '0'.$instance : $instance));
-                $this->session->set_userdata('therapist', $therapist);
-                $this->session->set_userdata('step', 0);
-                $this->session->set_userdata('section', 0);
-                $this->session->set_userdata('batterie', $batterie);
-                $this->session->set_userdata('sb_dynamic', true);
-                $this->session->set_userdata('gas', false);
-                if($instance % 5 == 0){
-                    $z_batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode,true);
-                    $z_instance = $instance < 10 ? 'Z0'.$instance : 'Z'.$instance;
-                    foreach($z_batterie as $b){
-                        $this -> Questionnaire_tool_model -> insert_questionnaire($therapist,$patientcode,$b->qid,$z_instance);
-                    }
+            $this->session->unset_userdata(array('CODE' => '','INSTANCE' => '','THERAPIST' => '','THERAPIST_FROM_SUBJECTS' => '','patient_vb' => '','patient_nb' => '','therapist_tb' => '','seen_feedback' => '','gas' => '', 'acknowledged_missing_data' => ''));
+            $this->session->set_userdata('patientcode', $patientcode);
+            $this->session->set_userdata('instance', ($instance < 10  ? '0'.$instance : $instance));
+            $this->session->set_userdata('therapist', $therapist);
+            $this->session->set_userdata('step', 0);
+            $this->session->set_userdata('section', 0);
+            $this->session->set_userdata('batterie', $batterie);
+            $this->session->set_userdata('sb_dynamic', true);
+            $this->session->set_userdata('gas', false);
+            if($instance % 5 == 0){
+                $z_batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode,true);
+                $z_instance = $instance < 10 ? 'Z0'.$instance : 'Z'.$instance;
+                foreach($z_batterie as $b){
+                    $this -> Questionnaire_tool_model -> insert_questionnaire($therapist,$patientcode,$b->qid,$z_instance);
                 }
-                echo "sb_dynamic";
-            }//else
+            }
+            echo "sb_dynamic";
         }//else
     }//ajax_validateCredentials()
 

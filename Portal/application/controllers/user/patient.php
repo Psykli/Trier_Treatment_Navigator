@@ -93,19 +93,13 @@ class Patient extends CI_Controller
         else
         {
             $status = $this->Patient_model->get_status( $patientcode );
-            $this -> data[CONTENT_STRING]['lastHscl'] = $this->Patient_model->get_last_hscl( $patientcode);
+            $lastHscl = $this->Patient_model->get_last_hscl( $patientcode);
+            $this -> data[CONTENT_STRING]['lastHscl'] = $lastHscl;
             
-            $color = $this->Patient_model->get_feedback_of_patient($patientcode);
-            
+           // $color = $this->Patient_model->get_feedback_of_patient($patientcode);
+            $boundary = $this->Patient_model->get_boundary($patientcode, $lastHscl->instance, "BOUNDARY_UEBERSCHRITTEN");
+            $color = $boundary == NULL ? 'green' : 'red';
             $this->data[CONTENT_STRING]['color'] = $color;
-            
-            $this->data[CONTENT_STRING]['hasOT'] = false;
-            
-            foreach ( $status as $s ) {
-                if( strpos( $s -> instance, 'OT' ) !== false ) {
-                  $this -> data[CONTENT_STRING]['hasOT'] = true;
-               }
-            }
 
             $this -> data[CONTENT_STRING]['patientcode'] = $patientcode;
             $this -> data[CONTENT_STRING]['status'] = $status; 	

@@ -15,7 +15,6 @@ import 'datatables.net-buttons/js/buttons.html5';
 import 'datatables.net-buttons/js/buttons.print';
 import 'datatables.net-buttons-bs4';
 import '@fortawesome/fontawesome-free/js/all.js';
-import 'jquery-sortable';
 import './main.scss';
 import 'jquery-validation';
 import 'formBuilder';

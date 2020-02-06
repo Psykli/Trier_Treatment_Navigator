@@ -90,6 +90,7 @@ class Patient extends CI_Controller
                         
                 if (!empty($patient_id))
                 {
+                    $this->membership_model->create_patient_subject($profile_data['initials']);
                     $this-> session -> set_flashdata('creation_success', TRUE);
                     redirect("admin/user/edit_user/{$patient_id}");
                 }

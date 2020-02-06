@@ -22,6 +22,8 @@ class Patient_model extends CI_Model
 		if( !property_exists( $CI, 'db_default' ) ) {
             $CI->db_default =& $this -> db;
         }
+
+        $this->load->Model('Questionnaire_tool_model');
     }
 
     public function get_all_patients( $username )
@@ -31,11 +33,10 @@ class Patient_model extends CI_Model
         $all_patients = NULL;
         $this -> db -> db_select( );
         
-        $this -> db -> select( 'sub.code as code, dok.dok012 as zustand, sub.therapist as therapist'  );
-        $this -> db -> select( 'date(sub.erstsich) as erstsich', FALSE );
-        $this -> db -> from( 'subjects sub' );
-        $this -> db -> join( 'dokumentation dok', 'dok.code = sub.code' );
-        $this -> db -> order_by( 'sub.code' );
+        $this -> db -> select( 'code, zustand, therapist'  );
+        $this -> db -> select( 'date(erstsich) as erstsich', FALSE );
+        $this -> db -> from( 'subjects' );
+        $this -> db -> order_by( 'code' );
 
         //if it's an admin show all.
         if( !$is_admin )
@@ -111,7 +112,7 @@ class Patient_model extends CI_Model
             $this -> db -> from( 'subjects' );
             $this -> db -> like( 'CODE', $patientcode );
             
-            if( isset( $therapist ) ) {
+            if( isset( $therapist ) AND !empty($therapist)) {
                 $this -> db -> like( 'THERAPIST', $therapist );
             }
             
@@ -341,16 +342,24 @@ class Patient_model extends CI_Model
     {
         $status = NULL;
         
+        $battery = $this->Questionnaire_tool_model->get_sb_batterie($patientcode, true);
+
+        if($battery == NULL){
+            return NULL;
+        }
+        $table = $battery[0]->tablename;
         $this -> db -> db_select( );
-        $this -> db -> select( "'phq-9' as status_name, code, instance, date(phqdat) as date" );
-        $this -> db -> from( 'phq-9' );
+        $this -> db -> select( "'$table' as status_name, code, instance" );
+        $this -> db -> from( $table );
         $this -> db -> where( 'code', $patientcode );
-        $this -> db -> order_by('date', 'desc');
+        $this -> db -> order_by('instance', 'desc');
 
         $query = $this -> db -> get();
 
         if ($query -> num_rows() > 0) {
             $status = $query -> result();
+        } else {
+            return NULL;
         }
 
         return $this->sort_status_by_instance($status);
@@ -393,6 +402,7 @@ class Patient_model extends CI_Model
 
     public function get_last_hscl($patientcode)
     {
+
         $result = null;
 
         $sql = "SELECT code, instance, hscdat as date

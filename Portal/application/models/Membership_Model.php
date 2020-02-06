@@ -297,12 +297,23 @@ class Membership_model extends CI_Model
         {
             $this-> user_set_access_rights($username, $key, $value);
         }
-            
+        
         
         return $user_ID;
     }
 
+    function create_patient_subject($code){
+        $this->db->from('subjects');
+        $this->db->where('CODE',$code);
+        $query = $this->db->get();
 
+        if($query->num_rows() == 0){
+            $data = array(
+                'CODE' => $code
+            );
+            $this->db->insert('subjects',$data);
+        }
+    }
     /*######################################################
      -----  Setter/Update Functions for User-DB-Entrys ----
     ######################################################*/

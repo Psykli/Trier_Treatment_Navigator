@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Questionnaire table="wohlbefinden_patient" date="WBPDAT" med="WBPMED" ver="WBPVER">
+<Questionnaire table="wohlbefinden_patient" date="WBPDAT">
 	<Language lang="de">
 		<Headline>Wohlbefinden Patient</Headline>
 		<Set type="radio" enumerate="no">

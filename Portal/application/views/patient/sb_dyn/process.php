@@ -5,14 +5,9 @@
 <div class="col-md-12">
 <!--<h2><a href="<?php echo site_url('patient/sb_dynamic/index');?>"> Stundenbogen beenden </a></h2>-->
 <?php $directory_number = 0; ?>
-<?php if( $view_status != 2 ): ?>
-    <div class="text-center" style="margin-top:9%;">
-        <h1>Vielen Dank!<h1>
-        <br/><br/><br/>
-        <a href="<?php echo site_url();?>"><h2>Klicken Sie hier um den Stundenbogen zu beenden</h2></a>
-    </div>
-<?php else:?>
 
+<h3>Vielen Dank!</h3>
+<br/>
 <?php 
 $_GET['tables'] = $tables;
     function selected($table, $item) {
@@ -92,7 +87,6 @@ $_GET['tables'] = $tables;
 <?php endforeach;?>
     
 <h2><a href="../sb_dynamic/index"> Stundenbogen beenden </a></h2>
-<?php endif;?>
 </div>
 </div>
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Questionnaire table="HAQ-S" date="HQSDAT" med="HQSMED" ver="HQSVER">
+<Questionnaire table="HAQ-S" date="HQSDAT">
 	<Data>
 		<Scale type="status">
 			<Name>HAQ-S Gesamt</Name>

@@ -57,11 +57,6 @@ class Feedback extends CI_Controller
             $lastHscl = $this->Patient_model->get_last_hscl( $patientcode);
             $this->data[CONTENT_STRING]['lastHscl'] = $lastHscl;
             
-            $colorArr = array("Beziehung" => $this->Questionnaire_model->get_bez($patientcode),
-            "Motivation" => $this->Questionnaire_model->get_motivation($patientcode),
-            "Risiko" => $this->Questionnaire_model->get_risk($patientcode),
-            "SocSupLife" => $this->Questionnaire_model->get_soc_sup_life($patientcode),
-            "Emo" => $this->Questionnaire_model->get_emo($patientcode));
 
             $acc = $this->Questionnaire_model->get_accept ($patientcode);
             $sup = $this->Questionnaire_model->get_suppress ($patientcode);

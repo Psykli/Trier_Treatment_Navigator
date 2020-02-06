@@ -62,11 +62,6 @@ class Questionnaire extends CI_Controller
             {
                 $id = $questionnaire_id;
             }
-
-            //Look up if last instance of Therapy
-            $abschluss = $this-> SB_Model -> endTherapy($this-> session -> userdata('INSTANCE'), $patientcode);
-            $abschluss = $abschluss[0] -> ABSCHLUSS;
-            $this-> data[CONTENT_STRING]['endTherapy'] = $abschluss;
         }
         
         $entry = $this -> Questionnaire_tool_model -> get_entry($id, "id, qid, instance");

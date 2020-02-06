@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Questionnaire table="HSCL-11" date="HSCDAT" med="HSCMED" ver="HSCVER">
+<Questionnaire table="HSCL-11" date="HSCDAT">
 	<Language lang="de">
 		<Headline alternate="HSCL-11">Probleme und Beschwerden</Headline>
 		<Info>

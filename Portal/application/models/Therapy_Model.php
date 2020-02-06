@@ -277,39 +277,38 @@ class Therapy_Model extends CI_Model
         {
             case 'therapeut':
             case 'supervisor':
-				$this->db->select( 'dok012' );
-				$this->db->from( 'dokumentation' );
-				$this->db->join( 'subjects', 'dokumentation.code = subjects.code' );
+				$this->db->select( 'zustand' );
+				$this->db->from( 'subjects' );
                 $this->db->where( 'therapist', $username );
                 //Dies ist die einzige Zeile gewesen, in der sich die alten Funktionen unterschieden haben
                 switch($zustand)
                 {
                     case 'open':
-                        $this->db->where( 'dok012', self::RUNNING );
+                        $this->db->where( 'zustand', self::RUNNING );
                         break;
                     case 'temp_break':
-                        $this->db->where( 'dok012', self::TEMP_BREAK );
+                        $this->db->where( 'zustand', self::TEMP_BREAK );
                         break;
                     case 'close':
-                        $this->db->where( 'dok012', self::FINISHED );
+                        $this->db->where( 'zustand', self::FINISHED );
                         break;
                     case 'waiting':
-                        $this->db->where( 'dok012', self::WAITING_PERIOD );
+                        $this->db->where( 'zustand', self::WAITING_PERIOD );
                         break;
                     case 'dropout':
-                        $this->db->where( 'dok012', self::DROPOUT );
+                        $this->db->where( 'zustand', self::DROPOUT );
                         $this->db->or_where( 'therapist', $username );
-                        $this->db->where( 'dok012', self::DROPOUT_IN_PROBATORIK );	
+                        $this->db->where( 'zustand', self::DROPOUT_IN_PROBATORIK );	
                         $this->db->or_where( 'therapist', $username );
-                        $this->db->where( 'dok012', self::DROPOUT_in_PROBATORIK_THERAPEUT  );	
+                        $this->db->where( 'zustand', self::DROPOUT_in_PROBATORIK_THERAPEUT  );	
                         $this->db->or_where( 'therapist', $username );
-                        $this->db->where( 'dok012', self::DROPOUT_in_PROBATORIK_PATIENT );	
+                        $this->db->where( 'zustand', self::DROPOUT_in_PROBATORIK_PATIENT );	
                         $this->db->or_where( 'therapist', $username );
-                        $this->db->where( 'dok012', self::DROPOUT_THERAPEUT );	
+                        $this->db->where( 'zustand', self::DROPOUT_THERAPEUT );	
                         $this->db->or_where( 'therapist', $username );
-                        $this->db->where( 'dok012', self::DROPOUT_PATIENT );						
+                        $this->db->where( 'zustand', self::DROPOUT_PATIENT );						
                         $this->db->or_where( 'therapist', $username );
-                        $this->db->where( 'dok012', self::DROPOUT_FORMAL );
+                        $this->db->where( 'zustand', self::DROPOUT_FORMAL );
                         break;
                 }
     
