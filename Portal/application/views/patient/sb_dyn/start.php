@@ -26,6 +26,9 @@
 			<div id="timeout_error" class="alert alert-danger sr-only">
 				Die Daten konnten nicht übertragen werden, bitte versuchen Sie es erneut oder wenden Sie sich an <a href="mailto:<?php echo $this -> config -> item( 'email_address_main' ); ?>"><?php echo $this -> config -> item( 'email_address_main' ); ?></a>
 			</div>
+			<div id="battery_error" class="alert alert-danger sr-only">
+				Es wurde keine Fragebogenbatterie für das Stundenbogensystem gefunden. Stellen sie sicher, dass diese existiert und dem SB-System zugewiesen ist.
+			</div>
 			<div id="request_not_filled" class="alert alert-danger sr-only">
 				<h2 class="alert-heading">Die Fallkonzpetion des Patienten <span id="request_patient"></span> fehlt!</h2>
 				<p>Bitte reichen Sie diese ein bevor Sie fortfahren oder wenden Sie sich an <a href="mailto:<?php echo $this -> config -> item( 'email_address_main' ); ?>"><?php echo $this -> config -> item( 'email_address_main' ); ?></a></p>
@@ -102,6 +105,7 @@
 		$('#timeout_error').addClass('sr-only');
 		$('#request_not_filled').addClass('sr-only');
 		$('#gas_not_filled').addClass('sr-only');
+		$('#battery_error').addClass('sr-only');
 	}
 	function validate_credentials(e){
 		e.preventDefault();
@@ -153,6 +157,9 @@
 						case 'gas_not_filled':
 							$('#gas_not_filled').removeClass('sr-only');
 							$('#gas_patient').html(data[i][1]);
+							break;
+						case 'no_battery':
+							$('#battery_error').removeClass('sr-only');
 							break;
 					}
 				}

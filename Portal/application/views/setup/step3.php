@@ -4,7 +4,7 @@
             <div class="card-body">
                 <h2 class="card-title">Datenbank wurde erstellt!</h2>
                 <p class="card-text">
-                    Jetzt brauchen wir einen Admin-Account, mit dem du alle anderen Nutzer erstellen und dein Portal verwalten kannst.<br/>
+                    Jetzt erstellen wir einen Admin-Account, mit dem du alle anderen Nutzer erstellen und dein Portal verwalten kannst.<br/>
                     Falls du diesen Schritt schon selbst erledigt hast drücke auf <a class="btn btn-primary" href="<?php echo site_url('setup/step4');?>">Weiter</a><br/>
                     Ansonsten fülle folgendes Formular aus:
                 </p>

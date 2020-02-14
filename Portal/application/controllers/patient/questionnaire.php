@@ -211,7 +211,7 @@ class Questionnaire extends CI_Controller
             $therapist_of_patient = $this -> Patient_Model -> get_therapist_of_patient( $data['CODE'], $data['CODE'] );
             $nextInstance = '';
 
-            if(empty($patientcode AND $entry->finished != 1)) // Fallbehandlung: kein Patientcode und nicht letzter Step in Sektion
+            if(empty($patientcode) AND $entry->finished != 1) // Fallbehandlung: kein Patientcode und nicht letzter Step in Sektion
             {
                 if( strcasecmp($this->input->post('table'),'ziel-fragebogen-internetinterventionen-new') == 0)
                 {
@@ -262,7 +262,7 @@ class Questionnaire extends CI_Controller
                 $this->session->set_userdata('suicide_set',true);
             }     
             
-            if($step < sizeof($batterie) AND $batterie[$step+1]->section == $section)
+            if($step+1 < sizeof($batterie) AND $batterie[$step+1]->section == $section)
             {
                 $this->session->set_userdata('step',++$step);
                 redirect($prefix.'/patient/questionnaire/show_questionnaire/'.$batterie[$step]->qid.'/'.$instance);
