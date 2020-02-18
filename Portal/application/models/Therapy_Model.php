@@ -232,9 +232,7 @@ class Therapy_Model extends CI_Model
                             'waiting' => 0);
 
         foreach($patients as $patient){
-            switch($patient->zustand){
-                case 0:
-                    $status['waiting']++;
+            switch($patient->zustand){               
                 case 1:
                     $status['open']++;
                     break;
@@ -253,6 +251,9 @@ class Therapy_Model extends CI_Model
                 case 5:
                     $status['temp_break']++;
                     break;
+                case 0:
+                default:
+                    $status['waiting']++;
             }
         }
 

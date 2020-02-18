@@ -115,34 +115,42 @@ class Patient extends CI_Controller
             $this -> data[CONTENT_STRING]['has_request'] = $this -> SB_model -> has_filled_request( $patientcode );
             $this -> data[CONTENT_STRING]['last_instance'] = $this -> SB_model -> getLastInstance( $patientcode );
 
-            if( $view_status == 2 || $user_role === 'admin' ) { // neues Feedback
-                $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this -> data[CONTENT_STRING] );
-            }
-            elseif( $view_status == 1 ) { // Kontrollgrp
-                // Patienten, die die Therapie abgebrochen oder beendet haben, soll das "neue" Feedback angezeigt werden
-                $dok_status = $this -> Patient_model -> get_status_of_patient( $patientcode ); 
-                        
-                if ( ($dok_status >= 2 && $dok_status <= 4 ) || ($dok_status >= 7 && $dok_status <= 11 ) ) {
-                    $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this->data[CONTENT_STRING] );
-                }
-                else{
-                    //TODO details_feedback_monitoring view isn't created yet. copy it from the admin views (views/admin/user/patient/feedback)?
-                    $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_monitoring', $this->data[CONTENT_STRING] );
-                }
-            }
-            else {
-                /*
-                Currently some patients still have another view_status (e.g. 0) which would result in a broken page being displayed.
-                The view_status was used for internal testing only anyway and isn't really needed anymore.
-                Therefore view_status = 2 gets assumed by default. 
-                */
-                $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this -> data[CONTENT_STRING] );
-            }
+            $therapists = $this -> membership_model -> get_all_users('admin','users');
+            $this -> data[CONTENT_STRING]['therapists'] = $therapists;
+
+            $assigned_therapist = $this -> Patient_Model -> get_therapist_of_patient($username, $patientcode);
+            $this -> data[CONTENT_STRING]['assigned_therapist'] = $assigned_therapist;
+
+            $state = $this-> Patient_Model -> get_state($patientcode);
+            $this -> data[CONTENT_STRING]['patient_state'] = $state;
+
+            $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this -> data[CONTENT_STRING] );
             
             $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this -> data[TOP_NAV_STRING] );
             $this -> template -> load( 'template' );
         }//else
     }//list()
+
+    public function assign_therapist($patientcode){
+        $therapist = $this -> input -> post('assignment');
+
+        $this->Patient_model->assign_therapist_to_patient($therapist,$patientcode);
+
+        $user_role = $this -> data[CONTENT_STRING]['userrole'];
+
+        if($user_role == 'admin'){
+            redirect('user/patient/list/'.$patientcode);
+        } else {
+            redirect($user_role.'/dashboard');
+        }
+    }
+
+    public function therapy_state_change(){
+        $patientcode = $this -> input -> post('patientcode');
+        $state = $this -> input -> post('state');
+
+        $this->Patient_model->set_state($patientcode,$state);
+    }
 
     public function messages()
     {

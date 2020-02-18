@@ -97,6 +97,77 @@
 					<?php endif; ?>
 				</div>
 			</div>
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Patientenzuweisung</h3>
+				</div>
+				<div class="card-body">
+					<p>
+						Zugewiesener Therapeut: <b><?php echo empty($assigned_therapist) ? 'Keiner' : $assigned_therapist;?></b>
+					</p>
+					<?php echo form_open( 'user/patient/assign_therapist/'.$patientcode,  array('role' => 'form', 'id' => 'assignTherapist' ) ); ?>
+						<select id="assignment" name="assignment" class="form-control">
+							<?php foreach($therapists as $therapist):?>
+								<option value="<?php echo $therapist->initials;?>"><?php echo $therapist->initials;?></option>
+							<?php endforeach;?>
+						</select>
+						<br/>
+						<input type="submit" name="submit" class="btn btn-primary">
+					</form>
+					<hr/>
+					<?php 
+						switch($patient_state){
+							case 0: 
+								$s = 'Wartezeit';
+								break;
+							case 1:
+								$s = 'Laufend';
+								break;
+							case 2:
+								$s = 'Beendet';
+								break;
+							default:
+								$s = 'Unterbrochen';
+								break;
+						}
+					?>
+					<p>Zustand: <b id="current_state"><?php echo $s;?></b></p>
+					<button id="therapy_resume" class="btn btn-success" onclick="therapyStateChange(1)">Therapie wieder aufnehmen</button>
+					<button id="therapy_break" class="btn btn-warning" onclick="therapyStateChange(5)">Therapie unterbrechen</button>
+					<button id="therapy_end" class="btn btn-danger" onclick="therapyStateChange(2)">Therapie beenden</button>
+				</div>
+			</div>
+			<script>
+				function therapyStateChange(state){
+					var csrf_token = '<?php echo $this->security->get_csrf_hash(); ?>';
+
+					$.ajax({
+						data: {patientcode: '<?php echo $patientcode;?>', state: state, csrf_test_name: csrf_token},
+						type: 'POST',
+						url: '../therapy_state_change',
+						success: function(){
+							$('#current_state').html(getPatientStateString(state));
+						}
+					});
+				}
+				function getPatientStateString(state){
+					switch(state){
+						case 0: 
+							return 'Wartezeit';
+							break;
+						case 1:
+							return 'Laufend';
+							break;
+						case 2:
+							return 'Beendet';
+							break;
+						default:
+							return 'Unterbrochen';
+							break;
+					}
+				}
+			</script>
+
 			</div>
 
 	</div><!-- end:#feedbackOQ -->

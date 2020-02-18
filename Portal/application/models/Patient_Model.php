@@ -257,6 +257,29 @@ class Patient_model extends CI_Model
         return $view_status;
     } //get_view_status()
 
+    public function get_state($patientcode){
+        $this->db->select('zustand');
+        $this->db->from('subjects');
+        $this->db->where('code',$patientcode);
+
+        $query = $this->db->get();
+        if($query -> num_rows() == 1){
+            $result = $query->result();
+            return $result[0]->zustand;
+        }
+        return NULL;
+    }
+
+    public function set_state($patientcode, $state){
+        $this->db->where('code',$patientcode);
+        $this->db->update('subjects',array('zustand' => $state));
+    }
+
+    public function assign_therapist_to_patient($therapist,$patient){
+        $this -> db -> where('code',$patient);
+        $this -> db -> update('subjects',array('therapist' => $therapist, 'zustand' => 1));
+    }
+
     public function get_therapist_of_patient( $username, $patientcode, $return_username_if_patientcode_empty = false ) {
         $therapist = null;
 
