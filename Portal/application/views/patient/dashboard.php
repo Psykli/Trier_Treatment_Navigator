@@ -4,10 +4,8 @@
 			<h1>Willkommen im Portal<br />
 				<small>
 					Hier finden Sie eine Übersicht zu den verschiedenen Bereichen des Portals. <br />
-					<!-- Unter <i>Übungen</i> finden Sie Informationen und Übungen, die Ihnen dabei helfen Ihre Beschwerden zu reduzieren. <br />-->
 					Unter <i>Nachrichten</i> könnnen Sie Nachrichten empfangen und an Ihren Therapeuten schicken. <br />
-					<!-- Unter <i>Fragebögen</i> sehen Sie die zu absolvierenden Fragebögen.<br />--> 
-					Die Funktion <i>Erinnerungen</i> zeigt Ihnen an, welche Fragebögen und Übungen Sie vergessen haben.<br />
+					Unter <i>Fragebögen</i> sehen Sie die zu absolvierenden Fragebögen.<br />
 				</small>
 			</h1>
 		</div>
@@ -16,15 +14,12 @@
 
 <hr /> 
 <div class="row">
-	
-	<?php if(isset($questionnaire_list)): ?>
 		<div class="col-sm-2" id="quest_button">
-			<a href="<?php echo base_url(); ?>index.php/patient/patient/index/questionnaire" type="button" class="btn btn-outline-secondary btn-lg" style="width:170px;">
+			<a href="<?php echo base_url(); ?>index.php/patient/patient/questionnaire/<?php echo $username;?>" type="button" class="btn btn-outline-secondary btn-lg" style="width:170px;">
 				<span class="fas fa-list-alt" style="font-size: 36px; color: #31708f"></span><br />
 				<br />Fragebögen
 			</a>
 		</div>
-	<?php endif; ?>
 	
 	<div class="col-sm-2">
 		<a href="<?php echo base_url(); ?>index.php/patient/patient/messages/" type="button" class="btn btn-outline-secondary btn-lg"  style="width:170px;">

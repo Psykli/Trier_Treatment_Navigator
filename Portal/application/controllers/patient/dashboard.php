@@ -70,31 +70,8 @@ class Dashboard extends CI_Controller
         $username = $this->data[TOP_NAV_STRING]['username'];
 
         $this->data[CONTENT_STRING]['anzahlMsg'] = $this-> Message_model -> get_count_of_unread_received_msgs( $username );	
-        $this->data[CONTENT_STRING]['datenschutz_status'] = $this-> Patient_model -> get_datenschutz_status_by_patient( $username );
-        
-        $qid = $this->Questionnaire_tool_model->get_questionnaire_id_by_table('ziel-fragebogen-internetinterventionen');
-        $this->data[CONTENT_STRING]['zfi'] = $this -> Questionnaire_tool_model -> get_single_released_questionnaire($username, $qid, null, 0);
-
         $this->data[CONTENT_STRING]['questionnaire_list'] = $this -> Questionnaire_tool_model -> get_released_not_finished_questionnaires( $username );
-
-        $loginDate = $this -> Piwik_model -> get_last_date_for_user( $username );
-        $login = $this -> Questionnaire_tool_model -> get_last_login( $username );
         
-        if( !empty( $loginDate ) && strtotime( $loginDate ) > strtotime( $login ) ) {
-            $login = $loginDate;
-        }
-        
-        $patientData = $this -> Patient_model -> get_therapist_of_patient( $username, $username );
-        $therapist = empty( $patientData ) ? "admin" : $patientData;
-        
-        $qid = $this -> Questionnaire_tool_model -> get_questionnaire_id_by_table( "einhaltung_von_internetinterventionen" );
-        $fei = $this -> Questionnaire_tool_model -> get_single_released_questionnaire( $username, $qid, null, false );
-        
-        if( !empty( $login ) && strtotime( "-1 week" ) > strtotime( $login ) && empty( $fei ) && !is_null( $qid ) ) {
-            $otNum = $this -> Questionnaire_tool_model -> get_next_instance_of_questionnaire( $qid, $username, $therapist, "OT" );
-            $this -> Questionnaire_tool_model -> insert_questionnaire( $therapist, $username, $qid, "OT".$otNum );
-        }
-
         $this -> template -> set( TOP_NAV_STRING, 'all/top_nav', $this->data[TOP_NAV_STRING] );
         $this -> template -> set( CONTENT_STRING, 'patient/dashboard', $this->data[CONTENT_STRING] );        
         $this -> template -> load( 'template' );

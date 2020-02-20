@@ -81,7 +81,7 @@ class Patient extends CI_Controller
      * @since 0.7.0
      * @access private
      */
-    function _questionnaire( $username )
+    function questionnaire( $username )
     {
 		$questionnaires = $this -> Questionnaire_tool_model -> get_released_not_finished_questionnaires( $this->data[TOP_NAV_STRING]['username'] );
 		
