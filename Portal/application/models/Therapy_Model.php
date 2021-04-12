@@ -52,9 +52,9 @@ class Therapy_Model extends CI_Model
         $this -> db = $this -> load -> database( 'default', TRUE );
 		
 		$this->load->model( 'Patient_model' );
-        $this->load->model( 'Remind_Model' );
+        $this->load->model( 'Remind_model' );
         $this->load->model( 'Questionnaire_tool_model' );
-        $this->load->model( 'SB_Model' );
+        $this->load->model( 'SB_model' );
     }//__construct()
 
     public function get_zw_reminds_of_patient( $patientcode ){

@@ -26,9 +26,9 @@ class Questionnaire extends CI_Controller
         );
         $this->load->Model('membership_model');
         $this->load->Model('session_model');
-        $this-> load -> Model('Patient_Model');
+        $this-> load -> Model('Patient_model');
         $this-> load -> Model('Questionnaire_tool_model');
-        $this-> load -> Model('Gas_Model');
+        $this-> load -> Model('Gas_model');
 
         $this-> load ->helper('cookie');
         

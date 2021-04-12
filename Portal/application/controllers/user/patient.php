@@ -28,8 +28,8 @@ class Patient extends CI_Controller
         $this->load->Model('membership_model');
         $this->load->Model('session_model');
         $this->load->library('user_agent');
-        $this->load->Model( 'User_Model' );
-        $this->load->Model( 'Patient_Model' );
+        $this->load->Model( 'User_model' );
+        $this->load->Model( 'Patient_model' );
 		$this->load->Model( 'Therapy_model' );
 		$this->load->Model( 'Questionnaire_tool_model' );
         $this->load->Model( 'Message_model');

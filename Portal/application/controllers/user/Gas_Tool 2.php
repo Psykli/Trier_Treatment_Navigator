@@ -22,7 +22,7 @@ class Gas_tool extends CI_Controller
         );
         $this->load->Model('membership_model');
         $this->load->Model('session_model');
-        $this-> load -> Model('Gas_model');
+        $this-> load -> Model('Gas_Model');
         $this-> load -> library('dompdf_gen');
 
         $this->data[TOP_NAV_STRING]['username'] = $this -> session -> userdata( 'username' );

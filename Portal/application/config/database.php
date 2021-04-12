@@ -77,9 +77,9 @@
         $db['default'] = array(
             'dsn'	=> '',
             'hostname' => 'localhost',
-            'username' => '',
-            'password' => '',
-            'database' => '',
+            'username' => 'root',
+            'password' => 'XXXXXX',
+            'database' => 'portal',
             'dbdriver' => 'mysqli',
             'dbprefix' => '',
             'pconnect' => FALSE,

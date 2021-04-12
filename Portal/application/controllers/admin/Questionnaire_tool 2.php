@@ -4,8 +4,7 @@ if( !defined( 'BASEPATH' ) )
 
 class Questionnaire_tool extends CI_Controller
 {
-	// In Zeile 8 sollte ein Check erfolgen, ob es sich um ein Windows- oder Unix-System handelt und der Pfad entsprechend angepasst werden…
-    private const QUESTIONNAIRE_BOW_XML_PATH = APPPATH.'views/patient/questionnaire/bows/';
+    private const QUESTIONNAIRE_BOW_XML_PATH = APPPATH.'views\\patient\\questionnaire\\bows\\';
 
     function __construct( )
     {
