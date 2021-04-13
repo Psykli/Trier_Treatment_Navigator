@@ -73,11 +73,11 @@ class Questionnaire extends CI_Controller
 
         if (!empty($patientcode))
         {
-            $last_sb_instance = $this-> SB_Model -> getLastInstance($patientcode);
+            $last_sb_instance = $this-> SB_model -> getLastInstance($patientcode);
         }
         else
         {
-            $last_sb_instance = $this-> SB_Model -> getLastInstance( $this -> data[TOP_NAV_STRING]['username'] );
+            $last_sb_instance = $this-> SB_model -> getLastInstance( $this -> data[TOP_NAV_STRING]['username'] );
         }
 
         $this->data[CONTENT_STRING]['last_sb_instance'] = $last_sb_instance;
@@ -146,9 +146,9 @@ class Questionnaire extends CI_Controller
 /* 
                 if(strcasecmp($batterie[$step]->tablename, $this->input->post['table']) !== 0) #Fehlercase: Falscher Fragebogen
                     $gas = $this->session->userdata('gas');
-                    $is_immutable = $this-> Gas_Model ->is_immutable($patientcode, $username);
+                    $is_immutable = $this-> Gas_model ->is_immutable($patientcode, $username);
                     if(!$gas AND $is_immutable AND $batterie[$step]->gas_section == $section AND ($instance-1) % 5 == 0 AND
-                       ($instance-1) != 5 AND $this-> Gas_Model ->does_pr_exist($patientcode, $username))
+                       ($instance-1) != 5 AND $this-> Gas_model ->does_pr_exist($patientcode, $username))
                     {
                         $z_instance = ($instance - ($instance % 5)); 
                         $z_instance = intval($z_instance) < 10 ? 'Z0'.intval($z_instance) : 'Z'.intval($z_instance);
@@ -208,7 +208,7 @@ class Questionnaire extends CI_Controller
 				}//if Email-Part
             }//if (!empty($data))
 
-            $therapist_of_patient = $this -> Patient_Model -> get_therapist_of_patient( $data['CODE'], $data['CODE'] );
+            $therapist_of_patient = $this -> Patient_model -> get_therapist_of_patient( $data['CODE'], $data['CODE'] );
             $nextInstance = '';
 
             if(empty($patientcode) AND $entry->finished != 1) // Fallbehandlung: kein Patientcode und nicht letzter Step in Sektion
@@ -270,10 +270,10 @@ class Questionnaire extends CI_Controller
             else 
             {
                 $gas = $this->session->userdata('gas');
-                $is_immutable = $this-> Gas_Model->is_immutable($patientcode, $username);
+                $is_immutable = $this-> Gas_model->is_immutable($patientcode, $username);
                 
                 if(!$gas AND $is_immutable AND $batterie[$step]->gas_section == $section AND ($instance-1) % 5 == 0 AND 
-                   ($instance-1) != 5 AND $this-> Gas_Model->does_pr_exist($patientcode, $username))
+                   ($instance-1) != 5 AND $this-> Gas_model->does_pr_exist($patientcode, $username))
                 {
                     $this->session->set_userdata('step',++$step);
                     $z_instance = ($instance - ($instance % 5)); 

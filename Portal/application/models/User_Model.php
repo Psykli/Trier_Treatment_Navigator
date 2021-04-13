@@ -24,7 +24,7 @@ class User_Model extends CI_Model
 		if( !property_exists( $CI, 'db' ) )
 			$CI->db =& $this -> db;   
 		
-		$this -> load -> Model('SB_Model');
+		$this -> load -> Model('SB_model');
         $this -> load -> Model( 'Questionnaire_tool_model' );
 	}//__construct()
 

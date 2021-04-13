@@ -13,7 +13,7 @@ if( !defined( 'BASEPATH' ) )
  *
  * @author Martin Kock <code @ deeagle.de>
  */
-class Gas_Model extends CI_Model
+class Gas_model extends CI_model
 {
     /**
      * Constructer
@@ -28,15 +28,15 @@ class Gas_Model extends CI_Model
             $CI->db_default =& $this -> db;
         }
         
-        $this -> load -> Model('Patient_Model');
+        $this -> load -> Model('Patient_model');
     }//__construct()
 
     private function _check_permissions( $username, $patientcode ) {
         $authorized = false;
 
-        $is_therapist_or_supervisor_of_patient = $this -> Patient_Model -> is_therapist_or_supervisor_of_patient( $username, $patientcode );
+        $is_therapist_or_supervisor_of_patient = $this -> Patient_model -> is_therapist_or_supervisor_of_patient( $username, $patientcode );
         if( !$is_therapist_or_supervisor_of_patient ) {
-            $is_patient_of_user = $this -> Patient_Model -> is_patient_of_user( $username, $username, $patientcode );
+            $is_patient_of_user = $this -> Patient_model -> is_patient_of_user( $username, $username, $patientcode );
             
             if( !$is_patient_of_user ) {
                 $is_admin = $this -> membership_model -> is_role( $username, 'admin' );
@@ -447,4 +447,4 @@ class Gas_Model extends CI_Model
 
         return $is_immutable;
     }//is_immutable()
-}//Gas_Model
+}//Gas_model
