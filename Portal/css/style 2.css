@@ -1,0 +1,591 @@
+.alert-winered {
+  color: #ffffff;
+  background-color: rgb(167, 63, 61);
+  border-color: rgb(167, 63, 61);
+}
+.alert-winered hr {
+  border-top-color: rgb(167, 63, 61);
+}
+.alert-winered .alert-link {
+  color: #66512c;
+}
+
+.alert-orange {
+  color: #ffffff;
+  background-color: rgb(240, 127, 65);
+  border-color: rgb(240, 127, 65);
+}
+.alert-orange hr {
+  border-top-color: rgb(240, 127, 65);
+}
+.alert-orange .alert-link {
+  color: #66512c;
+}
+
+.alert-lightorange {
+  color: #ffffff;
+  background-color: rgb(251, 161, 2);
+  border-color: rgb(251, 161, 2);
+}
+.alert-lightorange hr {
+  border-top-color: rgb(251, 161, 2);
+}
+.alert-lightorange .alert-link {
+  color: #66512c;
+}
+
+
+
+/*
+/*
+ * CSS-Style definitions for ci_patientfeedback
+ * 
+ * @author Martin Kock <code @ deeagle.de>
+ */
+ 
+p {color: black;
+   font-size: 16px;
+   text-align: justify;
+   padding-left: 0px}
+
+.orderd_list_ol {font-size: 16px;
+	border-style: solid;
+	border-width: 3px;
+	padding: 20px 20px 20px 30px;
+}
+
+
+#portal_entries ul {
+    margin-top: 50px;
+    list-style: none;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+}
+
+#portal_entries ul li {
+    width: 250px;
+    height: 150px;
+    display: block;
+    border: black 1px solid;
+    float: left;
+    position: relative;
+    margin: 0px 30px 0px 30px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 10;
+}
+
+#portal_entries ul li a {
+}
+
+/* login_form */
+#login_form {
+    width: 300px;
+    background: #f0f0f0;
+    border: 1px solid white;
+    margin: 200px auto 0;
+    padding: 1em;
+    -moz-border-radius: 3px;
+}
+
+#login_form h1 {
+    text-align: center;    
+}
+
+/* Validation error messages */
+
+.error {
+    color: #393939;
+    font-size: 15px;
+}
+
+fieldset {
+    width: 300px;
+    margin: auto;
+    margin-bottom: 2em;
+    display: block;
+}
+
+#member_area .info {
+    width: 350px;    
+    padding: 20px;
+    border: 1px solid black;
+    margin-right: 25px;
+}
+
+
+#member_area .dashrow {
+	width: 1175px !important;
+    clear: both;
+}
+
+#toPatient {
+	background: rgb(250, 250, 250);
+	padding: 5px;
+	text-align: center;
+	margin-top: -20px;
+
+}
+
+.top {
+	width: 98%;
+	margin: 0 0 2% 0;
+}
+
+.top ul {
+	list-style: none;
+	list-style-position: inside;
+	padding: 0;
+	margin: 0;
+}
+
+.top ul li {
+	font: 125%/.825 "Arial Black", Arial, san serif;
+	/*border-right: 1px solid #CDCDCD; */
+	width: 100%;
+	margin: 0;
+	padding: 1em;
+	display: inline;
+}
+
+.top ul li:last-child {
+	border: none;
+}
+
+.top ul li:first-child{
+	font: 150%/.825 "Arial Black", Arial, san serif;
+	border: none;
+	text-transform: uppercase;
+	letter-spacing: -1px;
+	line-height: 150%;
+	padding: 0;
+	margin: 0;
+	color: #654;
+}
+
+.middle {
+	width: 25%;
+	margin: 0 5% 0 0;
+}
+
+#member_area .table_box {
+	position: relative;
+	float: left;
+    padding: 10px;
+	background-color: #FFFFFF;
+	background: rgb(245, 245, 245);
+}
+
+#member_area .table_box  h3 {
+	font: 150%/.825 "Arial Black", Arial, san serif;
+	text-transform: uppercase;
+	letter-spacing: -1px;
+	line-height: 150%;
+	padding: 0;
+	margin: 0;
+	color: #654;
+}
+
+#member_area .table_box hr {
+	margin: 0.5em 0 1.5em 0;
+	border: 1px solid silver;
+}
+
+#member_area .feedback_info {
+	width: 725px !important;
+}
+
+#questionnaires {
+    width: 725px !important;
+}
+
+#right_box {
+    margin-left: 0px;
+}
+
+.process_container {
+    background: rgb(255, 255, 255);
+	border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    margin-bottom: 50px;
+}
+
+.process_container .head {
+    display: block;
+    padding: 8px 15px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.process_container .desc {
+    display: block;
+    padding: 8px 15px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.function_container {
+}
+
+.function_container .icon {
+}
+
+.function_container .head {
+    margin-left: 60px;
+}
+
+.function_container .desc {
+    margin-left: 60px;
+}
+ 
+#process_all_head {
+	list-style: none;
+	list-style-position: inside;
+	padding: 10px;
+	margin: 0 0 15px 0;
+}
+
+#process_all_head  li {
+	font: 120%/.825 "Arial Black", Arial, san serif;
+	line-height: 150%;
+	color: #654;
+	border-right: 2px solid #CDCDCD;
+	width: 100%;
+	margin: 0;
+	padding: 1em;
+	display: inline;
+}
+
+#feedbackOQ{
+	float: left;
+}
+
+#feedbackOQ img {
+	width: 60px;
+	height: 60px;
+	padding-right: 8px;
+	border-right: 2px solid #CDCDCD;
+}
+
+.OQFeedback div {
+	float: left;
+	height: 60px;
+}
+
+
+.OQExplaination {
+	width: 160px;
+	padding-left: 20px;
+	padding-right: 0;
+	margin-right: 0;
+	
+}
+
+.hausStoerung {
+	position: relative;
+	float: left;
+    padding: 10px;
+	background-color: #FFFFFF;
+	background: rgb(245, 245, 245);
+	width: 500px;
+	margin-right: 20px;
+}
+
+.hausStoerung input{
+	width: 90px;
+}
+
+#hausUebung{
+	position: relative;
+	float: left;
+    padding: 10px;
+	background-color: #FFFFFF;
+	background: rgb(245, 245, 245);
+	width: 500px;
+}
+
+.konfroSlider {
+	width: 250px; 
+	float:left;
+	margin-right: 20px;
+}
+
+.konfroLabel{
+	float:left;
+	padding-right: 25px;
+}
+
+.konfroTextarea{
+	width: 600px;
+	float:left; 
+	padding: 0px;
+}
+
+.konfroText {
+	border: 0; 
+	font-weight: bold; 
+	float: left; 
+}
+
+#showkonfro tbody tr td:first-child{
+	width: 350px;
+}
+
+.panel-heading .chevron-toggle:before {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+    content: "\e114 ";    /* adjust as needed, taken from bootstrap.css */
+    color: grey;         /* adjust as needed */
+}
+.panel-heading .chevron-toggle.collapsed:before {
+    /* symbol for "collapsed" panels */
+    content: "\e080 ";    /* adjust as needed, taken from bootstrap.css */
+}
+
+.stdExStyle {
+	padding-left: 0px;
+	font-size: 16px;
+	text-align: justify;
+	}
+
+/* needless non-working duplication (?!) while testing jQuery.tooltip :() */
+.ui-tooltip {
+  padding: 10px 20px;
+  color: white;
+  border-radius: 20px;
+  font: bold 14px "Helvetica Neue", Sans-Serif;
+  text-transform: uppercase;
+  box-shadow: 0 0 7px black;
+ }
+  
+  .badge-success {
+  background-color: #468847;
+}
+.badge-success:hover {
+  background-color: #356635;
+}
+.badge-error {
+  background-color: #b94a48;
+}
+.badge-error:hover {
+  background-color: #953b39;
+}
+.badge-warning {
+  background-color: #f89406;
+}
+.badge-warning:hover {
+  background-color: #c67605;
+}
+
+.badge-info {
+  background-color: #3a87ad;
+}
+.badge-info:hover {
+  background-color: #2d6987;
+}
+
+
+.inputGroupContainer .form-control-feedback,
+.selectContainer .form-control-feedback {
+    top: 0;
+    right: -30px;
+}
+/* Form-Validation Exercises*/
+#ex_aktiv_planerTable i.form-control-feedback {  
+    top: 0;
+    right: -15px;
+}
+#ex_gedankenTable i.form-control-feedback {
+    top: 15px !important;
+    right: 10px;
+}
+#ex_gedanken_essenTabele_step2 i.form-control-feedback {
+    top: 15px !important;
+}
+#ex_gedanken_essenTabele i.form-control-feedback {
+    top: 15px !important;
+    right: 10px;
+}
+#ex_gedanken_traumaTable i.form-control-feedback {
+    top: 15px !important;
+    right: 10px;
+}
+#ex_gruebelTable i.form-control-feedback {
+    top: 5px !important;
+    right: 20px;
+}
+#ex_ressource .inputGroupContainer .form-control-feedback {
+    top: 5px !important;
+    right: 15px;  
+}
+#ex_ressource_angenehm .inputGroupContainer .form-control-feedback {
+    top: 40px !important;
+    right: 0px;  
+}
+#ex_ressource_liebling .inputGroupContainer .form-control-feedback {
+    top: 40px !important;
+    right: 0px;  
+}
+#ex_ressource_staerke .inputGroupContainer .form-control-feedback {
+    top: 40px !important;
+    right: 0px;  
+}
+#ex_schlafTable .form-control-feedback {
+    top: 7px !important;
+    right: 20px;  
+}
+
+.gas_buttons {
+    margin:10px;
+	position: absolute;
+	z-index: -1;
+}
+
+/*http://www.cssmatic.com/ */
+.gas_buttons + label{
+    display: block;
+    text-align: center;
+    cursor:pointer;
+    background: rgba(205,225,217,1);
+    background: -moz-linear-gradient(top, rgba(205,225,217,1) 0%, rgba(195,214,206,1) 54%, rgba(186,204,197,1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(205,225,217,1)), color-stop(54%, rgba(195,214,206,1)), color-stop(100%, rgba(186,204,197,1)));
+    background: -webkit-linear-gradient(top, rgba(205,225,217,1) 0%, rgba(195,214,206,1) 54%, rgba(186,204,197,1) 100%);
+    background: -o-linear-gradient(top, rgba(205,225,217,1) 0%, rgba(195,214,206,1) 54%, rgba(186,204,197,1) 100%);
+    background: -ms-linear-gradient(top, rgba(205,225,217,1) 0%, rgba(195,214,206,1) 54%, rgba(186,204,197,1) 100%);
+    background: linear-gradient(to bottom, rgba(205,225,217,1) 0%, rgba(195,214,206,1) 54%, rgba(186,204,197,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cde1d9', endColorstr='#baccc5', GradientType=0 );
+    border: 1px solid #7B8783;
+    -webkit-box-shadow: inset 1px 1px 2px -1px rgba(255,255,255,0.2),1px 1px 2px -1px rgba(0,0,0,0.5);
+    -moz-box-shadow: inset 1px 1px 2px -1px rgba(255,255,255,0.2), 1px 1px 2px -1px rgba(0,0,0,0.5);
+    box-shadow: inset 1px 1px 2px -1px rgba(255,255,255,0.2), 1px 1px 2px -1px rgba(0,0,0,0.5);
+}
+
+.gas_buttons:checked + label{
+    -webkit-box-shadow: inset 2px 2px 5px -1px rgba(125,125,125,0.75),1px 1px 2px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: inset 2px 2px 5px -1px rgba(0,0,0,0.75), 1px 1px 2px -1px rgba(0,0,0,0.75);
+    box-shadow: inset 1px 1px 2px 2px rgba(125,125,125,0.3), 1px 1px 2px -1px rgba(0,0,0,0.5);
+    background: #E8FFF7;
+}
+
+
+/*SIDEBAR NAVIGATION (CLINICAL SUPPORT TOOLS */
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 220px; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: black; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 8px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+
+#diagnosen .form-control-feedback {  
+    right: 15px;
+}
+
+#teaz_form .form-control-feedback{
+    top: -25px;
+    right: -25px;
+}
+
+caption{
+    caption-side: top;
+}
+
+
+/* Questionnaire tool and messages */
+.clickable {
+    cursor: pointer !important;
+}
+
+
+/* Messages */
+.remove_text_decoration {
+    text-decoration: none !important;
+}
+
+.display_block {
+    display: block;
+}
+
+.remove_margin_bottom {
+    margin-bottom: 0 !important;
+}
+
+/* Profile */
+.password-progress {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.password-progress-bar {
+    width: 0;
+}
+
+#header_container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.75);
+    height: 119px;
+    background-image: url('../img/header_logo.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* admin's create new user page */
+.no-left-padding {
+    padding-left: 0;
+}
+
+/* admin's user statistics page */
+.scrollable-dropdown {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+/* General styles */
+select.custom-select {
+    /* Hide the up/down arrows for <select> form elements styled by datatables because already have a dropdown button */
+    background: none;
+}
+
+.bottom_spacer_25px {
+    margin-bottom: 25px;
+}
+
+.bottom_spacer_50px {
+    margin-bottom: 50px;
+}
