@@ -72,7 +72,7 @@ class Dashboard extends CI_Controller
     }//index()
 
     public function purge_testpatients(){
-        $this->SB_Model->test_patient_purge();
+        $this->SB_model->test_patient_purge();
     }//purge_testpatients
 
 }//class Dashboard

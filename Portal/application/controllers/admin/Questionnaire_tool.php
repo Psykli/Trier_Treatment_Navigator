@@ -135,7 +135,7 @@ class Questionnaire_tool extends CI_Controller
             }
         }
         
-        $res = $this->SB_Model->get_columns($table, $patientcode, $instance, $columns);
+        $res = $this->SB_model->get_columns($table, $patientcode, $instance, $columns);
         $col_array = array();
 
         foreach($res[0] as $key => $item) {
