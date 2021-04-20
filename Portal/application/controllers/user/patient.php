@@ -28,8 +28,8 @@ class Patient extends CI_Controller
         $this->load->Model('membership_model');
         $this->load->Model('session_model');
         $this->load->library('user_agent');
-        $this->load->Model( 'User_Model' );
-        $this->load->Model( 'Patient_Model' );
+        $this->load->Model( 'User_model' );
+        $this->load->Model( 'Patient_model' );
 		$this->load->Model( 'Therapy_model' );
 		$this->load->Model( 'Questionnaire_tool_model' );
         $this->load->Model( 'Message_model');
@@ -108,8 +108,8 @@ class Patient extends CI_Controller
             
             $this -> data[CONTENT_STRING]['rechte_feedback'] = $this -> membership_model -> is_rechte_set( $username, 'rechte_feedback' );
 
-            $this -> data[CONTENT_STRING]['recommendation_status'] = $this -> User_Model -> get_status_recommendation( $patientcode, $username );
-            $this -> data[CONTENT_STRING]['sb_allowed'] = $this -> Patient_Model -> get_sb_allowed( $patientcode );
+            $this -> data[CONTENT_STRING]['recommendation_status'] = $this -> User_model -> get_status_recommendation( $patientcode, $username );
+            $this -> data[CONTENT_STRING]['sb_allowed'] = $this -> Patient_model -> get_sb_allowed( $patientcode );
 
             $this -> data[CONTENT_STRING]['has_gas'] = $this -> SB_model -> has_gas( $patientcode );
             $this -> data[CONTENT_STRING]['has_request'] = $this -> SB_model -> has_filled_request( $patientcode );
@@ -118,10 +118,10 @@ class Patient extends CI_Controller
             $therapists = $this -> membership_model -> get_all_users('admin','users');
             $this -> data[CONTENT_STRING]['therapists'] = $therapists;
 
-            $assigned_therapist = $this -> Patient_Model -> get_therapist_of_patient($username, $patientcode);
+            $assigned_therapist = $this -> Patient_model -> get_therapist_of_patient($username, $patientcode);
             $this -> data[CONTENT_STRING]['assigned_therapist'] = $assigned_therapist;
 
-            $state = $this-> Patient_Model -> get_state($patientcode);
+            $state = $this-> Patient_model -> get_state($patientcode);
             $this -> data[CONTENT_STRING]['patient_state'] = $state;
 
             $this -> template -> set( CONTENT_STRING, 'user/patient/feedback/details_feedback_2', $this -> data[CONTENT_STRING] );
@@ -305,7 +305,7 @@ class Patient extends CI_Controller
             $is_patient_of_user = $this -> Patient_model -> is_patient_of_user( $username, $username, $patientcode );
             //TODO $recommendation_status is missing:
             if ( empty($recommendation_status[0]) AND $user_role === 'user' AND $is_patient_of_user){
-                $this->User_Model->insert_recommendation_status( $username, $patientcode );
+                $this->User_model->insert_recommendation_status( $username, $patientcode );
             }
                 
 			$this->data[CONTENT_STRING]['suicideItems'] = $this->Questionnaire_model->get_suicide_data($patientcode, $instance);

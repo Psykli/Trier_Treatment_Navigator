@@ -4,7 +4,8 @@ if( !defined( 'BASEPATH' ) )
 
 class Questionnaire_tool extends CI_Controller
 {
-    private const QUESTIONNAIRE_BOW_XML_PATH = APPPATH.'views\\patient\\questionnaire\\bows\\';
+	// In Zeile 8 sollte ein Check erfolgen, ob es sich um ein Windows- oder Unix-System handelt und der Pfad entsprechend angepasst werden…
+    private const QUESTIONNAIRE_BOW_XML_PATH = APPPATH.'views/patient/questionnaire/bows/';
 
     function __construct( )
     {
@@ -134,7 +135,7 @@ class Questionnaire_tool extends CI_Controller
             }
         }
         
-        $res = $this->SB_Model->get_columns($table, $patientcode, $instance, $columns);
+        $res = $this->SB_model->get_columns($table, $patientcode, $instance, $columns);
         $col_array = array();
 
         foreach($res[0] as $key => $item) {

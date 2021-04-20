@@ -22,7 +22,7 @@ class Dashboard extends CI_Controller
         parent::__construct( );
         $this->load->Model('membership_model');
         $this->load->Model('session_model');
-        $this->load->Model( 'SB_Model' );
+        $this->load->Model( 'SB_model' );
         $this->data = array(HEADER_STRING => array('title' => 'Portal'),
                             TOP_NAV_STRING => array(),
                             CONTENT_STRING => array(),
@@ -72,7 +72,7 @@ class Dashboard extends CI_Controller
     }//index()
 
     public function purge_testpatients(){
-        $this->SB_Model->test_patient_purge();
+        $this->SB_model->test_patient_purge();
     }//purge_testpatients
 
 }//class Dashboard

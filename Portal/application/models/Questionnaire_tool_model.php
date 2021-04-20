@@ -16,7 +16,7 @@ class Questionnaire_tool_model extends CI_Model
 		if( !property_exists( $CI, 'db_default' ) ) {
             $CI->db_default =& $this -> db;
 		}
-		$this -> load -> Model( 'SB_Model' );
+		$this -> load -> Model( 'SB_model' );
     }
 
 	public function get_sb_batterie($patientcode, $get_Z = false){

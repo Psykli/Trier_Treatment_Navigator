@@ -879,16 +879,16 @@ class Membership_model extends CI_Model
         switch($role)
         {
             case "user": // Therapeut
-            $initials_valid = (preg_match('/^[[:alpha:]]{2}[[:digit:]]{2}$/', $initials)) == 1 ? TRUE : FALSE;
-            $initials_error = ($initials_valid) ? NULL : "Die Initialien für Therapeuten dürfen nur aus zwei Buchstaben und zwei Ziffern bestehen!";
+            $initials_valid = (preg_match('/^[[:alpha:]]{2}[[:digit:]]{4}$/', $initials)) == 1 ? TRUE : FALSE;
+            $initials_error = ($initials_valid) ? NULL : "Die Initialien für Therapeuten dürfen nur aus zwei Buchstaben und vier Ziffern bestehen!";
             break;
             case "supervisor": //Supervisor
             $initials_valid = (preg_match('/^[[:alpha:]]{2}[[:digit:]]{3}$/', $initials)) == 1 ? TRUE : FALSE;
             $initials_error = ($initials_valid) ? NULL : "Die Initialien für Supervisoren düfren nur aus drei Buchstaben und zwei Ziffern bestehen!";
             break;
             case "patient": // Patient
-            $initials_valid = (preg_match('/^[[:digit:]]{4}P+[[:digit:]]{2}$/', $initials)) == 1 ? TRUE : FALSE;
-            $initials_error = ($initials_valid) ? NULL : "Die Initialien für einen Patienten müssen dem Muster 'vier Ziffern, P, zwei Ziffern' folgen!";
+            $initials_valid = (preg_match('/^[[:digit:]]{5}$/', $initials)) == 1 ? TRUE : FALSE;
+            $initials_error = ($initials_valid) ? NULL : "Der Code für einen Patienten muss dem Muster 'Jahr als zweistellige Zahl und dreistellige fortlaufende Nummer' folgen!";
             break;
             case "admin":
             $initials_valid = TRUE; // no inital restrictions

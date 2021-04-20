@@ -12,12 +12,12 @@ class SB_dynamic extends CI_Controller {
         );
         $this->load->Model('membership_model');
         $this->load->Model('session_model');
-        $this->load->Model('SB_Model');
-        $this->load->Model('Patient_Model');
-        $this->load->Model('Gas_Model');
-        $this->load->Model('Questionnaire_Model');
+        $this->load->Model('SB_model');
+        $this->load->Model('Patient_model');
+        $this->load->Model('Gas_model');
+        $this->load->Model('Questionnaire_model');
         $this->load->Model('Questionnaire_tool_model');
-        $this->load->Model("Therapy_Model");
+        $this->load->Model("Therapy_model");
         $this->load->Helper("cookie");
         $this-> lang -> load('sb_lang');
         
@@ -54,8 +54,8 @@ class SB_dynamic extends CI_Controller {
         if(!empty($patientcode) AND $this-> session ->userdata('instance') !== $instance) 
         {   
             //PreSessionChecks
-            $has_gas = $this-> SB_Model ->has_gas($patientcode);
-            $this->data[CONTENT_STRING]['is_immutable'] = $this-> Gas_Model ->is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
+            $has_gas = $this-> SB_model ->has_gas($patientcode);
+            $this->data[CONTENT_STRING]['is_immutable'] = $this-> Gas_model ->is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
             $view_status = $this-> Patient_model ->get_view_status( $patientcode );
             
             //Skipped an Instance? --> Send Skipped-Mail
@@ -71,7 +71,7 @@ class SB_dynamic extends CI_Controller {
             //Get Batterie-Data for this User from database
             $batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode);
             $patientcode = strtoupper($patientcode);
-            $PR_date = $this-> SB_Model ->get_PR_date($patientcode);  
+            $PR_date = $this-> SB_model ->get_PR_date($patientcode);  
             
             //set Userdata for whole Session
             $this->session->unset_userdata(array('CODE' => '','INSTANCE' => '','THERAPIST' => '','THERAPIST_FROM_SUBJECTS' => '','patient_vb' => '','patient_nb' => '','therapist_tb' => '','seen_feedback' => '','gas' => ''));
@@ -98,7 +98,7 @@ class SB_dynamic extends CI_Controller {
             $batterie = $this->session->userdata('batterie');
         }
 
-        $new_quartal = $this->SB_Model->firstInstanceInQuartal($patientcode,$instance);
+        $new_quartal = $this->SB_model->firstInstanceInQuartal($patientcode,$instance);
         $this->data[CONTENT_STRING]['new_quartal'] = $new_quartal;
         $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
         $this->data[CONTENT_STRING]['instance'] = $instance;
@@ -114,7 +114,7 @@ class SB_dynamic extends CI_Controller {
         // Wir wollen hier herausfinden wann die Boundary das letzte mal überschritten war. 
         // In BOUNDARY_UEBERSCHRITTEN steht nur wann sie das erste mal überschritten wurde
         for($i = $lastHscl->instance; $i >= $lastHscl->instance-3; $i--){
-            $boundary = $this->Patient_Model->get_boundary($patientcode, $i, "BOUNDARY_UEBERSCHRITTEN");
+            $boundary = $this->Patient_model->get_boundary($patientcode, $i, "BOUNDARY_UEBERSCHRITTEN");
 
             if($boundary->BOUNDARY_UEBERSCHRITTEN > 0){
                 $this->data[CONTENT_STRING]['over_boundary'] = $i;
@@ -131,7 +131,7 @@ class SB_dynamic extends CI_Controller {
             $this->data[CONTENT_STRING]['has_zwischen'] = $this -> Questionnaire_tool_model -> has_zwischen($patientcode, $z_instance);
         }
 
-        $this->data[CONTENT_STRING]['pr_exists'] = $this-> Gas_Model ->does_pr_exist($patientcode, $this->data[TOP_NAV_STRING]['username']);
+        $this->data[CONTENT_STRING]['pr_exists'] = $this-> Gas_model ->does_pr_exist($patientcode, $this->data[TOP_NAV_STRING]['username']);
 
         $this->template->set(HEADER_STRING, 'all/header_sb', $this->data[HEADER_STRING]);
         $this->template->set(CONTENT_STRING, 'patient/sb_dyn/overview', $this->data[CONTENT_STRING]);
@@ -161,7 +161,7 @@ class SB_dynamic extends CI_Controller {
 
         $batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode);
         if(isset($batterie)){
-            $current_instance = $this->SB_Model->get_instance($patientcode, $batterie[0]->tablename);
+            $current_instance = $this->SB_model->get_instance($patientcode, $batterie[0]->tablename);
         } else {
             $errors[] = array('no_battery');
             $danger = true;
@@ -186,8 +186,8 @@ class SB_dynamic extends CI_Controller {
                 $instance = 2;
             }
 
-            $has_gas = $this->SB_Model->has_gas($patientcode);
-            $is_immutable = $this -> Gas_Model -> is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
+            $has_gas = $this->SB_model->has_gas($patientcode);
+            $is_immutable = $this -> Gas_model -> is_immutable($patientcode, $this->data[TOP_NAV_STRING]['username']);
             if($has_gas AND $instance > 10 AND ($instance-1) % 5 == 0 AND !$is_immutable AND $view_status > 0 ) {
                 $this->immutable_gas_mail($therapist,$patientcode,$instance);
             }
@@ -220,7 +220,7 @@ class SB_dynamic extends CI_Controller {
 
         if ($suicide_set)
         {
-            $suicidecolour = $this-> SB_Model -> getSuicideColour($instance, $patientcode);
+            $suicidecolour = $this-> SB_model -> getSuicideColour($instance, $patientcode);
             $this-> data[CONTENT_STRING]['suicidecolour'] = $suicidecolour;
             $this-> session -> unset_userdata('suicide_set');
         }
@@ -243,19 +243,19 @@ class SB_dynamic extends CI_Controller {
         $this->data[CONTENT_STRING]['instance'] = $instance;
         $this->data[CONTENT_STRING]['therapist'] = $therapist;
 
-        $data = $this-> Questionnaire_Model -> get_process_data($therapist, $patientcode);
+        $data = $this-> Questionnaire_model -> get_process_data($therapist, $patientcode);
         $batterie = $this-> session -> userdata('batterie');
         $feedback = $this-> Questionnaire_tool_model -> get_feedback_of_batterie($batterie[0]->bid);
         
-       // $graph_data = $this->Questionnaire_Model -> fetch_hscl_chart_data($patientcode);
+       // $graph_data = $this->Questionnaire_model -> fetch_hscl_chart_data($patientcode);
         $graphs = array(); //FÄLLT RAUS! --> Erstetzen durch Datenstruktur die Daten enthält
-        $means = $this->Questionnaire_Model->get_process_scales_data($patientcode);
+        $means = $this->Questionnaire_model->get_process_scales_data($patientcode);
         $infos = array();
         foreach(array_keys($means) as $key){
-            $info[$key] = $this->Questionnaire_Model->get_process_scales_info($key);
+            $info[$key] = $this->Questionnaire_model->get_process_scales_info($key);
         }
 
-        $this-> data[CONTENT_STRING]['hsclData'] = $this->Questionnaire_Model->get_hscl_process_data($patientcode);
+        $this-> data[CONTENT_STRING]['hsclData'] = $this->Questionnaire_model->get_hscl_process_data($patientcode);
         $this-> data[CONTENT_STRING]['means'] = $means;
         $this-> data[CONTENT_STRING]['infos'] = $info;
         $this-> data[CONTENT_STRING]['graphs'] = $graphs; 
@@ -302,7 +302,7 @@ class SB_dynamic extends CI_Controller {
                 }
             }
 
-            $res = $this->SB_Model->get_columns($table, $patientcode, $instance, $columns);
+            $res = $this->SB_model->get_columns($table, $patientcode, $instance, $columns);
             $col_array = array();
             
             foreach($res[0] as $key => $item) {
@@ -318,7 +318,7 @@ class SB_dynamic extends CI_Controller {
     public function test(){
         $patientcode = '9995P99';
         $batterie = $this->Questionnaire_tool_model->get_sb_batterie($patientcode);
-        $instance = $this->SB_Model->get_instance($patientcode, $batterie[0]->tablename);
+        $instance = $this->SB_model->get_instance($patientcode, $batterie[0]->tablename);
         $instance = $instance[0]->INSTANCE + 1;
 
         $this->session->unset_userdata(array('CODE' => '','INSTANCE' => '','THERAPIST' => '','THERAPIST_FROM_SUBJECTS' => '','patient_vb' => '','patient_nb' => '','therapist_tb' => '','seen_feedback' => '','gas' => ''));
@@ -341,8 +341,8 @@ class SB_dynamic extends CI_Controller {
         $z_instance = ($instace - ($instance%5));
         $z_instance = intval($z_instance) < 10 ? 'Z0'.intval($z_instance) : 'Z'.intval($z_instance);
 
-        $data = $this -> Gas_Model -> get_gas_data($patientcode, $this->data[TOP_NAV_STRING]['username'], $z_instance);
-        $data_pr = $this -> Gas_Model -> get_gas_data($patientcode, $this->data[TOP_NAV_STRING]['username'], 'PR');
+        $data = $this -> Gas_model -> get_gas_data($patientcode, $this->data[TOP_NAV_STRING]['username'], $z_instance);
+        $data_pr = $this -> Gas_model -> get_gas_data($patientcode, $this->data[TOP_NAV_STRING]['username'], 'PR');
 
         $this->data[CONTENT_STRING]['patientcode'] = $patientcode;
         $this->data[CONTENT_STRING]['instance'] = $instance;
