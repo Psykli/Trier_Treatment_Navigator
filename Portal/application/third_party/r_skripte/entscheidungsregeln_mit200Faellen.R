@@ -19,9 +19,7 @@ args <- commandArgs(TRUE)
 
 #Patient ausw???hlen f???r Test (sp???ter wird Fall ???ber PHP ???bergeben)
 patient <- args[1]
-#patient <- '9995P99'
 aktuelle_session <- as.integer(args[2])
-#aktuelle_session <- 12
 
 #Funktion, die die SPSS Funktion von mean.n erstellt (also wieviele Werte m???ssen vorhanden sein, damit Mittelwert gebildet werden kann)
 mean.n   <- function(df, n) {
@@ -34,10 +32,10 @@ mean.n   <- function(df, n) {
 
 
 #Verbindung alte Datenbank
-myconn <-odbcDriverConnect("Driver=MySQL ODBC 5.3 Unicode Driver;Server=127.0.0.1; Database=portal; Uid=root;Pwd=; trusted_connection=yes")
+myconn <-odbcDriverConnect("Driver=MySQL ODBC 8.0 Unicode Driver;Server=127.0.0.1; Database=portal; Uid=root;Pwd=; trusted_connection=yes")
 
 #Verbindung Neue Datenbank
-myconn1 <-odbcDriverConnect("Driver=MySQL ODBC 5.3 Unicode Driver;Server=127.0.0.1; Database=portal; Uid=root;Pwd=; trusted_connection=yes")
+myconn1 <-odbcDriverConnect("Driver=MySQL ODBC 8.0 Unicode Driver;Server=127.0.0.1; Database=portal; Uid=root;Pwd=; trusted_connection=yes")
 
 
 boundary <- sqlQuery(myconn1, sprintf("SELECT INSTANCE, HSCL_MEAN, BOUNDARY_NEXT, BOUNDARY_UEBERSCHRITTEN  from `entscheidungsregeln_hscl` WHERE CODE = '%s' AND INSTANCE = '%s'", patient, aktuelle_session-1, stringsAsFactors = T))

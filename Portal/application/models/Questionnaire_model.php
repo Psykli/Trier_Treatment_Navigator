@@ -997,6 +997,24 @@ class Questionnaire_model extends CI_Model
         return $output;
     }
 
+    private function getHSCLMean($instance){
+
+        $this -> db -> select ("HSC001,HSC002,HSC003,HSC004,HSC005,HSC006,HSC007,HSC008,HSC009,HSC010,HSC011");
+        $this -> db -> from ("hscl-11");
+        $this -> db -> where ("INSTANCE",$instance);
+        $hscl = $this -> db -> get();
+        $hscl_arr = $hscl->result_array()[0];
+        if(sizeof($hscl_arr) == 0){
+            return null;
+        }
+        $result = 0;
+        foreach($hscl_arr as $val){
+            $result += $val;
+        }
+        return $result / sizeof($hscl_arr);
+    }
+
+
     //Gibt die Daten für den Verlaufsgraphen in richtiger Reihenfolge zurück
     public function get_hscl_process_data ($patientcode) {
         //green line
@@ -1010,6 +1028,7 @@ class Questionnaire_model extends CI_Model
         $this -> db -> from ("entscheidungsregeln_hscl");
         $this -> db -> where ("CODE",$patientcode);
         $data = $this -> db -> get();
+
 
         //Umformung des Arrays in Array von Arrays und initialisierung der Felder mit null
         $i = 1;
@@ -1033,6 +1052,13 @@ class Questionnaire_model extends CI_Model
             $result[$instance-1]['HSCL_MEAN'] = floatval($entry['HSCL_MEAN']);
             $result[$instance]['BOUNDARY'] = floatval($entry['BOUNDARY_NEXT']);
         }
+
+        foreach($result as $key => $entry){
+            if(!isset($entry['HSCL_MEAN'])){
+                $result[$key]['HSCL_MEAN'] = $this->getHSCLMean($entry['INSTANCE']);
+            }
+        }
+
         //Restructure Array
         foreach ($result as $subarray) {
             $means[] = $subarray['HSCL_MEAN'];
@@ -1050,6 +1076,7 @@ class Questionnaire_model extends CI_Model
         return $result;
     }
 
+    
     public function get_all_items(){
         $this->db->from('questionnaire_item_infos');        
         $query= $this->db->get();

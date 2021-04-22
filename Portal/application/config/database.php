@@ -78,7 +78,7 @@
             'dsn'	=> '',
             'hostname' => 'localhost',
             'username' => 'root',
-            'password' => 'jqAVvZCa63Ps8ApZBs2UA',
+            'password' => '',
             'database' => 'portal',
             'dbdriver' => 'mysqli',
             'dbprefix' => '',

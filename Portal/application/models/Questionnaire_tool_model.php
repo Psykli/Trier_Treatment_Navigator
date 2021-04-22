@@ -553,11 +553,12 @@ class Questionnaire_tool_model extends CI_Model
 			{
 				$aktPosition = getcwd();
 				$path = APPPATH.'third_party\\r_skripte';
-				var_dump($path);
+				//var_dump($path);
 				chdir($path);
 
 				//SOLL DIENST ZUR AKTUALISIERUNG DES HSCL_GRAPHEN ersetzten, (wurde bisher per Eintrag in feedback_log getriggert)
-				exec("Rscript entscheidungsregeln_mit200Faellen.R ".$data['CODE']." ".$data['INSTANCE']." &> /dev/null &");
+
+				exec("Rscript entscheidungsregeln_mit200Faellen.R ".$data['CODE']." ".$data['INSTANCE']."");
 			}
 		}
 	}//insert_row_DANGEROUS()
