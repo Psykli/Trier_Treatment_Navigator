@@ -18,7 +18,7 @@
     "jquery-ui-dist": "^1.12.1",
     "jquery-validation": "^1.19.3",
     "mithril": "^1.1.6",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "popper.js": "^1.15.0",
     "select2": "^4.0.7",
     "sortablejs": "^1.10.0-rc3",
