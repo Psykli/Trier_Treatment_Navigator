@@ -14,7 +14,7 @@
     "formBuilder": "^3.2.5",
     "jplayer": "^2.9.2",
     "jquery": "^3.5.0",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.2",
     "jquery-ui-dist": "^1.12.1",
     "jquery-validation": "^1.19.3",
     "mithril": "^1.1.6",
